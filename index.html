@@ -1,0 +1,201 @@
+﻿<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>展示ブース装飾提出ツール</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header no-print">
+    <div>
+      <p class="eyebrow">Booth layout submitter</p>
+      <h1>展示ブース装飾提出ツール</h1>
+    </div>
+    <div class="header-actions">
+      <button id="saveProjectBtn" class="secondary">保存</button>
+      <button id="loadProjectBtn" class="secondary">読込</button>
+      <button id="printBtn" class="primary">PDF出力</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel no-print">
+      <section>
+        <h2>展示会</h2>
+        <label>
+          プリセット
+          <select id="presetSelect"></select>
+        </label>
+        <div class="two-col">
+          <label>ブース幅 mm<input id="boothWidth" type="number" min="500" step="100"></label>
+          <label>ブース奥行 mm<input id="boothDepth" type="number" min="500" step="100"></label>
+        </div>
+        <div class="two-col">
+          <label>壁高さ mm<input id="wallHeight" type="number" min="0" step="100"></label>
+          <label>壁側<select id="wallSide">
+            <option value="top">上</option>
+            <option value="bottom">下</option>
+            <option value="left">左</option>
+            <option value="right">右</option>
+          </select></label>
+        </div>
+        <label>通路側<select id="aisleSide">
+            <option value="bottom">下</option>
+            <option value="top">上</option>
+            <option value="left">左</option>
+            <option value="right">右</option>
+          </select></label>
+        <label id="jointSideField" class="hidden">鈴木眼鏡様 0.5コマの位置
+          <select id="jointSide">
+            <option value="right">右側</option>
+            <option value="left">左側</option>
+          </select>
+        </label>
+      </section>
+
+      <section>
+        <h2>提出情報</h2>
+        <label>展示会名<input id="eventName" type="text"></label>
+        <label>小間番号<input id="boothNo" type="text" placeholder="例: A-12"></label>
+        <label>会社名<input id="companyName" type="text" value="株式会社サンニシムラ"></label>
+        <label>担当者<input id="contactName" type="text"></label>
+        <label>備考<textarea id="notes" rows="3" placeholder="電源位置、壁面装飾、注意事項など"></textarea></label>
+      </section>
+
+      <section>
+        <h2>配置するもの</h2>
+        <button id="standardLayoutBtn" class="primary wide-btn">標準レイアウトを置く</button>
+        <div id="itemPalette" class="palette"></div>
+      </section>
+
+      <section>
+        <h2>選択中</h2>
+        <div id="emptySelection" class="muted">図面上の備品をクリックしてください。</div>
+        <div id="selectionEditor" class="selection-editor hidden">
+          <label>名称<input id="itemLabel" type="text"></label>
+          <div class="three-col">
+            <label>幅 mm<input id="itemWidth" type="number" min="50" step="50"></label>
+            <label>奥行 mm<input id="itemDepth" type="number" min="50" step="50"></label>
+            <label>高さ mm<input id="itemHeight" type="number" min="20" step="50"></label>
+          </div>
+          <div class="two-col">
+            <label>X mm<input id="itemX" type="number" step="50"></label>
+            <label>Y mm<input id="itemY" type="number" step="50"></label>
+          </div>
+          <label id="wattField" class="hidden">ワット数 W<input id="itemWatt" type="number" min="0" step="50"></label>
+          <div class="button-row">
+            <button id="bringForwardBtn" class="secondary" type="button">前面へ</button>
+            <button id="sendBackwardBtn" class="secondary" type="button">背面へ</button>
+          </div>
+          <div class="button-row">
+            <button id="bringToFrontBtn" class="secondary" type="button">最前面</button>
+            <button id="sendToBackBtn" class="secondary" type="button">最背面</button>
+          </div>
+          <div class="button-row">
+            <button id="rotateBtn" class="secondary">90度回転</button>
+            <button id="deleteBtn" class="danger">削除</button>
+          </div>
+        </div>
+        <div id="boldaPreview" class="bolda-preview hidden">
+          <h3>bolda什器写真</h3>
+          <img id="boldaPreviewImage" alt="bolda什器写真">
+          <p id="boldaPreviewCaption"></p>
+        </div>
+      </section>
+
+      <section>
+        <h2>エージェント確認</h2>
+        <div id="agentChecks" class="agent-checks"></div>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <div class="toolbar no-print">
+        <button data-view="layout" class="view-btn active">配置図</button>
+        <button data-view="list" class="view-btn">備品一覧</button>
+        <button data-view="preview3d" class="view-btn">3Dプレビュー</button>
+        <button id="generate3dBtn" class="secondary">3D画像生成</button>
+        <button id="clearBtn" class="secondary">初期化</button>
+      </div>
+
+      <article id="printSheet" class="print-sheet">
+        <div class="sheet-head">
+          <div>
+            <p class="sheet-kicker">装飾・備品・電源 配置図</p>
+            <h2 id="sheetTitle">展示ブース配置図</h2>
+          </div>
+          <dl class="sheet-meta">
+            <div><dt>小間番号</dt><dd id="metaBoothNo">-</dd></div>
+            <div><dt>会社名</dt><dd id="metaCompany">-</dd></div>
+            <div><dt>作成日</dt><dd id="metaDate">-</dd></div>
+          </dl>
+        </div>
+
+        <div id="layoutView" class="layout-wrap">
+          <canvas id="layoutCanvas" width="980" height="700"></canvas>
+          <img id="printLayoutImage" class="print-layout-image" alt="高画質配置図">
+          <div class="legend">
+            <span><i class="swatch fixture"></i>什器</span>
+            <span><i class="swatch bolda"></i>自社什器 bolda</span>
+            <span><i class="swatch table"></i>机</span>
+            <span><i class="swatch power"></i>コンセント</span>
+            <span><i class="swatch spotlight"></i>スポットライト</span>
+            <span><i class="swatch wall"></i>壁面・サイン</span>
+          </div>
+        </div>
+
+        <div id="listView" class="hidden">
+          <table>
+            <thead>
+              <tr><th>種別</th><th>名称</th><th>サイズ</th><th>位置</th><th>電源</th><th>数量</th></tr>
+            </thead>
+            <tbody id="itemTable"></tbody>
+          </table>
+        </div>
+
+        <div id="preview3dView" class="hidden preview3d-wrap">
+          <div class="preview3d-actions no-print">
+            <button id="backToLayoutBtn" class="secondary" type="button">配置図に戻る</button>
+            <button id="reset3dViewBtn" class="secondary" type="button">視点を戻す</button>
+            <button id="downloadLayoutPngBtn" class="secondary" type="button">配置図PNG</button>
+            <button id="download3dPngBtn" class="secondary" type="button">3DプレビューPNG</button>
+            <button id="downloadPromptTxtBtn" class="secondary" type="button">プロンプトTXT</button>
+            <button id="downloadSpecJsonBtn" class="secondary" type="button">寸法仕様JSON</button>
+            <button id="downloadCodexPackBtn" class="secondary" type="button">Codex用資料HTML</button>
+          </div>
+          <div class="preview3d-stage">
+            <div class="preview3d-meta">
+              <strong id="preview3dTitle">3Dプレビュー</strong>
+              <span id="preview3dSpec"></span>
+            </div>
+            <canvas id="preview3dCanvas" width="1280" height="810"></canvas>
+          </div>
+          <div class="image-prompt no-print">
+            <label>ChatGPT / GPT image用 詳細プロンプト<textarea id="imagePrompt" rows="20"></textarea></label>
+            <button id="copyPromptBtn" class="secondary">プロンプトをコピー</button>
+          </div>
+          <div id="realBoothRefs" class="real-booth-refs no-print"></div>
+          <div id="furnitureImageRefs" class="furniture-image-refs no-print"></div>
+          <div id="boldaImageRefs" class="bolda-image-refs no-print"></div>
+        </div>
+
+        <div class="sheet-footer">
+          <div>
+            <strong>ブース寸法</strong>
+            <span id="boothSpec">-</span>
+          </div>
+          <div>
+            <strong>備考</strong>
+            <span id="printNotes">-</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <input id="projectFile" class="hidden" type="file" accept="application/json">
+  <script src="assets/vendor/three.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
