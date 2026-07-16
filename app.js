@@ -1532,7 +1532,7 @@ function ensureThreePreview() {
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.shadowMap.type = T.PCFShadowMap;
   const camera = new T.PerspectiveCamera(34, 1.58, 10, 100000);
   threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1 };
 }
@@ -1834,6 +1834,7 @@ function addThreePerson(scene, item) {
   shadow.scale.y = 0.38;
   shadow.position.set(sprite.position.x, 3, sprite.position.z + 25);
   scene.add(shadow);
+
 }
 
 function addThreeImagePlane(group, source, width, height, z, y, x = 0) {
