@@ -20,9 +20,9 @@ const itemTypes = [
   { type: "table", label: "展示台 W1500xD900", width: 1500, depth: 900, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD600", width: 1800, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD900", width: 1800, depth: 900, height: 700, color: "#f2b84b" },
-  { type: "fixture", label: "展示台", width: 900, depth: 450, color: "#77a7d9" },
-  { type: "fixture", label: "什器棚", width: 900, depth: 350, color: "#77a7d9" },
-  { type: "fixture", label: "姿見", width: 450, depth: 300, color: "#77a7d9" },
+  { type: "fixture", label: "展示台", width: 900, depth: 450, height: 900, color: "#77a7d9" },
+  { type: "fixture", label: "什器棚", width: 900, depth: 350, height: 1400, color: "#77a7d9" },
+  { type: "fixture", label: "姿見", width: 450, depth: 300, height: 1700, color: "#77a7d9" },
   { type: "bolda", label: "bolda ED04 耳・鼻 装着感向上", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png", boldaCode: "ED04", printTheme: "耳・鼻 装着感向上 / Custom Fit", frontTexture: "assets/bolda/textures/ed04-custom-base.png", tierTextures: ["assets/bolda/textures/ed04-custom-tier1.png", "assets/bolda/textures/ed04-custom-tier2.png"], referenceImages: ["assets/bolda/print-references/sample_ED04_A_ptn1.png", "assets/bolda/print-references/sample_ED04_B_ptn1.png"] },
   { type: "bolda", label: "bolda ED04 ネジ抜き・手磨き", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png", boldaCode: "ED04", printTheme: "ネジ抜き・手磨き / Screw Extraction & Hand Polishing", frontTexture: "assets/bolda/textures/ed04-screw-base.png", tierTextures: ["assets/bolda/textures/ed04-screw-tier1.png", "assets/bolda/textures/ed04-screw-tier2.png"], referenceImages: ["assets/bolda/print-references/sample_ED04_A_ptn2.png", "assets/bolda/print-references/sample_ED04_B_ptn2.png"] },
   { type: "bolda", label: "bolda ED04 試験枠・測定", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png", boldaCode: "ED04", printTheme: "試験枠・測定 / Trial Frames & Measurement", frontTexture: "assets/bolda/textures/ed04-trial-base.png", tierTextures: ["assets/bolda/textures/ed04-trial-tier1.png", "assets/bolda/textures/ed04-trial-tier2.png"], referenceImages: ["assets/bolda/print-references/sample_ED04_A_ptn3.png", "assets/bolda/print-references/sample_ED04_B_ptn3.png"] },
@@ -118,6 +118,11 @@ let origin = { x: 0, y: 0 };
 let printRenderMode = false;
 let threePreview = null;
 let threeDrag = null;
+let threeAssetPromises = [];
+let threeExpectedAssetCount = 0;
+let threeLoadedAssetCount = 0;
+let threeFailedAssetCount = 0;
+let threeSceneVersion = 0;
 
 const $ = (id) => document.getElementById(id);
 
@@ -795,7 +800,7 @@ function syncView() {
   $("listView").classList.toggle("hidden", state.view !== "list");
   $("preview3dView").classList.toggle("hidden", state.view !== "preview3d");
   if (state.view === "preview3d") {
-    $("preview3dTitle").textContent = `${state.eventName || "展示ブース"} 3Dプレビュー`;
+    $("preview3dTitle").textContent = `${state.eventName || "展示ブース"} 3D配置確認`;
     $("preview3dSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)}`;
     draw3dScene();
     $("imagePrompt").value = buildImagePrompt();
@@ -1509,9 +1514,13 @@ function draw3dScene() {
   disposeThreeScene(threePreview.scene);
   const T = window.THREE;
   const scene = new T.Scene();
+  const sceneVersion = ++threeSceneVersion;
+  threeAssetPromises = [];
+  threeExpectedAssetCount = 0;
+  threeLoadedAssetCount = 0;
+  threeFailedAssetCount = 0;
   const maxSize = Math.max(state.booth.width, state.booth.depth, state.booth.wallHeight);
-  scene.background = new T.Color(0xe8e7e2);
-  scene.fog = new T.Fog(0xe8e7e2, maxSize * 2.4, maxSize * 5.2);
+  scene.background = new T.Color(0xd8d7d2);
   threePreview.scene = scene;
 
   addThreeLighting(scene, maxSize);
@@ -1519,8 +1528,62 @@ function draw3dScene() {
   addThreeBoothFloor(scene);
   addThreeBoothWalls(scene);
   state.items.forEach((item) => addThreeItem(scene, item));
+  if (!state.items.some((item) => item.type === "person")) addThreeReferencePerson(scene);
+  syncThreeOverlapWarning();
 
   configureThreeCamera(false);
+  renderThreeScene();
+  updateThreeAssetStatus();
+  const assetsForScene = [...threeAssetPromises];
+  threePreview.assetsReady = Promise.allSettled(assetsForScene).then(() => {
+    if (threeSceneVersion !== sceneVersion || threePreview?.scene !== scene) return;
+    updateThreeAssetStatus();
+    renderThreeScene();
+  });
+}
+
+function trackThreeAssetPromise(promise) {
+  const assetVersion = threeSceneVersion;
+  threeExpectedAssetCount += 1;
+  updateThreeAssetStatus();
+  const tracked = promise.then((value) => {
+    if (assetVersion !== threeSceneVersion) return value;
+    threeLoadedAssetCount += 1;
+    if (!value) threeFailedAssetCount += 1;
+    updateThreeAssetStatus();
+    return value;
+  }, () => {
+    if (assetVersion !== threeSceneVersion) return null;
+    threeLoadedAssetCount += 1;
+    threeFailedAssetCount += 1;
+    updateThreeAssetStatus();
+    return null;
+  });
+  threeAssetPromises.push(tracked);
+  return tracked;
+}
+
+function updateThreeAssetStatus() {
+  const status = $("preview3dAssetStatus");
+  if (!status) return;
+  const placedPeople = state.items.filter((item) => item.type === "person").length;
+  const visiblePeople = placedPeople || 1;
+  const printFaces = state.items.reduce((sum, item) => sum + [item.frontTexture, item.riserTexture, ...(item.tierTextures || [])].filter(Boolean).length, 0);
+  const pending = Math.max(0, threeExpectedAssetCount - threeLoadedAssetCount);
+  status.classList.toggle("is-loading", pending > 0);
+  status.classList.toggle("has-error", threeFailedAssetCount > 0);
+  if (pending > 0) {
+    status.textContent = `人物・印刷素材を読込中 ${threeLoadedAssetCount}/${threeExpectedAssetCount}`;
+  } else if (threeFailedAssetCount > 0) {
+    status.textContent = `人物 ${visiblePeople}人・印刷面 ${printFaces}面を表示（一部素材を確認してください）`;
+  } else {
+    status.textContent = `人物 ${visiblePeople}人・印刷面 ${printFaces}面・配置物 ${state.items.length}点を立体表示`;
+  }
+}
+
+async function waitForThreeAssets() {
+  if (!threePreview?.assetsReady) return;
+  await threePreview.assetsReady;
   renderThreeScene();
 }
 
@@ -1530,11 +1593,11 @@ function ensureThreePreview() {
   const renderer = new T.WebGLRenderer({ canvas: preview3dCanvas, antialias: true, alpha: false, preserveDrawingBuffer: true });
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.toneMapping = T.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 0.94;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = T.PCFShadowMap;
   const camera = new T.PerspectiveCamera(34, 1.58, 10, 100000);
-  threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1 };
+  threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1, assetsReady: Promise.resolve() };
 }
 
 function disposeThreeScene(scene) {
@@ -1551,8 +1614,8 @@ function disposeThreeScene(scene) {
 
 function addThreeLighting(scene, maxSize) {
   const T = window.THREE;
-  scene.add(new T.HemisphereLight(0xffffff, 0x8b8276, 2.15));
-  const key = new T.DirectionalLight(0xffffff, 3.2);
+  scene.add(new T.HemisphereLight(0xffffff, 0x77716a, 1.35));
+  const key = new T.DirectionalLight(0xfffdf8, 2.25);
   key.position.set(-maxSize * 0.45, maxSize * 1.5, maxSize * 0.7);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -1564,7 +1627,7 @@ function addThreeLighting(scene, maxSize) {
   key.shadow.camera.bottom = -maxSize * 1.4;
   key.shadow.bias = -0.00015;
   scene.add(key);
-  const fill = new T.DirectionalLight(0xddeeff, 1.15);
+  const fill = new T.DirectionalLight(0xdde8ee, 0.72);
   fill.position.set(maxSize, maxSize * 0.8, -maxSize);
   scene.add(fill);
 }
@@ -1573,7 +1636,7 @@ function addThreeHallFloor(scene, maxSize) {
   const T = window.THREE;
   const ground = new T.Mesh(
     new T.PlaneGeometry(maxSize * 5, maxSize * 5),
-    new T.MeshStandardMaterial({ color: 0xc9c7c1, roughness: 0.96, metalness: 0 })
+    new T.MeshStandardMaterial({ color: 0xaaa8a3, roughness: 0.98, metalness: 0 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -24;
@@ -1587,18 +1650,11 @@ function addThreeBoothFloor(scene) {
   const d = state.booth.depth;
   const floor = new T.Mesh(
     new T.BoxGeometry(w, 28, d),
-    new T.MeshStandardMaterial({ color: 0xd7d3c9, roughness: 0.9, metalness: 0 })
+    new T.MeshStandardMaterial({ color: 0xc3c0ba, roughness: 0.94, metalness: 0 })
   );
   floor.position.y = -10;
   floor.receiveShadow = true;
   scene.add(floor);
-
-  const points = [];
-  for (let x = -w / 2 + 500; x < w / 2; x += 500) points.push(x, 7, -d / 2, x, 7, d / 2);
-  for (let z = -d / 2 + 500; z < d / 2; z += 500) points.push(-w / 2, 7, z, w / 2, 7, z);
-  const geometry = new T.BufferGeometry();
-  geometry.setAttribute("position", new T.Float32BufferAttribute(points, 3));
-  scene.add(new T.LineSegments(geometry, new T.LineBasicMaterial({ color: 0xb1ada4, transparent: true, opacity: 0.34 })));
 
   const boundaryPoints = [
     -w / 2, 10, -d / 2, w / 2, 10, -d / 2,
@@ -1662,6 +1718,8 @@ function addThreeItem(scene, item) {
   if (item.type === "chair") return addThreeChair(scene, item);
   if (item.type === "person") return addThreePerson(scene, item);
   if (item.type === "bolda") return addThreeBolda(scene, item);
+  if (item.type === "fixture" && String(item.label || "").includes("姿見")) return addThreeMirror(scene, item);
+  if (item.type === "fixture" && String(item.label || "").includes("棚")) return addThreeShelfFixture(scene, item);
   if (isFoldingTableItem(item)) return addThreeFoldingTable(scene, item);
   addThreeCounter(scene, item);
 }
@@ -1701,12 +1759,139 @@ function aisleFacingRotation(side) {
 function addThreeCounter(scene, item) {
   const height = item.height || defaultItemHeight(item);
   const group = createFacingGroup(item);
-  const body = threeStandardMaterial(0xf0f1ee, { roughness: 0.76 });
+  const body = threeStandardMaterial(0xe9eae7, { roughness: 0.72 });
   const white = threeStandardMaterial(0xffffff, { roughness: 0.58 });
-  addLocalBox(group, item.width, Math.max(80, height - 45), item.depth, 0, (height - 45) / 2, 0, body);
-  addLocalBox(group, item.width + 24, 45, item.depth + 24, 0, height - 22, 0, white);
-  addThreeFixtureGraphic(group, item, item.width * 0.88, Math.min(height * 0.62, 470), item.depth / 2 + 4, height * 0.47);
+  const reveal = threeStandardMaterial(0xaeb3b2, { roughness: 0.46, metalness: 0.12 });
+  const bodyH = Math.max(120, height - 52);
+  addLocalBox(group, item.width - 18, bodyH - 58, item.depth - 22, 0, 58 + (bodyH - 58) / 2, -6, body);
+  addLocalBox(group, item.width + 26, 52, item.depth + 24, 0, height - 26, 0, white);
+  addLocalBox(group, item.width - 50, 46, item.depth - 58, 0, 23, -4, reveal);
+  addLocalBox(group, 16, bodyH - 96, 12, -item.width / 2 + 28, 64 + (bodyH - 96) / 2, item.depth / 2 - 15, reveal, false);
+  addLocalBox(group, 16, bodyH - 96, 12, item.width / 2 - 28, 64 + (bodyH - 96) / 2, item.depth / 2 - 15, reveal, false);
+  addLocalBox(group, item.width - 72, 10, 12, 0, height * 0.46, item.depth / 2 - 15, reveal, false);
+  if (/展示台|ディスプレイ/i.test(String(item.label || ""))) {
+    addThreeDisplayProducts(group, item, height + 12, 0, Math.max(170, item.depth * 0.68), { maxItems: item.width >= 1500 ? 5 : 4, rows: item.depth >= 750 ? 2 : 1 });
+  }
   scene.add(group);
+}
+
+function addThreeMirror(scene, item) {
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const h = item.height || 1700;
+  const frame = threeStandardMaterial(0x737b7d, { roughness: 0.3, metalness: 0.72 });
+  const back = threeStandardMaterial(0xd6d9d8, { roughness: 0.62, metalness: 0.12 });
+  const mirror = new T.MeshPhysicalMaterial({ color: 0xdbe9ee, roughness: 0.08, metalness: 0.78, clearcoat: 1, clearcoatRoughness: 0.08, side: T.DoubleSide });
+  const mirrorH = Math.max(500, h - 190);
+  const centerY = 135 + mirrorH / 2;
+  addLocalBox(group, item.width, mirrorH + 42, 38, 0, centerY, 0, back);
+  addLocalBox(group, item.width + 34, 28, 54, 0, 120, 0, frame);
+  addLocalBox(group, item.width + 34, 28, 54, 0, 150 + mirrorH, 0, frame);
+  addLocalBox(group, 28, mirrorH, 54, -item.width / 2 - 3, centerY, 0, frame);
+  addLocalBox(group, 28, mirrorH, 54, item.width / 2 + 3, centerY, 0, frame);
+  const glass = new T.Mesh(new T.PlaneGeometry(Math.max(80, item.width - 44), Math.max(360, mirrorH - 44)), mirror);
+  glass.position.set(0, centerY, 22);
+  group.add(glass);
+  addLocalBox(group, item.width * 0.72, 34, item.depth * 0.84, 0, 24, 0, frame);
+  scene.add(group);
+}
+
+function addThreeShelfFixture(scene, item) {
+  const group = createFacingGroup(item);
+  const h = item.height || 1400;
+  const board = threeStandardMaterial(0xf3f4f1, { roughness: 0.76 });
+  const edge = threeStandardMaterial(0xbac0c0, { roughness: 0.38, metalness: 0.48 });
+  addLocalBox(group, item.width * 0.94, h, 30, 0, h / 2, -item.depth / 2 + 18, board);
+  addLocalBox(group, 34, h, item.depth * 0.9, -item.width / 2 + 17, h / 2, 0, edge);
+  addLocalBox(group, 34, h, item.depth * 0.9, item.width / 2 - 17, h / 2, 0, edge);
+  const shelfCount = 4;
+  for (let i = 0; i < shelfCount; i += 1) {
+    const y = 220 + i * ((h - 300) / Math.max(1, shelfCount - 1));
+    addLocalBox(group, item.width * 0.94, 28, item.depth * 0.88, 0, y, 8, board);
+    addThreeDisplayProducts(group, item, y + 22, 34, item.depth * 0.58, { maxItems: 3, rows: 1 });
+  }
+  scene.add(group);
+}
+
+function addThreeDisplayProducts(group, item, y, zCenter = 0, depth = 180, options = {}) {
+  const theme = `${item.printTheme || ""} ${item.label || ""}`;
+  const width = Math.max(180, item.width * 0.82);
+  if (/ヒーター/.test(theme)) {
+    addThreeHeaterDisplay(group, y, zCenter, Math.min(width, 520));
+    return;
+  }
+  if (/工具|ドライバー|ネジ|手磨き/.test(theme)) {
+    addThreeToolDisplay(group, y, zCenter, Math.min(width, 720));
+    return;
+  }
+  const rows = Math.max(1, Math.min(2, options.rows || 1));
+  const columns = Math.max(2, Math.min(options.maxItems || 5, Math.floor(width / 190)));
+  const mat = threeStandardMaterial(0xf8f8f5, { roughness: 0.8 });
+  const colors = [0x272b2d, 0x9a6838, 0x244f78, 0x672e55, 0x4d6a45];
+  const rowDepth = Math.min(130, Math.max(86, depth / rows - 12));
+  for (let row = 0; row < rows; row += 1) {
+    const z = zCenter + (row - (rows - 1) / 2) * Math.min(145, depth / rows);
+    for (let column = 0; column < columns; column += 1) {
+      const x = columns === 1 ? 0 : -width / 2 + (column + 0.5) * (width / columns);
+      const trayW = Math.min(174, width / columns - 12);
+      addLocalBox(group, trayW, 7, rowDepth, x, y, z, mat, false);
+      addLocalEyeglasses(group, x, y + 12, z + 6, Math.max(0.48, Math.min(0.78, trayW / 205)), colors[(row * columns + column) % colors.length]);
+    }
+  }
+}
+
+function addLocalEyeglasses(group, x, y, z, scale, color) {
+  const T = window.THREE;
+  const material = threeStandardMaterial(color, { roughness: 0.28, metalness: 0.72 });
+  const radius = 34 * scale;
+  const centerGap = 43 * scale;
+  [-centerGap, centerGap].forEach((dx) => {
+    const lens = new T.Mesh(new T.TorusGeometry(radius, Math.max(3, 5 * scale), 6, 18), material);
+    lens.rotation.x = Math.PI / 2;
+    lens.scale.set(1.12, 0.78, 1);
+    lens.position.set(x + dx, y, z);
+    lens.castShadow = true;
+    group.add(lens);
+  });
+  addLocalBox(group, Math.max(18, centerGap * 0.72), Math.max(3, 5 * scale), Math.max(3, 5 * scale), x, y, z, material, false);
+  [-1, 1].forEach((side) => {
+    const arm = addLocalBox(group, Math.max(3, 5 * scale), Math.max(3, 5 * scale), 82 * scale, x + side * (centerGap + radius * 1.08), y, z - 35 * scale, material, false);
+    arm.rotation.y = side * 0.11;
+  });
+}
+
+function addThreeToolDisplay(group, y, z, width) {
+  const tray = threeStandardMaterial(0xf4f4f0, { roughness: 0.84 });
+  const metal = threeStandardMaterial(0x6f7779, { roughness: 0.24, metalness: 0.78 });
+  const accent = [0xb53030, 0x235f96, 0xd38a23, 0x303536];
+  addLocalBox(group, width, 9, 150, 0, y, z, tray, false);
+  const count = Math.max(3, Math.min(6, Math.floor(width / 120)));
+  for (let i = 0; i < count; i += 1) {
+    const x = count === 1 ? 0 : -width * 0.42 + i * (width * 0.84 / (count - 1));
+    const handle = addLocalCylinder(group, 11, 76, x - 22, y + 16, z, threeStandardMaterial(accent[i % accent.length], { roughness: 0.42 }), 12);
+    handle.rotation.z = Math.PI / 2;
+    const shaft = addLocalCylinder(group, 3.5, 92, x + 58, y + 16, z, metal, 10);
+    shaft.rotation.z = Math.PI / 2;
+  }
+}
+
+function addThreeHeaterDisplay(group, y, z, width) {
+  const mat = threeStandardMaterial(0x22292b, { roughness: 0.36, metalness: 0.28 });
+  const orange = new window.THREE.MeshStandardMaterial({ color: 0xff8a24, emissive: 0xff5a00, emissiveIntensity: 0.7, roughness: 0.34 });
+  addLocalBox(group, width, 9, 190, 0, y, z, threeStandardMaterial(0xf6f5f0, { roughness: 0.82 }), false);
+  const count = Math.max(2, Math.min(4, Math.floor(width / 150)));
+  for (let i = 0; i < count; i += 1) {
+    const x = count === 1 ? 0 : -width * 0.38 + i * (width * 0.76 / (count - 1));
+    addLocalBox(group, 112, 54, 86, x, y + 31, z, mat);
+    addLocalBox(group, 72, 24, 8, x, y + 31, z + 47, orange, false);
+  }
+}
+
+function syncThreeOverlapWarning() {
+  const overlaps = countOverlaps();
+  const warning = $("preview3dWarning");
+  warning.classList.toggle("hidden", overlaps === 0);
+  warning.textContent = overlaps ? `配置が${overlaps}か所重なっています` : "";
 }
 
 function addThreeFixtureGraphic(group, item, width, height, z, y) {
@@ -1794,12 +1979,13 @@ function addThreeChair(scene, item) {
 
 function addThreePerson(scene, item) {
   const T = window.THREE;
-  const chair = getChairForPerson(item);
+  const chair = item.isThreeReference ? null : getChairForPerson(item);
   const seated = Boolean(chair);
-  const source = seated ? item.seatedImage : item.standingImage;
+  const source = seated ? (item.seatedImage || item.image) : (item.standingImage || item.image);
   if (!source) return;
   const anchor = chair || item;
-  const sprite = new T.Sprite(new T.SpriteMaterial({ transparent: true, alphaTest: 0.025, depthWrite: true }));
+  const spriteMaterial = new T.SpriteMaterial({ color: 0xffffff, transparent: true, opacity: 0, alphaTest: 0.025, depthWrite: false, toneMapped: false });
+  const sprite = new T.Sprite(spriteMaterial);
   const physicalHeight = seated ? 1320 : 1790;
   sprite.center.set(0.5, 0);
   sprite.position.set(
@@ -1812,19 +1998,24 @@ function addThreePerson(scene, item) {
   scene.add(sprite);
 
   const sceneAtLoad = threePreview?.scene;
-  new T.TextureLoader().load(source, (texture) => {
-    if (threePreview?.scene !== sceneAtLoad) {
-      texture.dispose();
-      return;
-    }
-    texture.colorSpace = T.SRGBColorSpace;
-    texture.anisotropy = Math.min(8, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
-    sprite.material.map = texture;
-    sprite.material.needsUpdate = true;
-    const aspect = texture.image?.width && texture.image?.height ? texture.image.width / texture.image.height : 0.4;
-    sprite.scale.set(physicalHeight * aspect, physicalHeight, 1);
-    renderThreeScene();
-  });
+  trackThreeAssetPromise(new Promise((resolve) => {
+    new T.TextureLoader().load(source, (texture) => {
+      if (threePreview?.scene !== sceneAtLoad) {
+        texture.dispose();
+        resolve(null);
+        return;
+      }
+      texture.colorSpace = T.SRGBColorSpace;
+      texture.anisotropy = Math.min(8, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
+      sprite.material.map = texture;
+      sprite.material.opacity = item.isThreeReference ? 0.94 : 1;
+      sprite.material.needsUpdate = true;
+      const aspect = texture.image?.width && texture.image?.height ? texture.image.width / texture.image.height : 0.4;
+      sprite.scale.set(physicalHeight * aspect, physicalHeight, 1);
+      renderThreeScene();
+      resolve(texture);
+    }, undefined, () => resolve(null));
+  }));
 
   const shadow = new T.Mesh(
     new T.CircleGeometry(seated ? 330 : 245, 40),
@@ -1837,26 +2028,54 @@ function addThreePerson(scene, item) {
 
 }
 
+function addThreeReferencePerson(scene) {
+  const template = itemTypes.find((item) => item.type === "person");
+  if (!template) return;
+  const personWidth = template.width || 600;
+  const personDepth = template.depth || 600;
+  const side = state.booth.aisleSide;
+  const position = {
+    bottom: { x: state.booth.width * 0.72 - personWidth / 2, y: state.booth.depth + 80 },
+    top: { x: state.booth.width * 0.28 - personWidth / 2, y: -personDepth - 80 },
+    left: { x: -personWidth - 80, y: state.booth.depth * 0.62 - personDepth / 2 },
+    right: { x: state.booth.width + 80, y: state.booth.depth * 0.38 - personDepth / 2 }
+  }[side] || { x: state.booth.width * 0.72 - personWidth / 2, y: state.booth.depth + 80 };
+  addThreePerson(scene, {
+    ...template,
+    id: "three-reference-person",
+    label: "3D縮尺確認用人物 179cm",
+    x: position.x,
+    y: position.y,
+    isThreeReference: true
+  });
+}
+
 function addThreeImagePlane(group, source, width, height, z, y, x = 0) {
   if (!source) return null;
   const T = window.THREE;
-  const material = new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.72, metalness: 0, side: T.DoubleSide });
+  const material = new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.68, metalness: 0, emissive: 0x202020, emissiveIntensity: 0.08, side: T.DoubleSide, transparent: true, opacity: 0, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const plane = new T.Mesh(new T.PlaneGeometry(Math.max(20, width), Math.max(20, height)), material);
   plane.position.set(x, y, z);
   plane.castShadow = false;
   group.add(plane);
   const sceneAtLoad = threePreview?.scene;
-  new T.TextureLoader().load(source, (texture) => {
-    if (threePreview?.scene !== sceneAtLoad) {
-      texture.dispose();
-      return;
-    }
-    texture.colorSpace = T.SRGBColorSpace;
-    texture.anisotropy = Math.min(8, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
-    material.map = texture;
-    material.needsUpdate = true;
-    renderThreeScene();
-  });
+  trackThreeAssetPromise(new Promise((resolve) => {
+    new T.TextureLoader().load(source, (texture) => {
+      if (threePreview?.scene !== sceneAtLoad) {
+        texture.dispose();
+        resolve(null);
+        return;
+      }
+      texture.colorSpace = T.SRGBColorSpace;
+      texture.anisotropy = Math.min(8, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
+      material.map = texture;
+      material.opacity = 1;
+      material.transparent = false;
+      material.needsUpdate = true;
+      renderThreeScene();
+      resolve(texture);
+    }, undefined, () => resolve(null));
+  }));
   return plane;
 }
 
@@ -1877,6 +2096,8 @@ function addThreeBolda(scene, item) {
     addLocalBox(group, item.width + 8, 20, riserD + 8, 0, h - 10, riserZ, top);
     addThreeImagePlane(group, item.frontTexture, item.width - 8, baseH - 8, item.depth / 2 + 4, baseH / 2);
     addThreeImagePlane(group, item.riserTexture, item.width - 8, riserH - 8, riserZ + riserD / 2 + 4, baseH + riserH / 2);
+    addThreeDisplayProducts(group, item, baseH + 18, item.depth * 0.17, item.depth * 0.34, { maxItems: 4, rows: 1 });
+    addThreeDisplayProducts(group, item, h + 18, riserZ, riserD * 0.72, { maxItems: 3, rows: 1 });
   } else if (code === "ED04") {
     const baseH = h * 0.64;
     const rise = (h - baseH) / 2;
@@ -1890,6 +2111,9 @@ function addThreeBolda(scene, item) {
     addThreeImagePlane(group, item.frontTexture, item.width - 8, baseH - 8, item.depth / 2 + 4, baseH / 2);
     addThreeImagePlane(group, item.tierTextures?.[0], item.width - 8, rise - 8, item.depth / 6 + 4, baseH + rise / 2);
     addThreeImagePlane(group, item.tierTextures?.[1], item.width - 8, rise - 8, -item.depth / 6 + 4, baseH + rise + rise / 2);
+    addThreeDisplayProducts(group, item, baseH + 18, item.depth * 0.34, item.depth * 0.22, { maxItems: 3, rows: 1 });
+    addThreeDisplayProducts(group, item, baseH + rise + 18, 0, item.depth * 0.2, { maxItems: 3, rows: 1 });
+    addThreeDisplayProducts(group, item, h + 18, -item.depth * 0.33, item.depth * 0.18, { maxItems: 3, rows: 1 });
   } else if (code === "TB13") {
     const lowerH = h * 0.58;
     const cubbyH = h - lowerH - 34;
@@ -1900,11 +2124,13 @@ function addThreeBolda(scene, item) {
     addLocalBox(group, 30, cubbyH, item.depth, 0, lowerH + cubbyH / 2, 0, board);
     addLocalBox(group, item.width, 28, item.depth, 0, lowerH + 14, 0, board);
     addThreeImagePlane(group, item.frontTexture, item.width - 8, lowerH - 8, item.depth / 2 + 4, lowerH / 2);
+    addThreeDisplayProducts(group, item, lowerH + cubbyH * 0.44, item.depth * 0.34, item.depth * 0.3, { maxItems: 4, rows: 1 });
   } else if (code === "SF03") {
     addLocalBox(group, Math.max(70, item.width * 0.24), h, 42, 0, h / 2, -item.depth / 2 + 24, board);
     for (let i = 0; i < 4; i += 1) {
       const y = 230 + i * ((h - 330) / 3);
       addLocalBox(group, item.width * 0.86, 30, item.depth * 0.72, 0, y, 20, top);
+      addThreeDisplayProducts(group, item, y + 22, 44, item.depth * 0.38, { maxItems: 2, rows: 1 });
     }
   } else {
     addLocalBox(group, item.width, h, item.depth, 0, h / 2, 0, board);
@@ -1914,6 +2140,7 @@ function addThreeBolda(scene, item) {
     } else if (code !== "TB05" && code !== "VB01_600CB" && code !== "AS01") {
       addThreeFixtureGraphic(group, item, item.width * 0.88, Math.min(h * 0.58, 420), item.depth / 2 + 4, h * 0.47);
     }
+    addThreeDisplayProducts(group, item, h + 18, 0, Math.max(120, item.depth * 0.62), { maxItems: item.width >= 850 ? 4 : 2, rows: item.depth >= 520 ? 2 : 1 });
   }
   scene.add(group);
 }
@@ -2117,11 +2344,11 @@ function configureThreeCamera(reset) {
   }[side] || new T.Vector3(0, 0, 1);
   const tangent = new T.Vector3(outward.z, 0, -outward.x);
   const target = new T.Vector3(0, Math.min(h * 0.38, 900), 0);
-  const distance = (maxSize * 1.32 + Math.min(w, d) * 0.58) * threePreview.zoom;
+  const distance = (maxSize * 1.16 + Math.min(w, d) * 0.48) * threePreview.zoom;
   const base = target.clone()
     .add(outward.clone().multiplyScalar(distance))
-    .add(tangent.multiplyScalar(maxSize * 0.23 * threePreview.zoom));
-  base.y = Math.max(h * 1.1, maxSize * 0.5) * threePreview.zoom;
+    .add(tangent.multiplyScalar(maxSize * 0.34 * threePreview.zoom));
+  base.y = Math.max(h * 0.98, maxSize * 0.46) * threePreview.zoom;
   const offset = base.clone().sub(target).applyAxisAngle(new T.Vector3(0, 1, 0), threePreview.yaw);
   offset.y += threePreview.pitch * maxSize;
   threePreview.target.copy(target);
@@ -2792,6 +3019,9 @@ function shade(hex, factor) {
 
 function defaultItemHeight(item) {
   if (item.type === "table") return 700;
+  if (item.type === "fixture" && String(item.label || "").includes("姿見")) return 1700;
+  if (item.type === "fixture" && String(item.label || "").includes("棚")) return 1400;
+  if (item.type === "fixture") return 900;
   if (item.type === "chair") return 780;
   if (item.type === "wall") return inferWallPanelHeight(item);
   if (item.type === "spotlight") return 180;
@@ -3102,8 +3332,22 @@ function downloadLayoutPng() {
   downloadDataUrl(createHighResolutionLayoutDataUrl(), fileBaseName("layout") + ".png");
 }
 
-function download3dPng() {
-  downloadDataUrl(createHighResolution3dDataUrl(), fileBaseName("3d-preview") + ".png");
+async function download3dPng() {
+  const button = $("download3dPngBtn");
+  const originalLabel = button?.textContent || "3DプレビューPNG";
+  if (button) {
+    button.disabled = true;
+    button.textContent = "人物・印刷素材を準備中...";
+  }
+  try {
+    const dataUrl = await createHighResolution3dDataUrl();
+    downloadDataUrl(dataUrl, fileBaseName("3d-preview") + ".png");
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
+  }
 }
 
 function downloadPromptTxt() {
@@ -3115,8 +3359,9 @@ function downloadSpecJson() {
   downloadBlob(JSON.stringify(buildBoothSpecification(), null, 2), fileBaseName("dimensions") + ".json", "application/json;charset=utf-8");
 }
 
-function createHighResolution3dDataUrl() {
+async function createHighResolution3dDataUrl() {
   draw3dScene();
+  await waitForThreeAssets();
   if (!threePreview?.scene) return preview3dCanvas.toDataURL("image/png");
   const renderer = threePreview.renderer;
   const camera = threePreview.camera;
@@ -3130,12 +3375,11 @@ function createHighResolution3dDataUrl() {
   return dataUrl;
 }
 
-function downloadCodexPack() {
+async function downloadCodexPack() {
   drawCanvas();
-  draw3dScene();
   const prompt = $("imagePrompt").value || buildImagePrompt();
   const layoutData = createHighResolutionLayoutDataUrl();
-  const previewData = createHighResolution3dDataUrl();
+  const previewData = await createHighResolution3dDataUrl();
   const boldaRefs = getUsedBoldaReferences();
   const personRefs = getUsedPersonReferences();
   const specification = JSON.stringify(buildBoothSpecification(), null, 2);

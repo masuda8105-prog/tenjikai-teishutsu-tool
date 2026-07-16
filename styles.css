@@ -454,9 +454,36 @@ th {
 
 .preview3d-meta strong { font-size: 16px; }
 
+.preview3d-warning {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  right: 18px;
+  padding: 7px 10px;
+  border: 1px solid #b34b42;
+  background: rgba(255, 246, 244, 0.94);
+  color: #862d26;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
 .preview3d-meta span {
   color: #4a595c;
   font-size: 11px;
+}
+
+.preview3d-asset-status {
+  color: #176f69 !important;
+  font-weight: 700;
+}
+
+.preview3d-asset-status.is-loading {
+  color: #9a5b00 !important;
+}
+
+.preview3d-asset-status.has-error {
+  color: #a1352d !important;
 }
 
 .image-prompt {
@@ -623,6 +650,10 @@ th {
   }
 
   .preview3d-meta strong { font-size: 14px; }
+  .preview3d-warning {
+    top: 72px;
+    right: 10px;
+  }
 }
 
 @media print {

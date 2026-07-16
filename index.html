@@ -117,8 +117,8 @@
       <div class="toolbar no-print">
         <button data-view="layout" class="view-btn active">配置図</button>
         <button data-view="list" class="view-btn">備品一覧</button>
-        <button data-view="preview3d" class="view-btn">3Dプレビュー</button>
-        <button id="generate3dBtn" class="secondary">3D画像生成</button>
+        <button data-view="preview3d" class="view-btn">3D配置確認</button>
+        <button id="generate3dBtn" class="secondary">完成イメージ用資料</button>
         <button id="clearBtn" class="secondary">初期化</button>
       </div>
 
@@ -169,9 +169,11 @@
           </div>
           <div class="preview3d-stage">
             <div class="preview3d-meta">
-              <strong id="preview3dTitle">3Dプレビュー</strong>
+              <strong id="preview3dTitle">3D配置確認</strong>
               <span id="preview3dSpec"></span>
+              <span id="preview3dAssetStatus" class="preview3d-asset-status"></span>
             </div>
+            <div id="preview3dWarning" class="preview3d-warning hidden"></div>
             <canvas id="preview3dCanvas" width="1280" height="810"></canvas>
           </div>
           <div class="image-prompt no-print">
@@ -198,7 +200,7 @@
   </main>
 
   <input id="projectFile" class="hidden" type="file" accept="application/json">
-  <script src="assets/vendor/three.bundle.min.js"></script>
-  <script src="app.js"></script>
+  <script src="assets/vendor/three.bundle.min.js?v=20260716-2"></script>
+  <script src="app.js?v=20260716-2"></script>
 </body>
 </html>
