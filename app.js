@@ -23,16 +23,25 @@ const itemTypes = [
   { type: "fixture", label: "展示台", width: 900, depth: 450, color: "#77a7d9" },
   { type: "fixture", label: "什器棚", width: 900, depth: 350, color: "#77a7d9" },
   { type: "fixture", label: "姿見", width: 450, depth: 300, color: "#77a7d9" },
-  { type: "bolda", label: "bolda AS01", width: 900, depth: 250, height: 300, color: "#5fb7b2", image: "assets/bolda/AS01.png" },
-  { type: "bolda", label: "bolda ED04", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png" },
+  { type: "bolda", label: "bolda ED04 耳・鼻 装着感向上", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png", boldaCode: "ED04", printTheme: "耳・鼻 装着感向上 / Custom Fit", frontTexture: "assets/bolda/textures/ed04-custom-base.png", tierTextures: ["assets/bolda/textures/ed04-custom-tier1.png", "assets/bolda/textures/ed04-custom-tier2.png"], referenceImages: ["assets/bolda/print-references/sample_ED04_A_ptn1.png", "assets/bolda/print-references/sample_ED04_B_ptn1.png"] },
+  { type: "bolda", label: "bolda ED04 ネジ抜き・手磨き", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png", boldaCode: "ED04", printTheme: "ネジ抜き・手磨き / Screw Extraction & Hand Polishing", frontTexture: "assets/bolda/textures/ed04-screw-base.png", tierTextures: ["assets/bolda/textures/ed04-screw-tier1.png", "assets/bolda/textures/ed04-screw-tier2.png"], referenceImages: ["assets/bolda/print-references/sample_ED04_A_ptn2.png", "assets/bolda/print-references/sample_ED04_B_ptn2.png"] },
+  { type: "bolda", label: "bolda ED04 試験枠・測定", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/ED04.png", boldaCode: "ED04", printTheme: "試験枠・測定 / Trial Frames & Measurement", frontTexture: "assets/bolda/textures/ed04-trial-base.png", tierTextures: ["assets/bolda/textures/ed04-trial-tier1.png", "assets/bolda/textures/ed04-trial-tier2.png"], referenceImages: ["assets/bolda/print-references/sample_ED04_A_ptn3.png", "assets/bolda/print-references/sample_ED04_B_ptn3.png"] },
+  { type: "bolda", label: "bolda TB05 + AS01 Recommended Items", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05_AS01", printTheme: "Recommended Items", frontTexture: "assets/bolda/textures/tb05-screwdrivers.png", riserTexture: "assets/bolda/textures/as01-recommended.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn3.png", "assets/bolda/print-references/sample_AS01_ptn1.png"], composite: true },
+  { type: "bolda", label: "bolda TB05 + AS01 NEW Products", width: 900, depth: 600, height: 1100, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05_AS01", printTheme: "NEW Products", frontTexture: "assets/bolda/textures/tb05-heater.png", riserTexture: "assets/bolda/textures/as01-new-products.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn2.png", "assets/bolda/print-references/sample_AS01_ptn2.png"], composite: true },
+  { type: "bolda", label: "bolda AS01 Recommended Items", width: 900, depth: 250, height: 300, color: "#5fb7b2", image: "assets/bolda/AS01.png", boldaCode: "AS01", printTheme: "Recommended Items", frontTexture: "assets/bolda/textures/as01-recommended.png", referenceImages: ["assets/bolda/print-references/sample_AS01_ptn1.png"] },
+  { type: "bolda", label: "bolda AS01 NEW Products", width: 900, depth: 250, height: 300, color: "#5fb7b2", image: "assets/bolda/AS01.png", boldaCode: "AS01", printTheme: "NEW Products", frontTexture: "assets/bolda/textures/as01-new-products.png", referenceImages: ["assets/bolda/print-references/sample_AS01_ptn2.png"] },
   { type: "bolda", label: "bolda SF03", width: 350, depth: 400, height: 1490, color: "#5fb7b2", image: "assets/bolda/SF03.png" },
-  { type: "bolda", label: "bolda TB05", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png" },
-  { type: "bolda", label: "bolda TB13", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png" },
+  { type: "bolda", label: "bolda TB05 工具", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "工具", frontTexture: "assets/bolda/textures/tb05-tools.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn1.png"] },
+  { type: "bolda", label: "bolda TB05 ヒーター", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb05-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn2.png"] },
+  { type: "bolda", label: "bolda TB05 ドライバー", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "ドライバー", frontTexture: "assets/bolda/textures/tb05-screwdrivers.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn3.png"] },
+  { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB13.png"] },
   { type: "bolda", label: "bolda VB01_600CB", width: 600, depth: 600, height: 600, color: "#5fb7b2", image: "assets/bolda/VB01_600CB.png" },
   { type: "wall", label: "サイン", width: 1200, depth: 80, height: 300, color: "#7bcb9d" },
   { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: 500 },
   { type: "spotlight", label: "スポットライト", width: 350, depth: 350, color: "#ffd45f", watt: 100 },
-  { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" }
+  { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" },
+  { type: "person", label: "人物A 179cm", width: 600, depth: 600, height: 1790, color: "#ef6fa8", image: "assets/people/person-a-standing-crop.png", standingImage: "assets/people/person-a-standing-crop.png", seatedImage: "assets/people/person-a-seated-crop.png" },
+  { type: "person", label: "人物B 179cm", width: 600, depth: 600, height: 1790, color: "#3b69d8", image: "assets/people/person-b-standing-crop.png", standingImage: "assets/people/person-b-standing-crop.png", seatedImage: "assets/people/person-b-seated-crop.png" }
 ];
 
 const boldaDetails = {
@@ -61,6 +70,11 @@ const boldaDetails = {
     visual: "a tall white counter cabinet; flat top; upper front has two open rectangular cubby shelves separated by a center divider; lower half is a solid smooth front panel",
     printData: "共通アイテム/【bolda】/to/bolda_Sannishimura_260323/TB13"
   },
+  TB05_AS01: {
+    code: "TB05 + AS01",
+    visual: "a printed W900 x D600 x H800 bolda TB05 counter with one W900 x D250 x H300 AS01 yokan-bar riser placed directly on the rear of its top surface; the two pieces touch with no floating gap",
+    printData: "共通アイテム/【bolda】/to/bolda_Sannishimura_260323/TB05 + AS01"
+  },
   VB01_600CB: {
     code: "VB01_600CB",
     visual: "a compact white cube pedestal; 600mm cube proportions; flat top, solid smooth panels on all visible sides, clean paper-board seams",
@@ -73,7 +87,9 @@ const furnitureReferenceImage = "assets/furniture/exhibition-furniture-reference
 const realBoothReferenceNotes = [
   "wide real booth photo: dark exhibition hall ceiling, grey carpet, white partition walls, Nishimura signboard, multiple white/black printed counters, products displayed densely on counters",
   "close-up black Nishimura counter photo: black front panel with large Nishimura logo, product category panels, tabletop product samples, trays, bottles, tools and small acrylic labels",
-  "close-up New Products counter photo: white counter base with printed product graphics, black tabletop, raised back panel reading NEW Products, many small eyewear tools arranged on white display mats"
+  "close-up New Products counter photo: white printed TB05 counter base with one AS01 yokan-bar riser placed directly on top, raised black panel reading NEW Products, many small eyewear tools arranged on white display mats",
+  "ED04 three-tier fixtures use three distinct real print themes: Custom Fit; Screw Extraction & Hand Polishing; Trial Frames & Measurement. Keep each theme on its matching fixture and never mix their panels",
+  "Recommended Items is a TB05 base plus one AS01 yokan-bar riser placed on its top, not one monolithic fixture and not two separated floating objects"
 ];
 
 const state = {
@@ -132,7 +148,10 @@ function init() {
 
 function paletteVisual(item) {
   if (item.image) {
-    return `<img class="palette-thumb palette-thumb-photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.label)} 組み立て済み什器画像">`;
+    const swatch = item.frontTexture
+      ? `<img class="palette-print-swatch" src="${escapeHtml(item.frontTexture)}" alt="${escapeHtml(item.printTheme || item.label)} 実印刷面">`
+      : "";
+    return `<span class="palette-image-stack"><img class="palette-thumb palette-thumb-photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.label)} 組み立て済み画像">${swatch}</span>`;
   }
   const svg = buildPaletteSvg(item);
   return `<img class="palette-thumb" src="data:image/svg+xml,${encodeURIComponent(svg)}" alt="${escapeHtml(item.label)}">`;
@@ -439,6 +458,15 @@ function addItem(template) {
     depth: template.depth,
     height: template.height || 0,
     image: template.image || "",
+    boldaCode: template.boldaCode || "",
+    printTheme: template.printTheme || "",
+    frontTexture: template.frontTexture || "",
+    riserTexture: template.riserTexture || "",
+    tierTextures: [...(template.tierTextures || [])],
+    referenceImages: [...(template.referenceImages || [])],
+    composite: Boolean(template.composite),
+    standingImage: template.standingImage || "",
+    seatedImage: template.seatedImage || "",
     color: template.color,
     watt: template.watt || 0,
     x: Math.max(0, Math.round((state.booth.width - template.width) / 2 / 50) * 50),
@@ -642,6 +670,7 @@ function clampItems() {
 
 function normalizeItems() {
   state.items.forEach((item) => {
+    hydrateLegacyItem(item);
     if (item.type === "power") {
       item.watt = Number(item.watt) || 500;
       item.width = item.width || 300;
@@ -664,6 +693,39 @@ function normalizeItems() {
       item.label = item.label.includes("左") ? "JEX付属テーブル 左 W1500xD600" : "JEX付属テーブル 右 W1500xD600";
     }
   });
+}
+
+function hydrateLegacyItem(item) {
+  if (item.type === "person") {
+    const personTemplate = itemTypes.find((entry) => entry.type === "person" && String(item.label || "").startsWith(entry.label.split(" ")[0]));
+    if (personTemplate) {
+      item.height = item.height || personTemplate.height;
+      item.standingImage = item.standingImage || personTemplate.standingImage;
+      item.seatedImage = item.seatedImage || personTemplate.seatedImage;
+      item.image = item.image || personTemplate.image;
+    }
+    return;
+  }
+  if (item.type !== "bolda" || item.frontTexture) return;
+
+  const legacyLabel = String(item.label || "").toUpperCase().replace("ED-4", "ED04");
+  let template = null;
+  if (legacyLabel.includes("ED04")) {
+    template = itemTypes.find((entry) => entry.label === "bolda ED04 試験枠・測定");
+  } else if (legacyLabel.includes("TB13")) {
+    template = itemTypes.find((entry) => entry.label === "bolda TB13 ヒーター展示");
+  } else if (legacyLabel.includes("TB05")) {
+    template = itemTypes.find((entry) => entry.label === "bolda TB05 工具");
+  } else if (legacyLabel.includes("AS01")) {
+    template = itemTypes.find((entry) => entry.label === "bolda AS01 Recommended Items");
+  }
+  if (!template) return;
+
+  ["boldaCode", "printTheme", "frontTexture", "riserTexture", "composite", "image"].forEach((key) => {
+    if (template[key] !== undefined && item[key] === undefined) item[key] = template[key];
+  });
+  if (!item.tierTextures && template.tierTextures) item.tierTextures = [...template.tierTextures];
+  if (!item.referenceImages && template.referenceImages) item.referenceImages = [...template.referenceImages];
 }
 
 function inferWallPanelHeight(item) {
@@ -719,7 +781,10 @@ function syncBoldaPreview(item) {
   $("boldaPreview").classList.toggle("hidden", !show);
   if (!show) return;
   $("boldaPreviewImage").src = item.image;
-  $("boldaPreviewCaption").textContent = `${item.label} / ${itemSizeLabel(item)}`;
+  const printImage = item.frontTexture || item.riserTexture || item.tierTextures?.[0] || "";
+  $("boldaPrintPreview").classList.toggle("hidden", !printImage);
+  if (printImage) $("boldaPrintPreviewImage").src = printImage;
+  $("boldaPreviewCaption").textContent = `${item.label} / ${itemSizeLabel(item)}${item.printTheme ? ` / 印刷: ${item.printTheme}` : ""}`;
 }
 
 function syncView() {
@@ -846,6 +911,10 @@ function drawItem(item) {
     drawSpotlight(item);
     return;
   }
+  if (item.type === "person") {
+    drawPersonMarker(item);
+    return;
+  }
 
   const x = origin.x + item.x * scale;
   const y = origin.y + item.y * scale;
@@ -863,6 +932,47 @@ function drawItem(item) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   drawItemText(item, x, y, w, h);
+  ctx.restore();
+}
+
+function drawPersonMarker(item) {
+  const x = origin.x + item.x * scale;
+  const y = origin.y + item.y * scale;
+  const w = item.width * scale;
+  const h = item.depth * scale;
+  const selected = item.id === state.selectedId;
+  const seated = Boolean(getChairForPerson(item));
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const radius = Math.max(8, Math.min(w, h) * 0.42);
+
+  ctx.save();
+  ctx.fillStyle = seated ? "rgba(155, 138, 214, 0.24)" : `${item.color}33`;
+  ctx.strokeStyle = selected ? "#111" : item.color;
+  ctx.lineWidth = selected ? 3 : 2;
+  ctx.setLineDash(seated ? [] : [6, 4]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = item.color;
+  ctx.beginPath();
+  ctx.arc(cx, cy - radius * 0.28, radius * 0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx, cy + radius * 0.18, radius * 0.38, Math.PI, 0);
+  ctx.lineTo(cx + radius * 0.38, cy + radius * 0.4);
+  ctx.lineTo(cx - radius * 0.38, cy + radius * 0.4);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "#132124";
+  ctx.font = `bold ${printRenderMode ? 42 : 10}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(seated ? "着座 179cm" : "立位 179cm", cx, y + h - Math.max(3, h * 0.05));
   ctx.restore();
 }
 
@@ -1103,6 +1213,10 @@ function getChecks() {
   const powers = powerItems.length;
   const totalWatt = powerItems.reduce((sum, item) => sum + (Number(item.watt) || 0), 0);
   const overlaps = countOverlaps();
+  const people = state.items.filter((item) => item.type === "person");
+  const seatedPeople = people.filter((item) => getChairForPerson(item)).length;
+  const personCollisions = countPersonCollisions();
+  const tightClearances = countTightPersonClearances();
   const checks = [
     {
       name: "寸法エージェント",
@@ -1113,6 +1227,15 @@ function getChecks() {
       name: "配置エージェント",
       level: overlaps ? "warn" : "ok",
       message: overlaps ? `${overlaps}か所で備品が重なっています。ドラッグして間隔を空けてください。` : "備品はブース内に収まっています。"
+    },
+    {
+      name: "導線エージェント",
+      level: personCollisions ? "warn" : people.length ? (tightClearances ? "warn" : "ok") : "warn",
+      message: personCollisions
+        ? `人物が什器と${personCollisions}か所で衝突しています。椅子との着座重なりは除外済みです。`
+        : people.length
+          ? `身長1790mmの人物を${people.length}人配置中（着座${seatedPeople}人）。${tightClearances ? `${tightClearances}人は周囲800mmの通過目安が狭めです。` : "各人物の周囲に800mmの通過目安があります。"}`
+          : "人物を配置すると、身長比較・着座・周囲800mmの導線目安を確認できます。"
     },
     {
       name: "電源エージェント",
@@ -1156,10 +1279,63 @@ function countOverlaps() {
   let count = 0;
   for (let i = 0; i < state.items.length; i += 1) {
     for (let j = i + 1; j < state.items.length; j += 1) {
-      if (isOverlap(state.items[i], state.items[j])) count += 1;
+      if (isOverlap(state.items[i], state.items[j]) && !isAllowedOverlap(state.items[i], state.items[j])) count += 1;
     }
   }
   return count;
+}
+
+function isAllowedOverlap(a, b) {
+  const person = a.type === "person" ? a : b.type === "person" ? b : null;
+  const chair = a.type === "chair" ? a : b.type === "chair" ? b : null;
+  return Boolean(person && chair && getChairForPerson(person)?.id === chair.id);
+}
+
+function getChairForPerson(person) {
+  if (!person || person.type !== "person") return null;
+  let best = null;
+  let bestArea = 0;
+  state.items.filter((item) => item.type === "chair").forEach((chair) => {
+    const area = overlapArea(person, chair);
+    const needed = Math.min(person.width * person.depth, chair.width * chair.depth) * 0.32;
+    if (area >= needed && area > bestArea) {
+      best = chair;
+      bestArea = area;
+    }
+  });
+  return best;
+}
+
+function overlapArea(a, b) {
+  const width = Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x));
+  const depth = Math.max(0, Math.min(a.y + a.depth, b.y + b.depth) - Math.max(a.y, b.y));
+  return width * depth;
+}
+
+function countPersonCollisions() {
+  let count = 0;
+  state.items.filter((item) => item.type === "person").forEach((person) => {
+    state.items.forEach((other) => {
+      if (person.id === other.id || other.type === "person" || ["power", "spotlight", "wall"].includes(other.type)) return;
+      if (isOverlap(person, other) && !isAllowedOverlap(person, other)) count += 1;
+    });
+  });
+  return count;
+}
+
+function countTightPersonClearances() {
+  return state.items.filter((item) => item.type === "person" && !getChairForPerson(item)).filter((person) => {
+    const clearance = {
+      x: person.x + person.width / 2 - 400,
+      y: person.y + person.depth / 2 - 400,
+      width: 800,
+      depth: 800
+    };
+    return state.items.some((other) => {
+      if (person.id === other.id || ["person", "power", "spotlight", "wall", "chair"].includes(other.type)) return false;
+      return isOverlap(clearance, other);
+    });
+  }).length;
 }
 
 function isOverlap(a, b) {
@@ -1178,7 +1354,7 @@ function oppositeSide(side) {
 }
 
 function typeLabel(type) {
-  return { table: "机", fixture: "什器", bolda: "自社什器 bolda", power: "コンセント", spotlight: "スポットライト", wall: "壁面", chair: "椅子" }[type] || type;
+  return { table: "机", fixture: "什器", bolda: "自社什器 bolda", power: "コンセント", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "導線確認用人物" }[type] || type;
 }
 
 function itemSizeLabel(item) {
@@ -1484,6 +1660,7 @@ function addThreeItem(scene, item) {
   if (item.type === "spotlight") return addThreeSpotlight(scene, item);
   if (item.type === "power") return addThreeOutlet(scene, item);
   if (item.type === "chair") return addThreeChair(scene, item);
+  if (item.type === "person") return addThreePerson(scene, item);
   if (item.type === "bolda") return addThreeBolda(scene, item);
   if (isFoldingTableItem(item)) return addThreeFoldingTable(scene, item);
   addThreeCounter(scene, item);
@@ -1615,22 +1792,103 @@ function addThreeChair(scene, item) {
   scene.add(group);
 }
 
+function addThreePerson(scene, item) {
+  const T = window.THREE;
+  const chair = getChairForPerson(item);
+  const seated = Boolean(chair);
+  const source = seated ? item.seatedImage : item.standingImage;
+  if (!source) return;
+  const anchor = chair || item;
+  const sprite = new T.Sprite(new T.SpriteMaterial({ transparent: true, alphaTest: 0.025, depthWrite: true }));
+  const physicalHeight = seated ? 1320 : 1790;
+  sprite.center.set(0.5, 0);
+  sprite.position.set(
+    anchor.x + anchor.width / 2 - state.booth.width / 2,
+    4,
+    anchor.y + anchor.depth / 2 - state.booth.depth / 2
+  );
+  sprite.scale.set(seated ? 620 : 620, physicalHeight, 1);
+  sprite.renderOrder = 4;
+  scene.add(sprite);
+
+  const sceneAtLoad = threePreview?.scene;
+  new T.TextureLoader().load(source, (texture) => {
+    if (threePreview?.scene !== sceneAtLoad) {
+      texture.dispose();
+      return;
+    }
+    texture.colorSpace = T.SRGBColorSpace;
+    texture.anisotropy = Math.min(8, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
+    sprite.material.map = texture;
+    sprite.material.needsUpdate = true;
+    const aspect = texture.image?.width && texture.image?.height ? texture.image.width / texture.image.height : 0.4;
+    sprite.scale.set(physicalHeight * aspect, physicalHeight, 1);
+    renderThreeScene();
+  });
+
+  const shadow = new T.Mesh(
+    new T.CircleGeometry(seated ? 330 : 245, 40),
+    new T.MeshBasicMaterial({ color: 0x202423, transparent: true, opacity: 0.16, depthWrite: false })
+  );
+  shadow.rotation.x = -Math.PI / 2;
+  shadow.scale.y = 0.38;
+  shadow.position.set(sprite.position.x, 3, sprite.position.z + 25);
+  scene.add(shadow);
+}
+
+function addThreeImagePlane(group, source, width, height, z, y, x = 0) {
+  if (!source) return null;
+  const T = window.THREE;
+  const material = new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.72, metalness: 0, side: T.DoubleSide });
+  const plane = new T.Mesh(new T.PlaneGeometry(Math.max(20, width), Math.max(20, height)), material);
+  plane.position.set(x, y, z);
+  plane.castShadow = false;
+  group.add(plane);
+  const sceneAtLoad = threePreview?.scene;
+  new T.TextureLoader().load(source, (texture) => {
+    if (threePreview?.scene !== sceneAtLoad) {
+      texture.dispose();
+      return;
+    }
+    texture.colorSpace = T.SRGBColorSpace;
+    texture.anisotropy = Math.min(8, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
+    material.map = texture;
+    material.needsUpdate = true;
+    renderThreeScene();
+  });
+  return plane;
+}
+
 function addThreeBolda(scene, item) {
   const code = getBoldaCode(item);
   const group = createFacingGroup(item);
   const h = item.height || defaultItemHeight(item);
   const board = threeStandardMaterial(0xf5f5f2, { roughness: 0.8 });
   const top = threeStandardMaterial(0xffffff, { roughness: 0.62 });
-  if (code === "ED04") {
-    const baseH = h * 0.58;
+  if (code === "TB05_AS01") {
+    const baseH = h * (800 / 1100);
+    const riserH = h - baseH;
+    const riserD = Math.min(250, item.depth * 0.42);
+    const riserZ = -item.depth / 2 + riserD / 2;
     addLocalBox(group, item.width, baseH, item.depth, 0, baseH / 2, 0, board);
-    const bandD = item.depth / 3;
-    [0, 1, 2].forEach((i) => {
-      const stepH = baseH + (i + 1) * ((h - baseH) / 3);
-      const z = item.depth / 2 - bandD / 2 - i * bandD;
-      addLocalBox(group, item.width, stepH - baseH, bandD, 0, baseH + (stepH - baseH) / 2, z, top);
-    });
-    addThreeFixtureGraphic(group, item, item.width * 0.9, baseH * 0.62, item.depth / 2 + 5, baseH * 0.48);
+    addLocalBox(group, item.width + 12, 24, item.depth + 12, 0, baseH - 12, 0, top);
+    addLocalBox(group, item.width, riserH, riserD, 0, baseH + riserH / 2, riserZ, board);
+    addLocalBox(group, item.width + 8, 20, riserD + 8, 0, h - 10, riserZ, top);
+    addThreeImagePlane(group, item.frontTexture, item.width - 8, baseH - 8, item.depth / 2 + 4, baseH / 2);
+    addThreeImagePlane(group, item.riserTexture, item.width - 8, riserH - 8, riserZ + riserD / 2 + 4, baseH + riserH / 2);
+  } else if (code === "ED04") {
+    const baseH = h * 0.64;
+    const rise = (h - baseH) / 2;
+    const middleDepth = item.depth * (2 / 3);
+    const topDepth = item.depth / 3;
+    const middleZ = -item.depth / 6;
+    const topZ = -item.depth / 3;
+    addLocalBox(group, item.width, baseH, item.depth, 0, baseH / 2, 0, board);
+    addLocalBox(group, item.width, rise, middleDepth, 0, baseH + rise / 2, middleZ, top);
+    addLocalBox(group, item.width, rise, topDepth, 0, baseH + rise + rise / 2, topZ, top);
+    addThreeImagePlane(group, item.frontTexture, item.width - 8, baseH - 8, item.depth / 2 + 4, baseH / 2);
+    addThreeImagePlane(group, item.tierTextures?.[0], item.width - 8, rise - 8, item.depth / 6 + 4, baseH + rise / 2);
+    addThreeImagePlane(group, item.tierTextures?.[1], item.width - 8, rise - 8, -item.depth / 6 + 4, baseH + rise + rise / 2);
   } else if (code === "TB13") {
     const lowerH = h * 0.58;
     const cubbyH = h - lowerH - 34;
@@ -1640,6 +1898,7 @@ function addThreeBolda(scene, item) {
     addLocalBox(group, 34, cubbyH, item.depth, item.width / 2 - 17, lowerH + cubbyH / 2, 0, board);
     addLocalBox(group, 30, cubbyH, item.depth, 0, lowerH + cubbyH / 2, 0, board);
     addLocalBox(group, item.width, 28, item.depth, 0, lowerH + 14, 0, board);
+    addThreeImagePlane(group, item.frontTexture, item.width - 8, lowerH - 8, item.depth / 2 + 4, lowerH / 2);
   } else if (code === "SF03") {
     addLocalBox(group, Math.max(70, item.width * 0.24), h, 42, 0, h / 2, -item.depth / 2 + 24, board);
     for (let i = 0; i < 4; i += 1) {
@@ -1649,7 +1908,9 @@ function addThreeBolda(scene, item) {
   } else {
     addLocalBox(group, item.width, h, item.depth, 0, h / 2, 0, board);
     addLocalBox(group, item.width + 18, 30, item.depth + 18, 0, h - 15, 0, top);
-    if (code !== "TB05" && code !== "VB01_600CB" && code !== "AS01") {
+    if (item.frontTexture) {
+      addThreeImagePlane(group, item.frontTexture, item.width - 8, h - 8, item.depth / 2 + 4, h / 2);
+    } else if (code !== "TB05" && code !== "VB01_600CB" && code !== "AS01") {
       addThreeFixtureGraphic(group, item, item.width * 0.88, Math.min(h * 0.58, 420), item.depth / 2 + 4, h * 0.47);
     }
   }
@@ -2207,6 +2468,7 @@ function drawSoftFootprintShadow(ctx3, iso, item, alpha) {
 }
 function getPreviewAssetSrc(item) {
   const base = "assets/furniture/preview-assets/";
+  if (item.type === "person") return getChairForPerson(item) ? item.seatedImage : item.standingImage;
   if (item.type === "bolda") {
     const code = getBoldaCode(item);
     if (code) return `assets/bolda/preview-assets/${code}.png`;
@@ -2538,14 +2800,18 @@ function defaultItemHeight(item) {
 
 function buildImagePrompt() {
   const boldaRefs = getUsedBoldaReferences();
+  const personRefs = getUsedPersonReferences();
   const items = state.items.map(buildPromptItemBlock).join("\n\n");
   const contacts = buildContactInstructions();
   const alignment = buildAlignmentInstructions();
   const camera = buildPromptCameraInstruction();
   const counts = buildPromptCountSummary();
   const references = boldaRefs.length
-    ? `Attach and use these assembled bolda reference images for the matching product codes:\n${boldaRefs.map((ref) => `- ${ref.name}: ${ref.path}${ref.printData ? `; matching print/artwork source: ${ref.printData}` : ""}`).join("\n")}`
+    ? `Attach and use these bolda shape and exact print-face images for the matching product codes:\n${boldaRefs.map((ref) => `- ${ref.name}: ${ref.path}; role: ${ref.role}${ref.printData ? `; source folder: ${ref.printData}` : ""}`).join("\n")}`
     : "No bolda reference images are used in this layout.";
+  const peopleReferences = personRefs.length
+    ? `Attach and use these exact character images without changing identity, clothing or costume:\n${personRefs.map((ref) => `- ${ref.name}: ${ref.path}; role: ${ref.role}`).join("\n")}`
+    : "No people are specified in this layout. Do not add people.";
   const joint = isImfEgfPreset()
     ? `Joint booth split: Sannishimura uses 1.5 booths and Suzuki Megane uses 0.5 booth. Suzuki Megane is on the ${state.jointSide === "left" ? "left" : "right"} side. Preserve that allocation and do not move either company into the other area.`
     : "";
@@ -2572,7 +2838,8 @@ function buildImagePrompt() {
     "- 3D preview PNG: authoritative booth orientation, wall/aisle relationship, object volumes and camera direction. It is not a texture reference.",
     "- Previous Nishimura booth photos: material, branding, tabletop product density, exhibition-hall lighting and grey-carpet atmosphere only. Do not copy their old layout.",
     `- Furniture reference image (${furnitureReferenceImage}): appearance of four-leg folding tables, white exhibition counters and relative W/D/H proportions.`,
-    "- bolda images: exact assembled product form for each matching code. They are not dielines.",
+    "- bolda assembled-shape images define geometry. Cropped print-face images define the exact visible artwork and must be applied only to the stated front/riser face.",
+    "- Character images define the exact person appearance. Use the standing image for a free-standing person and the seated image only when the plan places that person on a chair.",
     "",
     "REAL-BOOTH MATERIAL AND MERCHANDISING STYLE",
     realBoothReferenceNotes.map((note) => `- ${note}`).join("\n"),
@@ -2585,13 +2852,16 @@ function buildImagePrompt() {
     items || "No movable objects placed.",
     "",
     references,
+    peopleReferences,
     "",
     contacts,
     alignment,
     "",
     "BOLDA AND FURNITURE RULES",
     "- Render bolda products fully assembled as real white paper-board/cardboard counters or shelves. Never show flat development drawings, unfolded print sheets or generic substitute boxes.",
-    "- Match ED04 as the stepped display, TB13 as the two-cubby counter, and TB05 as the plain rectangular block. Keep their different silhouettes unmistakable.",
+    "- Match ED04 as a W900 x D600 x H1100 three-level stepped display with exactly three usable horizontal display levels. Match TB13 as the two-cubby counter and TB05 as the W900 x D600 x H800 rectangular counter.",
+    "- ED04 has three separate print themes. Keep Custom Fit, Screw Extraction & Hand Polishing, and Trial Frames & Measurement on their matching fixtures; never exchange or merge their panels.",
+    "- A TB05 + AS01 composite is two real parts: one W900 x D600 x H800 TB05 base on floor Z0 and one W900 x D250 x H300 AS01 yokan-bar riser resting directly on the rear of its top at Z800. No air gap, no separate floor placement, total height H1100.",
     "- Preserve real width/depth/height proportions. W1500xD900 must visibly be 50% deeper than W1500xD600; W1800 must visibly be 20% wider than W1500 at the same camera depth.",
     "- Folding tables must have a full tabletop and four visible/supporting metal legs. Do not turn them into solid counters.",
     "- If matching print/artwork is supplied, wrap it only onto the correct visible front/side faces without changing the furniture geometry.",
@@ -2601,7 +2871,7 @@ function buildImagePrompt() {
     "- Keep equal X or Y edges in straight rows. Keep all furniture level on floor Z0 and all wall equipment attached to its specified wall and Z range.",
     "- A plan marker for an outlet or spotlight is an annotation zone, not the physical size of the device. Never create a 300mm outlet box or a 350mm furniture block for a spotlight.",
     "- Signboards are shallow H300 wall-mounted panels at the stated Z elevation, not floor-to-ceiling wall panels.",
-    "- Keep the specified aisle side fully open. Do not add doors, extra counters, people blocking the booth, decorative structures or ceiling truss unless explicitly listed.",
+    "- Keep the specified aisle side fully open. Do not add doors, extra counters, unlisted people, decorative structures or ceiling truss. Preserve every explicitly listed person's position and standing/seated state.",
     "- Ensure outlet wattage and spotlight wattage cues are legible where practical. Render no unrelated text, logos or watermarks."
   ].filter(Boolean).join("\n");
 }
@@ -2633,11 +2903,24 @@ function buildPromptItemBlock(item, index) {
   } else if (item.type === "power") {
     lines.push(`   - Physical fixture: two-socket outlet plate approximately W150 x D35 x H180, mounted on the ${sideEnglish(side)} wall at Z${Math.round(vertical.bottom)}..Z${Math.round(vertical.top)} near plan marker centre X${Math.round(item.x + item.width / 2)} Y${Math.round(item.y + item.depth / 2)}.`);
     lines.push(`   - Electrical cue: ${item.watt || 0}W must be legible; do not scale the outlet to the annotation rectangle.`);
+  } else if (item.type === "person") {
+    const chair = getChairForPerson(item);
+    if (chair) {
+      lines.push(`   - Pose: seated naturally on ${chair.label} centred at X${Math.round(chair.x + chair.width / 2)} Y${Math.round(chair.y + chair.depth / 2)}; chair seat height about Z430; hips and knees bent near 90 degrees; both feet on floor; do not show the person standing or floating.`);
+      lines.push(`   - Exact character reference: ${item.seatedImage}. Preserve the same face, glasses/helmet, clothing/costume and body appearance.`);
+    } else {
+      lines.push(`   - Pose: standing upright on floor Z0, real human height H1790mm. The W600 x D600 plan footprint is the occupied standing/turning zone, not a solid pedestal.`);
+      lines.push(`   - Exact character reference: ${item.standingImage}. Preserve the same face, glasses/helmet, clothing/costume and body appearance.`);
+    }
   } else {
     lines.push(`   - Appearance: ${buildItemVisualInstruction(item, bolda).replace(/^,\s*/, "") || "real exhibition furniture matching the stated dimensions"}.`);
   }
   if (bolda) {
     lines.push(`   - Matching assembled product reference: ${item.image?.split("/").pop() || bolda.code}; exact form: ${bolda.visual}.`);
+    if (item.printTheme) lines.push(`   - Exact print theme: ${item.printTheme}. Do not replace, paraphrase or mix this theme with another fixture.`);
+    if (item.frontTexture) lines.push(`   - Exact main front-face artwork: ${item.frontTexture}.`);
+    if (item.tierTextures?.length) lines.push(`   - Exact stepped-riser artworks from lower to upper: ${item.tierTextures.join(", ")}.`);
+    if (item.riserTexture) lines.push(`   - Exact AS01 riser artwork: ${item.riserTexture}; mount it on top of the TB05 base with no gap.`);
     if (bolda.printData) lines.push(`   - Matching artwork source: ${bolda.printData}. Apply only to correct visible faces.`);
   }
   return lines.join("\n");
@@ -2659,7 +2942,7 @@ function buildPromptCameraInstruction() {
 }
 
 function buildPromptCountSummary() {
-  const labels = { table: "tables/counters", fixture: "fixtures", bolda: "bolda fixtures", wall: "signboards", power: "outlets", spotlight: "spotlights", chair: "chairs" };
+  const labels = { table: "tables/counters", fixture: "fixtures", bolda: "bolda fixtures", wall: "signboards", power: "outlets", spotlight: "spotlights", chair: "chairs", person: "people" };
   const counts = state.items.reduce((map, item) => {
     map[item.type] = (map[item.type] || 0) + 1;
     return map;
@@ -2695,9 +2978,14 @@ function buildBoothSpecification() {
         dimensions: { width: Math.round(item.width), depth: Math.round(item.depth), height: Math.round(item.height || defaultItemHeight(item)) },
         verticalRange: { z1: Math.round(vertical.bottom), z2: Math.round(vertical.top) },
         nearestWall: ["wall", "spotlight", "power"].includes(item.type) ? nearestBoothSide(item) : null,
-        frontDirection: ["table", "fixture", "bolda", "chair"].includes(item.type) ? state.booth.aisleSide : null,
+        frontDirection: ["table", "fixture", "bolda", "chair", "person"].includes(item.type) ? state.booth.aisleSide : null,
         watt: item.watt || null,
         boldaCode: getBoldaCode(item) || null,
+        printTheme: item.printTheme || null,
+        printFaces: [item.frontTexture, ...(item.tierTextures || []), item.riserTexture].filter(Boolean),
+        personPose: item.type === "person" ? (getChairForPerson(item) ? "seated" : "standing") : null,
+        standingImage: item.standingImage || null,
+        seatedImage: item.seatedImage || null,
         referenceImage: item.image || null
       };
     })
@@ -2705,6 +2993,7 @@ function buildBoothSpecification() {
 }
 
 function buildItemVisualInstruction(item, bolda) {
+  if (item.type === "person") return `, visual form: the exact referenced 1790mm-tall character, ${getChairForPerson(item) ? "naturally seated on the overlapping chair" : "standing upright on the floor"}`;
   if (bolda) return `, visual form: assembled bolda fixture, ${bolda.visual}`;
   if (item.type === "table" && String(item.label || "").includes("展示台")) {
     return ", visual form: display counter/plinth with the exact footprint proportions and H700mm height; a W1500xD900 stand must look deeper than W1500xD600, and W1800 stands must look wider than W1500 stands";
@@ -2722,14 +3011,34 @@ function getUsedBoldaReferences() {
   state.items
     .filter((item) => item.type === "bolda" && item.image)
     .forEach((item) => {
-      const fileName = item.image.split("/").pop();
       const detail = getBoldaDetail(item);
-      refs.set(fileName, { name: fileName, path: item.image, label: item.label, visual: detail?.visual || "", printData: detail?.printData || "" });
+      const add = (path, role) => {
+        if (!path || refs.has(path)) return;
+        refs.set(path, { name: path.split("/").pop(), path, label: item.label, role, visual: detail?.visual || "", printData: detail?.printData || "" });
+      };
+      add(item.image, `assembled blank shape for ${item.label}`);
+      add(item.frontTexture, `exact printed main front face for ${item.printTheme || item.label}`);
+      (item.tierTextures || []).forEach((path, index) => add(path, `exact printed ED04 ${index === 0 ? "lower" : "upper"} riser face for ${item.printTheme}`));
+      add(item.riserTexture, `exact printed AS01 yokan-bar front face mounted on the TB05 base for ${item.printTheme}`);
     });
   return [...refs.values()];
 }
 
+function getUsedPersonReferences() {
+  const refs = new Map();
+  state.items.filter((item) => item.type === "person").forEach((item) => {
+    [
+      [item.standingImage, `exact standing appearance for ${item.label}, physical height 1790mm`],
+      [item.seatedImage, `exact seated appearance for ${item.label}, use only when placed on a chair`]
+    ].forEach(([path, role]) => {
+      if (path && !refs.has(path)) refs.set(path, { name: path.split("/").pop(), path, label: item.label, role });
+    });
+  });
+  return [...refs.values()];
+}
+
 function getBoldaCode(item) {
+  if (item.boldaCode && boldaDetails[item.boldaCode]) return item.boldaCode;
   const text = `${item.label || ""} ${item.image || ""}`;
   return Object.keys(boldaDetails).find((code) => text.includes(code)) || "";
 }
@@ -2751,18 +3060,25 @@ function renderBoldaImageReferences() {
   const wrap = $("boldaImageRefs");
   if (!wrap) return;
   const refs = getUsedBoldaReferences();
-  if (!refs.length) {
-    wrap.innerHTML = `<h3>bolda参照画像</h3><p>配置中のbolda什器はありません。</p>`;
+  const personRefs = getUsedPersonReferences();
+  if (!refs.length && !personRefs.length) {
+    wrap.innerHTML = `<h3>生成参照画像</h3><p>配置中のbolda什器・人物はありません。</p>`;
     return;
   }
   wrap.innerHTML = `
-    <h3>bolda参照画像</h3>
-    <p>GPT image 2.0で画像生成する時は、下の画像をプロンプトと一緒に参照画像として添付してください。</p>
+    <h3>bolda・人物参照画像</h3>
+    <p>GPT image 2.0で画像生成する時は、形状画像、実印刷面、人物画像をプロンプトと一緒に添付してください。</p>
     <div class="bolda-ref-grid">
       ${refs.map((ref) => `
         <figure>
           <img src="${escapeHtml(ref.path)}" alt="${escapeHtml(ref.label)}">
-          <figcaption>${escapeHtml(ref.label)}<br>${escapeHtml(ref.name)}${ref.printData ? `<br>${escapeHtml(ref.printData)}` : ""}</figcaption>
+          <figcaption>${escapeHtml(ref.label)}<br>${escapeHtml(ref.role)}<br>${escapeHtml(ref.name)}</figcaption>
+        </figure>
+      `).join("")}
+      ${personRefs.map((ref) => `
+        <figure>
+          <img src="${escapeHtml(ref.path)}" alt="${escapeHtml(ref.label)}">
+          <figcaption>${escapeHtml(ref.label)}<br>${escapeHtml(ref.role)}</figcaption>
         </figure>
       `).join("")}
     </div>
@@ -2820,6 +3136,7 @@ function downloadCodexPack() {
   const layoutData = createHighResolutionLayoutDataUrl();
   const previewData = createHighResolution3dDataUrl();
   const boldaRefs = getUsedBoldaReferences();
+  const personRefs = getUsedPersonReferences();
   const specification = JSON.stringify(buildBoothSpecification(), null, 2);
   const html = `<!doctype html>
 <html lang="ja">
@@ -2865,9 +3182,20 @@ function downloadCodexPack() {
       ${boldaRefs.map((ref) => `
         <figure>
           <img src="${escapeHtml(absoluteAssetUrl(ref.path))}" alt="${escapeHtml(ref.label)}">
-          <figcaption>${escapeHtml(ref.label)} / ${escapeHtml(ref.name)}${ref.printData ? `<br>${escapeHtml(ref.printData)}` : ""}</figcaption>
+          <figcaption>${escapeHtml(ref.label)} / ${escapeHtml(ref.role)} / ${escapeHtml(ref.name)}</figcaption>
         </figure>
       `).join("") || "<p>配置中のbolda什器はありません。</p>"}
+    </div>
+  </section>
+  <section>
+    <h2>人物参照画像</h2>
+    <div class="grid">
+      ${personRefs.map((ref) => `
+        <figure>
+          <img src="${escapeHtml(absoluteAssetUrl(ref.path))}" alt="${escapeHtml(ref.label)}">
+          <figcaption>${escapeHtml(ref.label)} / ${escapeHtml(ref.role)}</figcaption>
+        </figure>
+      `).join("") || "<p>配置中の人物はありません。</p>"}
     </div>
   </section>
   <section>

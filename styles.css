@@ -195,6 +195,29 @@ button {
   background: #f8faf9;
 }
 
+.palette-image-stack {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.palette-image-stack .palette-thumb {
+  display: block;
+}
+
+.palette-print-swatch {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: calc(100% - 12px);
+  height: 29%;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 3px;
+  background: #1b1e20;
+  box-shadow: 0 1px 4px rgba(14, 24, 26, 0.22);
+}
+
 .stage {
   overflow: auto;
   padding: 18px;
@@ -355,6 +378,24 @@ th {
 .bolda-preview h3 {
   margin: 0;
   font-size: 13px;
+}
+
+.bolda-preview-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.bolda-preview-pair figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.bolda-preview-pair figcaption {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
 }
 
 .bolda-preview img {
@@ -545,6 +586,43 @@ th {
   }
   .three-col { grid-template-columns: 1fr; }
   .preview3d-stage { min-height: 360px; }
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  h1 { font-size: 20px; }
+  .panel { padding: 14px; }
+  .stage { padding: 10px; }
+  .print-sheet { padding: 14px; }
+
+  .sheet-head {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .sheet-head h2 {
+    margin-bottom: 12px;
+    font-size: 20px;
+  }
+
+  .sheet-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .preview3d-stage { min-height: 240px; }
+  .preview3d-meta {
+    top: 10px;
+    left: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .preview3d-meta strong { font-size: 14px; }
 }
 
 @media print {
