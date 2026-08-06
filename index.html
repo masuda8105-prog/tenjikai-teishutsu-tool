@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>展示ブース装飾提出ツール</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260717-1">
 </head>
 <body>
   <header class="app-header no-print">
@@ -160,7 +160,13 @@
         <div id="preview3dView" class="hidden preview3d-wrap">
           <div class="preview3d-actions no-print">
             <button id="backToLayoutBtn" class="secondary" type="button">配置図に戻る</button>
-            <button id="reset3dViewBtn" class="secondary" type="button">視点を戻す</button>
+            <button id="reset3dViewBtn" class="secondary" type="button">全体視点</button>
+            <span class="preview3d-camera-actions" aria-label="3D視点切り替え">
+              <button class="secondary" data-three-camera="front" type="button">正面</button>
+              <button class="secondary" data-three-camera="left" type="button">左斜め</button>
+              <button class="secondary" data-three-camera="right" type="button">右斜め</button>
+              <button class="secondary" data-three-camera="top" type="button">俯瞰</button>
+            </span>
             <button id="downloadLayoutPngBtn" class="secondary" type="button">配置図PNG</button>
             <button id="download3dPngBtn" class="secondary" type="button">3DプレビューPNG</button>
             <button id="downloadPromptTxtBtn" class="secondary" type="button">プロンプトTXT</button>
@@ -174,7 +180,16 @@
               <span id="preview3dAssetStatus" class="preview3d-asset-status"></span>
             </div>
             <div id="preview3dWarning" class="preview3d-warning hidden"></div>
-            <canvas id="preview3dCanvas" width="1280" height="810"></canvas>
+            <div class="preview3d-help">ドラッグ: 視点回転 / ホイール: 拡大縮小 / クリック: 什器選択</div>
+            <canvas id="preview3dCanvas" width="1280" height="810" tabindex="0" aria-label="選択した什器だけを表示する3D配置確認"></canvas>
+            <div class="preview3d-selection no-print">
+              <span id="preview3dSelectionText">3D内の什器をクリックすると選択できます</span>
+              <span class="preview3d-selection-actions">
+                <button id="editSelected3dBtn" class="secondary" type="button" disabled>配置図で編集</button>
+                <button id="rotateSelected3dBtn" class="secondary" type="button" disabled>90度回転</button>
+                <button id="deleteSelected3dBtn" class="danger" type="button" disabled>削除</button>
+              </span>
+            </div>
           </div>
           <div class="image-prompt no-print">
             <label>ChatGPT / GPT image用 詳細プロンプト<textarea id="imagePrompt" rows="20"></textarea></label>
@@ -201,6 +216,6 @@
 
   <input id="projectFile" class="hidden" type="file" accept="application/json">
   <script src="assets/vendor/three.bundle.min.js?v=20260716-2"></script>
-  <script src="app.js?v=20260716-2"></script>
+  <script src="app.js?v=20260717-1"></script>
 </body>
 </html>

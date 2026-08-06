@@ -111,6 +111,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
 .primary {
   background: var(--accent);
   color: #fff;
@@ -418,6 +423,28 @@ th {
   gap: 12px;
 }
 
+.preview3d-actions,
+.preview3d-camera-actions,
+.preview3d-selection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+
+.preview3d-actions button,
+.preview3d-selection button {
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.preview3d-camera-actions button.active {
+  border-color: var(--accent);
+  background: #dff2ef;
+  color: var(--accent-strong);
+}
+
 #preview3dCanvas {
   display: block;
   width: 100%;
@@ -430,6 +457,11 @@ th {
 }
 
 #preview3dCanvas:active { cursor: grabbing; }
+
+#preview3dCanvas:focus-visible {
+  outline: 3px solid rgba(0, 140, 131, 0.42);
+  outline-offset: -3px;
+}
 
 .preview3d-stage {
   position: relative;
@@ -466,6 +498,44 @@ th {
   font-size: 12px;
   font-weight: 700;
   pointer-events: none;
+}
+
+.preview3d-help {
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  bottom: 76px;
+  padding: 6px 9px;
+  border-radius: 5px;
+  background: rgba(23, 34, 37, 0.78);
+  color: #fff;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.preview3d-selection {
+  position: absolute;
+  z-index: 3;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 10px;
+  border: 1px solid rgba(120, 133, 136, 0.72);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 4px 16px rgba(26, 38, 40, 0.14);
+}
+
+#preview3dSelectionText {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #253538;
 }
 
 .preview3d-meta span {
@@ -509,6 +579,36 @@ th {
 .real-booth-refs p,
 .real-booth-refs ul {
   margin: 0;
+}
+
+.real-booth-reference-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.real-booth-reference-grid figure {
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.real-booth-reference-grid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 5px;
+  background: #eef2f3;
+}
+
+.real-booth-reference-grid figcaption {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .real-booth-refs ul {
@@ -654,6 +754,16 @@ th {
     top: 72px;
     right: 10px;
   }
+
+  .preview3d-help { display: none; }
+  .preview3d-selection {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .preview3d-selection-actions button { flex: 1; }
 }
 
 @media print {

@@ -1,6 +1,6 @@
 ﻿const presets = {
   wof: { label: "WOF 東京 2コマ", eventName: "WOF 東京 2コマ", width: 5940, depth: 2500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
-  imf: { label: "IMF 大阪秋 2コマ", eventName: "IMF 大阪秋 2コマ", width: 5500, depth: 3700, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
+  imf: { label: "IMF 大阪秋 2コマ", eventName: "IMF 大阪秋 2コマ", width: 9000, depth: 4500, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   egf: { label: "EGF 大阪春 2コマ", eventName: "EGF 大阪春 2コマ", width: 6000, depth: 3600, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   jex: { label: "JEX 東京 2小間", eventName: "JEX 東京 2小間", width: 8000, depth: 2000, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   wide: { label: "横長 2小間", eventName: "横長 2小間", width: 6000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
@@ -9,7 +9,7 @@
 };
 
 const jexRuleNote = "JEX 3階レンタル装飾 2小間: W8000 x D2000、壁面パネルH2100。含まれるもの: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント500W。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
-const imfRuleNote = "IMF 2コマ: Bタイプ W5500 x D3700 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
+const imfRuleNote = "IMF 2コマ: W9000 x D4500 x H2100。サンニシムラ1.5コマ（W6750）、鈴木眼鏡様0.5コマ（W2250）の共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
 const egfRuleNote = "EGF 2コマ: Aタイプ1コマ W3000 x D3600 x H2100を2コマ運用として W6000 x D3600 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kW 100Vまでは事務局負担、1.5kW超の電気使用料およびコンセント等の小間内配線工事は出展社負担。";
 const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。2口コンセント使用時はワット数を必ず記入。";
 
@@ -84,12 +84,36 @@ const boldaDetails = {
 
 const furnitureReferenceImage = "assets/furniture/exhibition-furniture-reference.png";
 
+const realBoothReferenceImages = [
+  {
+    path: "assets/booth-references/imf-2021-hall-wide.jpg",
+    label: "IMF 2021 実ブース全景",
+    role: "会場照明、天井、通路、床、白い間仕切りの雰囲気だけを参照"
+  },
+  {
+    path: "assets/booth-references/wof-2024-display-detail.jpg",
+    label: "WOF 2024 展示面参考",
+    role: "白パネル、アルミ枠、机上面、掲示物の素材感だけを参照"
+  },
+  {
+    path: "assets/booth-references/wof-2024-furniture-detail.jpg",
+    label: "WOF 2024 什器・椅子参考",
+    role: "椅子、床、壁、什器の実寸感だけを参照"
+  }
+];
+
 const realBoothReferenceNotes = [
-  "wide real booth photo: dark exhibition hall ceiling, grey carpet, white partition walls, Nishimura signboard, multiple white/black printed counters, products displayed densely on counters",
-  "close-up black Nishimura counter photo: black front panel with large Nishimura logo, product category panels, tabletop product samples, trays, bottles, tools and small acrylic labels",
-  "close-up New Products counter photo: white printed TB05 counter base with one AS01 yokan-bar riser placed directly on top, raised black panel reading NEW Products, many small eyewear tools arranged on white display mats",
-  "ED04 three-tier fixtures use three distinct real print themes: Custom Fit; Screw Extraction & Hand Polishing; Trial Frames & Measurement. Keep each theme on its matching fixture and never mix their panels",
-  "Recommended Items is a TB05 base plus one AS01 yokan-bar riser placed on its top, not one monolithic fixture and not two separated floating objects"
+  "Use the real-booth photographs only for exhibition-hall lighting, ceiling scale, aisle openness, floor and partition materials, aluminium framing, contact shadows and realistic fixture finish.",
+  "Do not copy or infer any merchandise, eyewear, tools, trays, bottles, signs, people, furniture count or previous layout from a reference photograph.",
+  "Render only the booth shell and objects explicitly listed in the placed-object specification. An unlisted object must not appear, even if it is visible in a reference photograph.",
+  "Apply print artwork only when that exact print-face asset belongs to a placed fixture. Never invent substitute graphics or merchandise."
+];
+
+const realBoothReferencePolicyJa = [
+  "実ブース写真は、照明・天井・通路・床・白パネル・アルミ枠・影・素材感だけに使用します。",
+  "写真に写るメガネ、工具、商品、トレー、ボトル、人物、旧什器、以前の配置は3Dへ自動追加しません。",
+  "3Dに表示するのはブース外形と、現在の配置図に置かれた項目だけです。",
+  "印刷面は、配置した什器に紐づく実データがある場合だけ表示します。"
 ];
 
 const state = {
@@ -331,6 +355,12 @@ function bindInputs() {
   $("generate3dBtn").addEventListener("click", generate3dPreview);
   $("backToLayoutBtn").addEventListener("click", () => setView("layout"));
   $("reset3dViewBtn").addEventListener("click", resetThreeCamera);
+  document.querySelectorAll("[data-three-camera]").forEach((button) => {
+    button.addEventListener("click", () => setThreeCameraPreset(button.dataset.threeCamera));
+  });
+  $("editSelected3dBtn").addEventListener("click", () => setView("layout"));
+  $("rotateSelected3dBtn").addEventListener("click", rotateSelected);
+  $("deleteSelected3dBtn").addEventListener("click", deleteSelected);
   $("copyPromptBtn").addEventListener("click", copyImagePrompt);
   $("downloadLayoutPngBtn").addEventListener("click", downloadLayoutPng);
   $("download3dPngBtn").addEventListener("click", download3dPng);
@@ -597,7 +627,8 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
     watt,
     image,
     x,
-    y
+    y,
+    rotationQuarterTurns: 0
   };
 }
 
@@ -625,6 +656,7 @@ function rotateSelected() {
   const item = selectedItem();
   if (!item) return;
   [item.width, item.depth] = [item.depth, item.width];
+  item.rotationQuarterTurns = (itemRotationQuarterTurns(item) + 1) % 4;
   clampItem(item);
   render();
 }
@@ -676,6 +708,7 @@ function clampItems() {
 function normalizeItems() {
   state.items.forEach((item) => {
     hydrateLegacyItem(item);
+    item.rotationQuarterTurns = itemRotationQuarterTurns(item);
     if (item.type === "power") {
       item.watt = Number(item.watt) || 500;
       item.width = item.width || 300;
@@ -702,7 +735,10 @@ function normalizeItems() {
 
 function hydrateLegacyItem(item) {
   if (item.type === "person") {
-    const personTemplate = itemTypes.find((entry) => entry.type === "person" && String(item.label || "").startsWith(entry.label.split(" ")[0]));
+    const personTemplates = itemTypes.filter((entry) => entry.type === "person");
+    const personTemplate = personTemplates.find((entry) => String(item.label || "").startsWith(entry.label.split(" ")[0]))
+      || personTemplates.find((entry) => item.color && entry.color === item.color)
+      || personTemplates[0];
     if (personTemplate) {
       item.height = item.height || personTemplate.height;
       item.standingImage = item.standingImage || personTemplate.standingImage;
@@ -803,6 +839,7 @@ function syncView() {
     $("preview3dTitle").textContent = `${state.eventName || "展示ブース"} 3D配置確認`;
     $("preview3dSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)}`;
     draw3dScene();
+    syncThreeSelectionUi();
     $("imagePrompt").value = buildImagePrompt();
     renderRealBoothReferences();
     renderFurnitureImageReferences();
@@ -1528,7 +1565,7 @@ function draw3dScene() {
   addThreeBoothFloor(scene);
   addThreeBoothWalls(scene);
   state.items.forEach((item) => addThreeItem(scene, item));
-  if (!state.items.some((item) => item.type === "person")) addThreeReferencePerson(scene);
+  addThreeSelectionHighlight(scene);
   syncThreeOverlapWarning();
 
   configureThreeCamera(false);
@@ -1566,18 +1603,17 @@ function trackThreeAssetPromise(promise) {
 function updateThreeAssetStatus() {
   const status = $("preview3dAssetStatus");
   if (!status) return;
-  const placedPeople = state.items.filter((item) => item.type === "person").length;
-  const visiblePeople = placedPeople || 1;
+  const visiblePeople = state.items.filter((item) => item.type === "person").length;
   const printFaces = state.items.reduce((sum, item) => sum + [item.frontTexture, item.riserTexture, ...(item.tierTextures || [])].filter(Boolean).length, 0);
   const pending = Math.max(0, threeExpectedAssetCount - threeLoadedAssetCount);
   status.classList.toggle("is-loading", pending > 0);
   status.classList.toggle("has-error", threeFailedAssetCount > 0);
   if (pending > 0) {
-    status.textContent = `人物・印刷素材を読込中 ${threeLoadedAssetCount}/${threeExpectedAssetCount}`;
+    status.textContent = `選択項目の人物・印刷素材を読込中 ${threeLoadedAssetCount}/${threeExpectedAssetCount}`;
   } else if (threeFailedAssetCount > 0) {
-    status.textContent = `人物 ${visiblePeople}人・印刷面 ${printFaces}面を表示（一部素材を確認してください）`;
+    status.textContent = `配置物 ${state.items.length}点のみ（人物 ${visiblePeople}人・印刷面 ${printFaces}面／一部素材は代替表示）`;
   } else {
-    status.textContent = `人物 ${visiblePeople}人・印刷面 ${printFaces}面・配置物 ${state.items.length}点を立体表示`;
+    status.textContent = `配置物 ${state.items.length}点のみ・自動追加なし（人物 ${visiblePeople}人・印刷面 ${printFaces}面）`;
   }
 }
 
@@ -1597,7 +1633,7 @@ function ensureThreePreview() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = T.PCFShadowMap;
   const camera = new T.PerspectiveCamera(34, 1.58, 10, 100000);
-  threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1, assetsReady: Promise.resolve() };
+  threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1, lateral: 0.34, assetsReady: Promise.resolve() };
 }
 
 function disposeThreeScene(scene) {
@@ -1715,13 +1751,30 @@ function addThreeItem(scene, item) {
   if (item.type === "wall") return addThreeWallSign(scene, item);
   if (item.type === "spotlight") return addThreeSpotlight(scene, item);
   if (item.type === "power") return addThreeOutlet(scene, item);
-  if (item.type === "chair") return addThreeChair(scene, item);
   if (item.type === "person") return addThreePerson(scene, item);
-  if (item.type === "bolda") return addThreeBolda(scene, item);
-  if (item.type === "fixture" && String(item.label || "").includes("姿見")) return addThreeMirror(scene, item);
-  if (item.type === "fixture" && String(item.label || "").includes("棚")) return addThreeShelfFixture(scene, item);
-  if (isFoldingTableItem(item)) return addThreeFoldingTable(scene, item);
-  addThreeCounter(scene, item);
+  const displayItem = createThreeDisplayItem(item);
+  if (item.type === "chair") return addThreeChair(scene, displayItem);
+  if (item.type === "bolda") return addThreeBolda(scene, displayItem);
+  if (item.type === "fixture" && String(item.label || "").includes("姿見")) return addThreeMirror(scene, displayItem);
+  if (item.type === "fixture" && String(item.label || "").includes("棚")) return addThreeShelfFixture(scene, displayItem);
+  if (isFoldingTableItem(item)) return addThreeFoldingTable(scene, displayItem);
+  addThreeCounter(scene, displayItem);
+}
+
+function addThreeSelectionHighlight(scene) {
+  if (!state.selectedId) return;
+  const T = window.THREE;
+  let target = null;
+  scene.traverse((node) => {
+    if (!target && node.userData?.itemId === state.selectedId) target = node;
+  });
+  if (!target) return;
+  const helper = new T.BoxHelper(target, 0x008c83);
+  helper.material.depthTest = false;
+  helper.material.transparent = true;
+  helper.material.opacity = 0.92;
+  helper.renderOrder = 12;
+  scene.add(helper);
 }
 
 function isFoldingTableItem(item) {
@@ -1744,16 +1797,40 @@ function addLocalBox(group, width, height, depth, x, y, z, material, castShadow 
   return mesh;
 }
 
+function itemRotationQuarterTurns(item) {
+  const turns = Math.round(Number(item.rotationQuarterTurns) || 0);
+  return ((turns % 4) + 4) % 4;
+}
+
+function aisleFacingQuarterTurns(side) {
+  return ({ bottom: 0, top: 2, left: -1, right: 1 })[side] || 0;
+}
+
+function createThreeDisplayItem(item) {
+  const planWidth = item.width;
+  const planDepth = item.depth;
+  const threeQuarterTurns = aisleFacingQuarterTurns(state.booth.aisleSide) + itemRotationQuarterTurns(item);
+  const swapsLocalAxes = Math.abs(threeQuarterTurns) % 2 === 1;
+  return {
+    ...item,
+    width: swapsLocalAxes ? planDepth : planWidth,
+    depth: swapsLocalAxes ? planWidth : planDepth,
+    planWidth,
+    planDepth,
+    threeQuarterTurns
+  };
+}
+
 function createFacingGroup(item) {
   const T = window.THREE;
   const group = new T.Group();
-  group.position.set(threeWorldX(item.x + item.width / 2), 0, threeWorldZ(item.y + item.depth / 2));
-  group.rotation.y = aisleFacingRotation(state.booth.aisleSide);
+  group.userData.itemId = item.id;
+  const planWidth = item.planWidth ?? item.width;
+  const planDepth = item.planDepth ?? item.depth;
+  const quarterTurns = item.threeQuarterTurns ?? (aisleFacingQuarterTurns(state.booth.aisleSide) + itemRotationQuarterTurns(item));
+  group.position.set(threeWorldX(item.x + planWidth / 2), 0, threeWorldZ(item.y + planDepth / 2));
+  group.rotation.y = quarterTurns * Math.PI / 2;
   return group;
-}
-
-function aisleFacingRotation(side) {
-  return ({ bottom: 0, top: Math.PI, left: -Math.PI / 2, right: Math.PI / 2 })[side] || 0;
 }
 
 function addThreeCounter(scene, item) {
@@ -1769,9 +1846,6 @@ function addThreeCounter(scene, item) {
   addLocalBox(group, 16, bodyH - 96, 12, -item.width / 2 + 28, 64 + (bodyH - 96) / 2, item.depth / 2 - 15, reveal, false);
   addLocalBox(group, 16, bodyH - 96, 12, item.width / 2 - 28, 64 + (bodyH - 96) / 2, item.depth / 2 - 15, reveal, false);
   addLocalBox(group, item.width - 72, 10, 12, 0, height * 0.46, item.depth / 2 - 15, reveal, false);
-  if (/展示台|ディスプレイ/i.test(String(item.label || ""))) {
-    addThreeDisplayProducts(group, item, height + 12, 0, Math.max(170, item.depth * 0.68), { maxItems: item.width >= 1500 ? 5 : 4, rows: item.depth >= 750 ? 2 : 1 });
-  }
   scene.add(group);
 }
 
@@ -1808,83 +1882,8 @@ function addThreeShelfFixture(scene, item) {
   for (let i = 0; i < shelfCount; i += 1) {
     const y = 220 + i * ((h - 300) / Math.max(1, shelfCount - 1));
     addLocalBox(group, item.width * 0.94, 28, item.depth * 0.88, 0, y, 8, board);
-    addThreeDisplayProducts(group, item, y + 22, 34, item.depth * 0.58, { maxItems: 3, rows: 1 });
   }
   scene.add(group);
-}
-
-function addThreeDisplayProducts(group, item, y, zCenter = 0, depth = 180, options = {}) {
-  const theme = `${item.printTheme || ""} ${item.label || ""}`;
-  const width = Math.max(180, item.width * 0.82);
-  if (/ヒーター/.test(theme)) {
-    addThreeHeaterDisplay(group, y, zCenter, Math.min(width, 520));
-    return;
-  }
-  if (/工具|ドライバー|ネジ|手磨き/.test(theme)) {
-    addThreeToolDisplay(group, y, zCenter, Math.min(width, 720));
-    return;
-  }
-  const rows = Math.max(1, Math.min(2, options.rows || 1));
-  const columns = Math.max(2, Math.min(options.maxItems || 5, Math.floor(width / 190)));
-  const mat = threeStandardMaterial(0xf8f8f5, { roughness: 0.8 });
-  const colors = [0x272b2d, 0x9a6838, 0x244f78, 0x672e55, 0x4d6a45];
-  const rowDepth = Math.min(130, Math.max(86, depth / rows - 12));
-  for (let row = 0; row < rows; row += 1) {
-    const z = zCenter + (row - (rows - 1) / 2) * Math.min(145, depth / rows);
-    for (let column = 0; column < columns; column += 1) {
-      const x = columns === 1 ? 0 : -width / 2 + (column + 0.5) * (width / columns);
-      const trayW = Math.min(174, width / columns - 12);
-      addLocalBox(group, trayW, 7, rowDepth, x, y, z, mat, false);
-      addLocalEyeglasses(group, x, y + 12, z + 6, Math.max(0.48, Math.min(0.78, trayW / 205)), colors[(row * columns + column) % colors.length]);
-    }
-  }
-}
-
-function addLocalEyeglasses(group, x, y, z, scale, color) {
-  const T = window.THREE;
-  const material = threeStandardMaterial(color, { roughness: 0.28, metalness: 0.72 });
-  const radius = 34 * scale;
-  const centerGap = 43 * scale;
-  [-centerGap, centerGap].forEach((dx) => {
-    const lens = new T.Mesh(new T.TorusGeometry(radius, Math.max(3, 5 * scale), 6, 18), material);
-    lens.rotation.x = Math.PI / 2;
-    lens.scale.set(1.12, 0.78, 1);
-    lens.position.set(x + dx, y, z);
-    lens.castShadow = true;
-    group.add(lens);
-  });
-  addLocalBox(group, Math.max(18, centerGap * 0.72), Math.max(3, 5 * scale), Math.max(3, 5 * scale), x, y, z, material, false);
-  [-1, 1].forEach((side) => {
-    const arm = addLocalBox(group, Math.max(3, 5 * scale), Math.max(3, 5 * scale), 82 * scale, x + side * (centerGap + radius * 1.08), y, z - 35 * scale, material, false);
-    arm.rotation.y = side * 0.11;
-  });
-}
-
-function addThreeToolDisplay(group, y, z, width) {
-  const tray = threeStandardMaterial(0xf4f4f0, { roughness: 0.84 });
-  const metal = threeStandardMaterial(0x6f7779, { roughness: 0.24, metalness: 0.78 });
-  const accent = [0xb53030, 0x235f96, 0xd38a23, 0x303536];
-  addLocalBox(group, width, 9, 150, 0, y, z, tray, false);
-  const count = Math.max(3, Math.min(6, Math.floor(width / 120)));
-  for (let i = 0; i < count; i += 1) {
-    const x = count === 1 ? 0 : -width * 0.42 + i * (width * 0.84 / (count - 1));
-    const handle = addLocalCylinder(group, 11, 76, x - 22, y + 16, z, threeStandardMaterial(accent[i % accent.length], { roughness: 0.42 }), 12);
-    handle.rotation.z = Math.PI / 2;
-    const shaft = addLocalCylinder(group, 3.5, 92, x + 58, y + 16, z, metal, 10);
-    shaft.rotation.z = Math.PI / 2;
-  }
-}
-
-function addThreeHeaterDisplay(group, y, z, width) {
-  const mat = threeStandardMaterial(0x22292b, { roughness: 0.36, metalness: 0.28 });
-  const orange = new window.THREE.MeshStandardMaterial({ color: 0xff8a24, emissive: 0xff5a00, emissiveIntensity: 0.7, roughness: 0.34 });
-  addLocalBox(group, width, 9, 190, 0, y, z, threeStandardMaterial(0xf6f5f0, { roughness: 0.82 }), false);
-  const count = Math.max(2, Math.min(4, Math.floor(width / 150)));
-  for (let i = 0; i < count; i += 1) {
-    const x = count === 1 ? 0 : -width * 0.38 + i * (width * 0.76 / (count - 1));
-    addLocalBox(group, 112, 54, 86, x, y + 31, z, mat);
-    addLocalBox(group, 72, 24, 8, x, y + 31, z + 47, orange, false);
-  }
 }
 
 function syncThreeOverlapWarning() {
@@ -1892,51 +1891,6 @@ function syncThreeOverlapWarning() {
   const warning = $("preview3dWarning");
   warning.classList.toggle("hidden", overlaps === 0);
   warning.textContent = overlaps ? `配置が${overlaps}か所重なっています` : "";
-}
-
-function addThreeFixtureGraphic(group, item, width, height, z, y) {
-  const texture = createFixturePanelTexture(item.label);
-  const T = window.THREE;
-  const plane = new T.Mesh(
-    new T.PlaneGeometry(Math.max(80, width), Math.max(60, height)),
-    new T.MeshStandardMaterial({ map: texture, roughness: 0.7, metalness: 0, side: T.DoubleSide })
-  );
-  plane.position.set(0, y, z);
-  plane.castShadow = false;
-  group.add(plane);
-}
-
-function createFixturePanelTexture(label) {
-  const T = window.THREE;
-  const canvas2 = document.createElement("canvas");
-  canvas2.width = 768;
-  canvas2.height = 384;
-  const c = canvas2.getContext("2d");
-  c.fillStyle = "#f5f5f3";
-  c.fillRect(0, 0, canvas2.width, canvas2.height);
-  c.fillStyle = "#202526";
-  c.fillRect(0, 0, canvas2.width, 72);
-  c.fillStyle = "#ffffff";
-  c.font = "700 34px Arial, sans-serif";
-  c.fillText("Nishimura", 30, 48);
-  c.fillStyle = "#3a4042";
-  c.font = "700 26px Arial, sans-serif";
-  c.fillText(compactLabel(label), 30, 118);
-  c.strokeStyle = "#aeb4b3";
-  c.lineWidth = 7;
-  for (let i = 0; i < 5; i += 1) {
-    const x = 48 + i * 140;
-    c.strokeRect(x, 160, 94, 130);
-    c.beginPath();
-    c.arc(x + 47, 225, 24 + (i % 2) * 7, 0, Math.PI * 2);
-    c.stroke();
-  }
-  c.fillStyle = "#d5d8d7";
-  c.fillRect(30, 320, 708, 22);
-  const texture = new T.CanvasTexture(canvas2);
-  texture.colorSpace = T.SRGBColorSpace;
-  texture.anisotropy = Math.min(4, threePreview?.renderer?.capabilities?.getMaxAnisotropy?.() || 1);
-  return texture;
 }
 
 function addThreeFoldingTable(scene, item) {
@@ -1982,10 +1936,12 @@ function addThreePerson(scene, item) {
   const chair = item.isThreeReference ? null : getChairForPerson(item);
   const seated = Boolean(chair);
   const source = seated ? (item.seatedImage || item.image) : (item.standingImage || item.image);
-  if (!source) return;
   const anchor = chair || item;
+  const fallbackPerson = addThreePersonFallback(scene, item, anchor, seated);
+  if (!source) return fallbackPerson;
   const spriteMaterial = new T.SpriteMaterial({ color: 0xffffff, transparent: true, opacity: 0, alphaTest: 0.025, depthWrite: false, toneMapped: false });
   const sprite = new T.Sprite(spriteMaterial);
+  sprite.userData.itemId = item.id;
   const physicalHeight = seated ? 1320 : 1790;
   sprite.center.set(0.5, 0);
   sprite.position.set(
@@ -2012,6 +1968,7 @@ function addThreePerson(scene, item) {
       sprite.material.needsUpdate = true;
       const aspect = texture.image?.width && texture.image?.height ? texture.image.width / texture.image.height : 0.4;
       sprite.scale.set(physicalHeight * aspect, physicalHeight, 1);
+      fallbackPerson.visible = false;
       renderThreeScene();
       resolve(texture);
     }, undefined, () => resolve(null));
@@ -2028,26 +1985,57 @@ function addThreePerson(scene, item) {
 
 }
 
-function addThreeReferencePerson(scene) {
-  const template = itemTypes.find((item) => item.type === "person");
-  if (!template) return;
-  const personWidth = template.width || 600;
-  const personDepth = template.depth || 600;
-  const side = state.booth.aisleSide;
-  const position = {
-    bottom: { x: state.booth.width * 0.72 - personWidth / 2, y: state.booth.depth + 80 },
-    top: { x: state.booth.width * 0.28 - personWidth / 2, y: -personDepth - 80 },
-    left: { x: -personWidth - 80, y: state.booth.depth * 0.62 - personDepth / 2 },
-    right: { x: state.booth.width + 80, y: state.booth.depth * 0.38 - personDepth / 2 }
-  }[side] || { x: state.booth.width * 0.72 - personWidth / 2, y: state.booth.depth + 80 };
-  addThreePerson(scene, {
-    ...template,
-    id: "three-reference-person",
-    label: "3D縮尺確認用人物 179cm",
-    x: position.x,
-    y: position.y,
-    isThreeReference: true
-  });
+function addThreePersonFallback(scene, item, anchor, seated) {
+  const T = window.THREE;
+  const group = new T.Group();
+  group.userData.itemId = item.id;
+  group.position.set(
+    anchor.x + anchor.width / 2 - state.booth.width / 2,
+    0,
+    anchor.y + anchor.depth / 2 - state.booth.depth / 2
+  );
+  const cloth = threeStandardMaterial(item.color || 0x437d99, { roughness: 0.72 });
+  const skin = threeStandardMaterial(0xd6a37e, { roughness: 0.82 });
+  const dark = threeStandardMaterial(0x283034, { roughness: 0.68 });
+  const addSphere = (radius, x, y, z, material) => {
+    const mesh = new T.Mesh(new T.SphereGeometry(radius, 20, 14), material);
+    mesh.position.set(x, y, z);
+    mesh.castShadow = true;
+    group.add(mesh);
+    return mesh;
+  };
+
+  if (seated) {
+    addLocalBox(group, 340, 420, 170, 0, 910, 0, cloth);
+    addSphere(108, 0, 1210, 0, skin);
+    [-1, 1].forEach((side) => {
+      const arm = addLocalCylinder(group, 48, 430, side * 215, 890, 0, cloth, 14);
+      arm.rotation.z = side * -0.18;
+      addLocalBox(group, 145, 92, 330, side * 78, 655, 112, dark);
+      addLocalCylinder(group, 58, 470, side * 105, 380, 155, dark, 14);
+      addLocalBox(group, 145, 70, 260, side * 108, 52, 210, dark);
+    });
+  } else {
+    addLocalBox(group, 360, 570, 180, 0, 1080, 0, cloth);
+    addSphere(112, 0, 1635, 0, skin);
+    [-1, 1].forEach((side) => {
+      const arm = addLocalCylinder(group, 50, 610, side * 240, 1050, 0, cloth, 14);
+      arm.rotation.z = side * -0.1;
+      addLocalCylinder(group, 72, 760, side * 92, 380, 0, dark, 14);
+      addLocalBox(group, 170, 74, 300, side * 92, 38, 52, dark);
+    });
+  }
+
+  const shadow = new T.Mesh(
+    new T.CircleGeometry(seated ? 320 : 240, 36),
+    new T.MeshBasicMaterial({ color: 0x202423, transparent: true, opacity: 0.13, depthWrite: false })
+  );
+  shadow.rotation.x = -Math.PI / 2;
+  shadow.scale.y = 0.42;
+  shadow.position.y = 3;
+  group.add(shadow);
+  scene.add(group);
+  return group;
 }
 
 function addThreeImagePlane(group, source, width, height, z, y, x = 0) {
@@ -2096,8 +2084,6 @@ function addThreeBolda(scene, item) {
     addLocalBox(group, item.width + 8, 20, riserD + 8, 0, h - 10, riserZ, top);
     addThreeImagePlane(group, item.frontTexture, item.width - 8, baseH - 8, item.depth / 2 + 4, baseH / 2);
     addThreeImagePlane(group, item.riserTexture, item.width - 8, riserH - 8, riserZ + riserD / 2 + 4, baseH + riserH / 2);
-    addThreeDisplayProducts(group, item, baseH + 18, item.depth * 0.17, item.depth * 0.34, { maxItems: 4, rows: 1 });
-    addThreeDisplayProducts(group, item, h + 18, riserZ, riserD * 0.72, { maxItems: 3, rows: 1 });
   } else if (code === "ED04") {
     const baseH = h * 0.64;
     const rise = (h - baseH) / 2;
@@ -2111,9 +2097,6 @@ function addThreeBolda(scene, item) {
     addThreeImagePlane(group, item.frontTexture, item.width - 8, baseH - 8, item.depth / 2 + 4, baseH / 2);
     addThreeImagePlane(group, item.tierTextures?.[0], item.width - 8, rise - 8, item.depth / 6 + 4, baseH + rise / 2);
     addThreeImagePlane(group, item.tierTextures?.[1], item.width - 8, rise - 8, -item.depth / 6 + 4, baseH + rise + rise / 2);
-    addThreeDisplayProducts(group, item, baseH + 18, item.depth * 0.34, item.depth * 0.22, { maxItems: 3, rows: 1 });
-    addThreeDisplayProducts(group, item, baseH + rise + 18, 0, item.depth * 0.2, { maxItems: 3, rows: 1 });
-    addThreeDisplayProducts(group, item, h + 18, -item.depth * 0.33, item.depth * 0.18, { maxItems: 3, rows: 1 });
   } else if (code === "TB13") {
     const lowerH = h * 0.58;
     const cubbyH = h - lowerH - 34;
@@ -2124,23 +2107,18 @@ function addThreeBolda(scene, item) {
     addLocalBox(group, 30, cubbyH, item.depth, 0, lowerH + cubbyH / 2, 0, board);
     addLocalBox(group, item.width, 28, item.depth, 0, lowerH + 14, 0, board);
     addThreeImagePlane(group, item.frontTexture, item.width - 8, lowerH - 8, item.depth / 2 + 4, lowerH / 2);
-    addThreeDisplayProducts(group, item, lowerH + cubbyH * 0.44, item.depth * 0.34, item.depth * 0.3, { maxItems: 4, rows: 1 });
   } else if (code === "SF03") {
     addLocalBox(group, Math.max(70, item.width * 0.24), h, 42, 0, h / 2, -item.depth / 2 + 24, board);
     for (let i = 0; i < 4; i += 1) {
       const y = 230 + i * ((h - 330) / 3);
       addLocalBox(group, item.width * 0.86, 30, item.depth * 0.72, 0, y, 20, top);
-      addThreeDisplayProducts(group, item, y + 22, 44, item.depth * 0.38, { maxItems: 2, rows: 1 });
     }
   } else {
     addLocalBox(group, item.width, h, item.depth, 0, h / 2, 0, board);
     addLocalBox(group, item.width + 18, 30, item.depth + 18, 0, h - 15, 0, top);
     if (item.frontTexture) {
       addThreeImagePlane(group, item.frontTexture, item.width - 8, h - 8, item.depth / 2 + 4, h / 2);
-    } else if (code !== "TB05" && code !== "VB01_600CB" && code !== "AS01") {
-      addThreeFixtureGraphic(group, item, item.width * 0.88, Math.min(h * 0.58, 420), item.depth / 2 + 4, h * 0.47);
     }
-    addThreeDisplayProducts(group, item, h + 18, 0, Math.max(120, item.depth * 0.62), { maxItems: item.width >= 850 ? 4 : 2, rows: item.depth >= 520 ? 2 : 1 });
   }
   scene.add(group);
 }
@@ -2157,6 +2135,7 @@ function addThreeWallSign(scene, item) {
     new T.BoxGeometry(horizontal ? length : 46, item.height || 300, horizontal ? 46 : length),
     threeStandardMaterial(0xffffff, { roughness: 0.58 })
   );
+  sign.userData.itemId = item.id;
   sign.position.set(
     horizontal ? center : side === "left" ? -state.booth.width / 2 + 30 : state.booth.width / 2 - 30,
     (mount.bottom + mount.top) / 2,
@@ -2166,6 +2145,7 @@ function addThreeWallSign(scene, item) {
   scene.add(sign);
 
   const plane = createThreeTextPlane(state.companyName || item.label, length * 0.88, (item.height || 300) * 0.72, "#ffffff", "#172225", 48);
+  plane.userData.itemId = item.id;
   plane.position.copy(sign.position);
   orientWallPlane(plane, side, 27);
   scene.add(plane);
@@ -2263,6 +2243,7 @@ function createThreeTextPlane(text, width, height, background, foreground, fontS
 function createWallMountedGroup(item, side, elevation) {
   const T = window.THREE;
   const group = new T.Group();
+  group.userData.itemId = item.id;
   const along = wallAlongPosition(item, side, 0);
   group.position.set(
     side === "left" ? -state.booth.width / 2 + 24 : side === "right" ? state.booth.width / 2 - 24 : along,
@@ -2330,6 +2311,7 @@ function configureThreeCamera(reset) {
     threePreview.yaw = 0;
     threePreview.pitch = 0;
     threePreview.zoom = 1;
+    threePreview.lateral = 0.34;
   }
   const w = state.booth.width;
   const d = state.booth.depth;
@@ -2347,7 +2329,7 @@ function configureThreeCamera(reset) {
   const distance = (maxSize * 1.16 + Math.min(w, d) * 0.48) * threePreview.zoom;
   const base = target.clone()
     .add(outward.clone().multiplyScalar(distance))
-    .add(tangent.multiplyScalar(maxSize * 0.34 * threePreview.zoom));
+    .add(tangent.multiplyScalar(maxSize * (threePreview.lateral ?? 0.34) * threePreview.zoom));
   base.y = Math.max(h * 0.98, maxSize * 0.46) * threePreview.zoom;
   const offset = base.clone().sub(target).applyAxisAngle(new T.Vector3(0, 1, 0), threePreview.yaw);
   offset.y += threePreview.pitch * maxSize;
@@ -2370,26 +2352,34 @@ function renderThreeScene() {
 
 function bindThreePreviewControls() {
   preview3dCanvas.addEventListener("pointerdown", (event) => {
-    threeDrag = { x: event.clientX, y: event.clientY };
+    if (event.button !== 0) return;
+    threeDrag = { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, moved: false };
     preview3dCanvas.setPointerCapture(event.pointerId);
   });
   preview3dCanvas.addEventListener("pointermove", (event) => {
     if (!threeDrag || !threePreview) return;
     const dx = event.clientX - threeDrag.x;
     const dy = event.clientY - threeDrag.y;
-    threeDrag = { x: event.clientX, y: event.clientY };
+    const moved = threeDrag.moved || Math.hypot(event.clientX - threeDrag.startX, event.clientY - threeDrag.startY) > 5;
+    threeDrag = { ...threeDrag, x: event.clientX, y: event.clientY, moved };
+    if (!moved) return;
     threePreview.yaw += dx * 0.006;
     threePreview.pitch = Math.max(-0.32, Math.min(0.5, threePreview.pitch + dy * 0.0017));
+    syncThreeCameraButtons("");
     configureThreeCamera(false);
     renderThreeScene();
   });
-  const stop = () => { threeDrag = null; };
-  preview3dCanvas.addEventListener("pointerup", stop);
-  preview3dCanvas.addEventListener("pointercancel", stop);
+  preview3dCanvas.addEventListener("pointerup", (event) => {
+    const finished = threeDrag;
+    threeDrag = null;
+    if (finished && !finished.moved) selectThreeItemAtPointer(event);
+  });
+  preview3dCanvas.addEventListener("pointercancel", () => { threeDrag = null; });
   preview3dCanvas.addEventListener("wheel", (event) => {
     if (!threePreview) return;
     event.preventDefault();
     threePreview.zoom = Math.max(0.68, Math.min(1.8, threePreview.zoom * (event.deltaY > 0 ? 1.08 : 0.92)));
+    syncThreeCameraButtons("");
     configureThreeCamera(false);
     renderThreeScene();
   }, { passive: false });
@@ -2403,8 +2393,76 @@ function resetThreeCamera() {
     draw3dScene();
     return;
   }
-  configureThreeCamera(true);
+  setThreeCameraPreset("default");
+}
+
+function setThreeCameraPreset(preset) {
+  if (!threePreview) draw3dScene();
+  if (!threePreview) return;
+  const settings = {
+    default: { yaw: 0, pitch: 0, zoom: 1, lateral: 0.34 },
+    front: { yaw: 0, pitch: -0.08, zoom: 0.96, lateral: 0 },
+    left: { yaw: 0, pitch: 0, zoom: 1, lateral: -0.38 },
+    right: { yaw: 0, pitch: 0, zoom: 1, lateral: 0.38 },
+    top: { yaw: 0, pitch: 0.5, zoom: 1.08, lateral: 0 }
+  }[preset] || { yaw: 0, pitch: 0, zoom: 1, lateral: 0.34 };
+  Object.assign(threePreview, settings);
+  syncThreeCameraButtons(preset || "default");
+  configureThreeCamera(false);
   renderThreeScene();
+}
+
+function syncThreeCameraButtons(activePreset) {
+  document.querySelectorAll("[data-three-camera]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.threeCamera === activePreset);
+  });
+}
+
+function selectThreeItemAtPointer(event) {
+  if (!threePreview?.scene || !window.THREE) return;
+  const T = window.THREE;
+  const rect = preview3dCanvas.getBoundingClientRect();
+  const pointer = new T.Vector2(
+    ((event.clientX - rect.left) / rect.width) * 2 - 1,
+    -((event.clientY - rect.top) / rect.height) * 2 + 1
+  );
+  const raycaster = new T.Raycaster();
+  raycaster.setFromCamera(pointer, threePreview.camera);
+  const intersections = raycaster.intersectObjects(threePreview.scene.children, true);
+  let itemId = null;
+  for (const intersection of intersections) {
+    let node = intersection.object;
+    while (node && node !== threePreview.scene) {
+      if (node.userData?.itemId) {
+        itemId = node.userData.itemId;
+        break;
+      }
+      node = node.parent;
+    }
+    if (itemId) break;
+  }
+  state.selectedId = state.items.some((item) => item.id === itemId) ? itemId : null;
+  preview3dCanvas.focus({ preventScroll: true });
+  syncSelectionEditor();
+  drawCanvas();
+  renderTable();
+  renderAgents();
+  autosave();
+  draw3dScene();
+  syncThreeSelectionUi();
+}
+
+function syncThreeSelectionUi() {
+  const item = selectedItem();
+  const text = $("preview3dSelectionText");
+  if (text) {
+    text.textContent = item
+      ? `選択中: ${item.label} / ${itemSizeLabel(item)} / X${Math.round(item.x)} Y${Math.round(item.y)}`
+      : "3D内の什器をクリックすると選択できます";
+  }
+  ["editSelected3dBtn", "rotateSelected3dBtn", "deleteSelected3dBtn"].forEach((id) => {
+    if ($(id)) $(id).disabled = !item;
+  });
 }
 
 function createIsoProjector(cw, ch) {
@@ -3032,6 +3090,7 @@ function defaultItemHeight(item) {
 function buildImagePrompt() {
   const boldaRefs = getUsedBoldaReferences();
   const personRefs = getUsedPersonReferences();
+  const boothPhotoReferences = realBoothReferenceImages.map((ref) => `${ref.label}: ${ref.path}`).join("; ");
   const items = state.items.map(buildPromptItemBlock).join("\n\n");
   const contacts = buildContactInstructions();
   const alignment = buildAlignmentInstructions();
@@ -3049,7 +3108,7 @@ function buildImagePrompt() {
   return [
     "Use case: photorealistic-natural",
     "Asset type: interior-designer-quality exhibition booth proposal rendering",
-    `Primary request: Create one photorealistic, buildable 3D rendering of the exact eyewear exhibition booth layout for ${state.eventName || "an eyewear trade show"}.`,
+    `Primary request: Create one photorealistic, buildable 3D rendering of the exact exhibition booth layout for ${state.eventName || "a trade show"}.`,
     "",
     "GEOMETRY PRIORITY",
     "Treat the attached 2D plan and every coordinate below as construction constraints, not inspiration. Establish the booth shell and all object volumes first, then add materials, graphics and products. Never improve the composition by moving, rotating, spreading, duplicating or resizing an object.",
@@ -3067,7 +3126,7 @@ function buildImagePrompt() {
     "REFERENCE IMAGE ROLES",
     "- 2D layout PNG: authoritative plan and object count. Match it exactly.",
     "- 3D preview PNG: authoritative booth orientation, wall/aisle relationship, object volumes and camera direction. It is not a texture reference.",
-    "- Previous Nishimura booth photos: material, branding, tabletop product density, exhibition-hall lighting and grey-carpet atmosphere only. Do not copy their old layout.",
+    `- Real-booth reference photographs (${boothPhotoReferences}): use only for hall atmosphere, lighting, floor, partitions, aluminium framing, shadows and realistic material finish. Never copy products, people, signs, furniture count or the old layout.`,
     `- Furniture reference image (${furnitureReferenceImage}): appearance of four-leg folding tables, white exhibition counters and relative W/D/H proportions.`,
     "- bolda assembled-shape images define geometry. Cropped print-face images define the exact visible artwork and must be applied only to the stated front/riser face.",
     "- Character images define the exact person appearance. Use the standing image for a free-standing person and the seated image only when the plan places that person on a chair.",
@@ -3075,7 +3134,7 @@ function buildImagePrompt() {
     "REAL-BOOTH MATERIAL AND MERCHANDISING STYLE",
     realBoothReferenceNotes.map((note) => `- ${note}`).join("\n"),
     "- Use white modular exhibition panels with slim aluminium posts, grey commercial carpet, clean overhead hall lighting, and soft contact shadows.",
-    "- Add plausible eyewear tools, trays, product samples and small acrylic cards only on top of the specified counters/tables. Keep all products inside those surfaces and do not add new furniture.",
+    "- Keep every counter, table, shelf and riser empty unless a product or accessory is explicitly listed as its own placed object. Do not auto-populate surfaces.",
     "",
     `OBJECT COUNT CHECK: ${counts}. The final image must contain exactly these specified fixtures; do not omit or duplicate them.`,
     "",
@@ -3098,6 +3157,7 @@ function buildImagePrompt() {
     "- If matching print/artwork is supplied, wrap it only onto the correct visible front/side faces without changing the furniture geometry.",
     "",
     "FINAL VALIDATION BEFORE RENDERING",
+    "- Confirm that every visible movable object appears in the placed-object specification. Delete any inferred merchandise, eyewear, tools, trays, bottles, people or decorative props.",
     "- Compare every footprint edge to the 2D plan and preserve touching/near-touching edges without artificial gaps.",
     "- Keep equal X or Y edges in straight rows. Keep all furniture level on floor Z0 and all wall equipment attached to its specified wall and Z range.",
     "- A plan marker for an outlet or spotlight is an annotation zone, not the physical size of the device. Never create a 300mm outlet box or a 350mm furniture block for a spotlight.",
@@ -3321,9 +3381,17 @@ function renderRealBoothReferences() {
   if (!wrap) return;
   wrap.innerHTML = `
     <h3>実ブース参考写真</h3>
-    <p>CodexやGPT image 2.0で生成する時は、今回送った実ブース写真も参照画像として一緒に添付してください。</p>
+    <p>共有フォルダーに提出済みの実画像を参照素材として同梱しています。写真内の商品や旧レイアウトは再現せず、会場環境と素材感だけに使います。</p>
+    <div class="real-booth-reference-grid">
+      ${realBoothReferenceImages.map((ref) => `
+        <figure>
+          <img src="${escapeHtml(ref.path)}" alt="${escapeHtml(ref.label)}">
+          <figcaption><strong>${escapeHtml(ref.label)}</strong><br>${escapeHtml(ref.role)}</figcaption>
+        </figure>
+      `).join("")}
+    </div>
     <ul>
-      ${realBoothReferenceNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
+      ${realBoothReferencePolicyJa.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
     </ul>
   `;
 }
@@ -3444,8 +3512,16 @@ async function downloadCodexPack() {
     </div>
   </section>
   <section>
-    <h2>実ブース写真の参照方針</h2>
-    <ul>${realBoothReferenceNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}</ul>
+    <h2>実ブース参考写真（環境・素材感のみ）</h2>
+    <div class="grid">
+      ${realBoothReferenceImages.map((ref) => `
+        <figure>
+          <img src="${escapeHtml(absoluteAssetUrl(ref.path))}" alt="${escapeHtml(ref.label)}">
+          <figcaption>${escapeHtml(ref.label)} / ${escapeHtml(ref.role)}</figcaption>
+        </figure>
+      `).join("")}
+    </div>
+    <ul>${realBoothReferencePolicyJa.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}</ul>
   </section>
 </body>
 </html>`;

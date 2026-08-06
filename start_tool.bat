@@ -6,13 +6,13 @@ set "CODEX_PY=C:\Users\AONUSR02\.cache\codex-runtimes\codex-primary-runtime\depe
 where python >nul 2>nul
 if exist "%CODEX_PY%" (
   start "Booth Layout Server" /min "%CODEX_PY%" -m http.server 8765 --bind 127.0.0.1 --directory "%TOOL_DIR%"
-  start "" "http://127.0.0.1:8765/"
+  start "" "http://127.0.0.1:8765/?v=20260717-1"
   exit /b
 )
 
 if %ERRORLEVEL% EQU 0 (
   start "Booth Layout Server" /min python -m http.server 8765 --bind 127.0.0.1 --directory "%TOOL_DIR%"
-  start "" "http://127.0.0.1:8765/"
+  start "" "http://127.0.0.1:8765/?v=20260717-1"
   exit /b
 )
 
