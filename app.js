@@ -8,10 +8,11 @@
   custom: { label: "自由入力", eventName: "自由入力", width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" }
 };
 
-const jexRuleNote = "JEX 3階レンタル装飾 2小間: W8000 x D2000、壁面パネルH2100。含まれるもの: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント500W。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
+const OUTLET_WATT = 100;
+const jexRuleNote = "JEX 3階レンタル装飾 2小間: W8000 x D2000、壁面パネルH2100。含まれるもの: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
 const imfRuleNote = "IMF 2コマ: W9000 x D4500 x H2100。サンニシムラ1.5コマ（W6750）、鈴木眼鏡様0.5コマ（W2250）の共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
 const egfRuleNote = "EGF 2コマ: Aタイプ1コマ W3000 x D3600 x H2100を2コマ運用として W6000 x D3600 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kW 100Vまでは事務局負担、1.5kW超の電気使用料およびコンセント等の小間内配線工事は出展社負担。";
-const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。2口コンセント使用時はワット数を必ず記入。";
+const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。";
 
 const itemTypes = [
   { type: "table", label: "長机", width: 1800, depth: 600, color: "#f2b84b" },
@@ -37,7 +38,7 @@ const itemTypes = [
   { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB13.png"] },
   { type: "bolda", label: "bolda VB01_600CB", width: 600, depth: 600, height: 600, color: "#5fb7b2", image: "assets/bolda/VB01_600CB.png" },
   { type: "wall", label: "サイン", width: 1200, depth: 80, height: 300, color: "#7bcb9d" },
-  { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: 500 },
+  { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: OUTLET_WATT },
   { type: "spotlight", label: "スポットライト", width: 350, depth: 350, color: "#ffd45f", watt: 100 },
   { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" },
   { type: "person", label: "人物A 179cm", width: 600, depth: 600, height: 1790, color: "#ef6fa8", image: "assets/people/person-a-standing-crop.png", standingImage: "assets/people/person-a-standing-crop.png", seatedImage: "assets/people/person-a-seated-crop.png" },
@@ -162,8 +163,8 @@ function init() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "palette-item";
-    const detail = item.type === "power" || item.type === "spotlight" ? `${item.watt}W` : itemSizeLabel(item);
-    button.innerHTML = `${paletteVisual(item)}<span>${item.label}</span><small>${detail}</small>`;
+    const detail = item.type === "spotlight" ? `${item.watt}W` : item.type === "power" ? "" : itemSizeLabel(item);
+    button.innerHTML = `${paletteVisual(item)}<span>${item.label}</span>${detail ? `<small>${detail}</small>` : ""}`;
     button.addEventListener("click", () => addItem(item));
     $("itemPalette").append(button);
   });
@@ -198,7 +199,7 @@ function buildUtilityPaletteSvg(item) {
   const color = item.color || "#d8e0e2";
   const shape = item.type === "spotlight"
     ? `<line x1="60" y1="14" x2="60" y2="29" stroke="#6d5200" stroke-width="4" stroke-linecap="round"/><polygon points="42,31 78,31 60,66" fill="${color}" stroke="#6d5200" stroke-width="3"/><path d="M44 75 Q60 88 76 75" fill="none" stroke="#d9a600" stroke-width="3"/><text x="60" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#172225">${item.watt || 0}W</text>`
-    : `<rect x="38" y="22" width="44" height="44" rx="8" fill="#fff" stroke="${color}" stroke-width="5"/><circle cx="52" cy="44" r="4" fill="${color}"/><circle cx="68" cy="44" r="4" fill="${color}"/><line x1="60" y1="30" x2="60" y2="58" stroke="#d9e1e3" stroke-width="2"/><text x="60" y="92" text-anchor="middle" font-size="13" font-weight="700" fill="#172225">${item.watt || 0}W</text>`;
+    : `<rect x="34" y="22" width="52" height="52" rx="9" fill="#fff" stroke="${color}" stroke-width="5"/><circle cx="51" cy="48" r="4" fill="${color}"/><circle cx="69" cy="48" r="4" fill="${color}"/><line x1="60" y1="30" x2="60" y2="66" stroke="#d9e1e3" stroke-width="2"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="112" viewBox="0 0 120 112" role="img" aria-label="${escapeHtml(item.label)}">${shape}</svg>`;
 }
 function buildSignPaletteSvg(item) {
@@ -543,7 +544,7 @@ function applyStandardLayout() {
     makeItem("fixture", "什器棚", 900, 350, "#77a7d9", 150, 250),
     makeItem("wall", "壁面サイン", Math.min(1600, w - 400), 80, "#7bcb9d", 200, 0, 0, 300),
     makeItem("spotlight", "スポットライト", 350, 350, "#ffd45f", Math.max(100, w / 2 - 175), 150, 100),
-    makeItem("power", "コンセント", 300, 300, "#d85a5a", Math.max(100, w - 450), Math.max(100, d - 500), 500)
+    makeItem("power", "コンセント", 300, 300, "#d85a5a", Math.max(100, w - 450), Math.max(100, d - 500), OUTLET_WATT)
   ];
   state.items.forEach(clampItem);
   state.selectedId = state.items[0].id;
@@ -567,8 +568,8 @@ function applyWofTwoBoothLayout(renderNow = true) {
     makeItem("spotlight", "アームスポット 2", 350, 350, "#ffd45f", 2200, 120, 100),
     makeItem("spotlight", "アームスポット 3", 350, 350, "#ffd45f", 3650, 120, 100),
     makeItem("spotlight", "アームスポット 4", 350, 350, "#ffd45f", 5100, 120, 100),
-    makeItem("power", "2口コンセント 左", 300, 300, "#d85a5a", 160, d - 1150, 500),
-    makeItem("power", "2口コンセント 右", 300, 300, "#d85a5a", Math.max(160, w - 460), d - 1150, 500)
+    makeItem("power", "2口コンセント 左", 300, 300, "#d85a5a", 160, d - 1150, OUTLET_WATT),
+    makeItem("power", "2口コンセント 右", 300, 300, "#d85a5a", Math.max(160, w - 460), d - 1150, OUTLET_WATT)
   ];
   state.items.forEach(clampItem);
   state.selectedId = state.items[0]?.id || null;
@@ -603,7 +604,7 @@ function applyJexTwoBoothLayout(renderNow = true) {
     makeItem("wall", "社名板 右 W1800xH300", 1800, 80, "#7bcb9d", w - 2100, 0, 0, 300),
     makeItem("table", "JEX付属テーブル 左 W1500xD600", 1500, 600, "#f2b84b", 2100, d - 850),
     makeItem("table", "JEX付属テーブル 右 W1500xD600", 1500, 600, "#f2b84b", 4400, d - 850),
-    makeItem("power", "100V2口コンセント", 300, 300, "#d85a5a", 350, d - 420, 500)
+    makeItem("power", "100V2口コンセント", 300, 300, "#d85a5a", 350, d - 420, OUTLET_WATT)
   ];
 
   for (let i = 0; i < 8; i += 1) {
@@ -645,7 +646,7 @@ function updateSelectedFromForm() {
   item.height = Math.max(20, Number($("itemHeight").value) || defaultItemHeight(item));
   item.x = Number($("itemX").value) || 0;
   item.y = Number($("itemY").value) || 0;
-  if (item.type === "power" || item.type === "spotlight") {
+  if (item.type === "spotlight") {
     item.watt = Math.max(0, Number($("itemWatt").value) || 0);
   }
   clampItem(item);
@@ -710,7 +711,7 @@ function normalizeItems() {
     hydrateLegacyItem(item);
     item.rotationQuarterTurns = itemRotationQuarterTurns(item);
     if (item.type === "power") {
-      item.watt = Number(item.watt) || 500;
+      item.watt = OUTLET_WATT;
       item.width = item.width || 300;
       item.depth = item.depth || 300;
     }
@@ -813,7 +814,7 @@ function syncSelectionEditor() {
   $("itemHeight").value = Math.round(item.height || defaultItemHeight(item));
   $("itemX").value = Math.round(item.x);
   $("itemY").value = Math.round(item.y);
-  $("wattField").classList.toggle("hidden", item.type !== "power" && item.type !== "spotlight");
+  $("wattField").classList.toggle("hidden", item.type !== "spotlight");
   $("itemWatt").value = item.watt || 0;
 }
 
@@ -1082,8 +1083,8 @@ function drawPowerOutlet(item) {
   const h = item.depth * scale;
   const selected = item.id === state.selectedId;
   const cx = x + w / 2;
-  const cy = y + h * 0.4;
-  const radius = Math.min(w, h) * 0.3;
+  const cy = y + h / 2;
+  const radius = Math.min(w, h) * 0.32;
 
   ctx.save();
   ctx.fillStyle = "#fff7f7";
@@ -1108,11 +1109,6 @@ function drawPowerOutlet(item) {
   roundedRect(cx + radius * 0.36 - slotW / 2, cy - slotH / 2, slotW, slotH, 2);
   ctx.fill();
 
-  ctx.fillStyle = "#6c2222";
-  ctx.font = `bold ${printRenderMode ? 50 : 13}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(`${item.watt || 0}W`, cx, y + h * 0.82);
   ctx.restore();
 }
 
@@ -1230,7 +1226,7 @@ function renderTable() {
   }
   state.items.forEach((item) => {
     const tr = document.createElement("tr");
-    const watt = item.type === "power" || item.type === "spotlight" ? `${item.watt || 0}W` : "-";
+    const watt = item.type === "spotlight" ? `${item.watt || 0}W` : "-";
     tr.innerHTML = `<td>${typeLabel(item.type)}</td><td>${escapeHtml(item.label)}</td><td>${itemSizeLabel(item)}</td><td>X${Math.round(item.x)} / Y${Math.round(item.y)}mm</td><td>${watt}</td><td>1</td>`;
     tbody.append(tr);
   });
@@ -1251,9 +1247,10 @@ function getChecks() {
   if (!state.eventName) required.push("展示会名");
   if (!state.boothNo) required.push("小間番号");
   if (!state.contactName) required.push("担当者");
-  const powerItems = state.items.filter((item) => item.type === "power" || item.type === "spotlight");
-  const powers = powerItems.length;
-  const totalWatt = powerItems.reduce((sum, item) => sum + (Number(item.watt) || 0), 0);
+  const outlets = state.items.filter((item) => item.type === "power");
+  const spotlights = state.items.filter((item) => item.type === "spotlight");
+  const powers = outlets.length + spotlights.length;
+  const totalSpotlightWatt = spotlights.reduce((sum, item) => sum + (Number(item.watt) || 0), 0);
   const overlaps = countOverlaps();
   const people = state.items.filter((item) => item.type === "person");
   const seatedPeople = people.filter((item) => getChairForPerson(item)).length;
@@ -1282,7 +1279,9 @@ function getChecks() {
     {
       name: "電源エージェント",
       level: powers ? "ok" : "warn",
-      message: powers ? `電源器具を${powers}点配置済みです。合計 ${totalWatt}W。` : "電源位置が未配置です。必要な場合はコンセントを追加してください。"
+      message: powers
+        ? `コンセント${outlets.length}点、照明${spotlights.length}点を配置済みです。${spotlights.length ? `照明合計 ${totalSpotlightWatt}W。` : ""}`
+        : "電源位置が未配置です。必要な場合はコンセントを追加してください。"
     },
     {
       name: "提出エージェント",
@@ -1299,7 +1298,7 @@ function getChecks() {
       name: "JEXルール",
       level: jexOk ? "ok" : "warn",
       message: jexOk
-        ? "JEX 3階レンタル装飾 2小間の基本構成です。W8000 x D2000、スポット8灯、100V2口コンセント500W、付属テーブルW1500 x D600を2台。"
+        ? "JEX 3階レンタル装飾 2小間の基本構成です。W8000 x D2000、スポット8灯、100V2口コンセント、付属テーブルW1500 x D600を2台。"
         : "JEX 2小間の基本構成から変更されています。必要に応じて標準レイアウトを置き直してください。"
     });
   }
@@ -2181,17 +2180,17 @@ function addThreeOutlet(scene, item) {
   const side = nearestBoothSide(item);
   const mount = getItemVerticalRange(item);
   const group = createWallMountedGroup(item, side, mount.center);
-  const plate = createOutletPlane(item.watt || 0);
+  const plate = createOutletPlane();
   plate.position.set(0, 0, 25);
   group.add(plate);
   scene.add(group);
 }
 
-function createOutletPlane(watt) {
+function createOutletPlane() {
   const T = window.THREE;
   const canvas2 = document.createElement("canvas");
   canvas2.width = 320;
-  canvas2.height = 380;
+  canvas2.height = 300;
   const c = canvas2.getContext("2d");
   c.fillStyle = "#fafafa";
   c.fillRect(10, 10, 300, 280);
@@ -2206,15 +2205,9 @@ function createOutletPlane(watt) {
     c.arc(x, 188, 15, 0, Math.PI * 2);
     c.fill();
   });
-  c.fillStyle = "#c93030";
-  c.fillRect(30, 305, 260, 62);
-  c.fillStyle = "#ffffff";
-  c.font = "700 44px Arial, sans-serif";
-  c.textAlign = "center";
-  c.fillText(`${watt}W`, 160, 352);
   const texture = new T.CanvasTexture(canvas2);
   texture.colorSpace = T.SRGBColorSpace;
-  return new T.Mesh(new T.PlaneGeometry(150, 178), new T.MeshStandardMaterial({ map: texture, roughness: 0.62, side: T.DoubleSide }));
+  return new T.Mesh(new T.PlaneGeometry(150, 140), new T.MeshStandardMaterial({ map: texture, roughness: 0.62, side: T.DoubleSide }));
 }
 
 function createThreeTextPlane(text, width, height, background, foreground, fontSize) {
@@ -2695,13 +2688,10 @@ function drawPowerOutletItem3d(ctx3, iso, item) {
   ctx3.fill();
   ctx3.stroke();
   ctx3.fillStyle = "#c53333";
-  roundedRectCanvas(ctx3, p.x - 10, p.y + 8, 20, 10, 2);
+  roundedRectCanvas(ctx3, p.x - 7, p.y - 9, 3, 9, 1);
   ctx3.fill();
-  ctx3.fillStyle = "#ffffff";
-  ctx3.font = "bold 7px sans-serif";
-  ctx3.textAlign = "center";
-  ctx3.textBaseline = "middle";
-  ctx3.fillText(`${item.watt || 0}W`, p.x, p.y + 13);
+  roundedRectCanvas(ctx3, p.x + 4, p.y - 9, 3, 9, 1);
+  ctx3.fill();
   ctx3.restore();
 }
 
@@ -2759,7 +2749,7 @@ function getPreviewAssetSrc(item) {
     const code = getBoldaCode(item);
     if (code) return `assets/bolda/preview-assets/${code}.png`;
   }
-  if (item.type === "power") return base + "outlet-500w.png";
+  if (item.type === "power") return "";
   if (item.type === "spotlight") return base + "spotlight-100w.png";
   if (item.type === "wall") return base + "sign-panel.png";
   if (item.type === "chair") return base + "chair.png";
@@ -2874,7 +2864,7 @@ function drawItem3dLabel(ctx3, item, x, y) {
   ctx3.save();
   ctx3.fillStyle = "rgba(255,255,255,0.86)";
   ctx3.strokeStyle = "rgba(24,38,41,0.14)";
-  const text = item.type === "power" || item.type === "spotlight" ? `${compactLabel(item.label)} ${item.watt || 0}W` : compactLabel(item.label);
+  const text = item.type === "spotlight" ? `${compactLabel(item.label)} ${item.watt || 0}W` : compactLabel(item.label);
   ctx3.font = "11px sans-serif";
   const w = Math.min(150, ctx3.measureText(text).width + 12);
   roundedRectCanvas(ctx3, x - w / 2, y - 12, w, 18, 6);
@@ -3163,7 +3153,7 @@ function buildImagePrompt() {
     "- A plan marker for an outlet or spotlight is an annotation zone, not the physical size of the device. Never create a 300mm outlet box or a 350mm furniture block for a spotlight.",
     "- Signboards are shallow H300 wall-mounted panels at the stated Z elevation, not floor-to-ceiling wall panels.",
     "- Keep the specified aisle side fully open. Do not add doors, extra counters, unlisted people, decorative structures or ceiling truss. Preserve every explicitly listed person's position and standing/seated state.",
-    "- Ensure outlet wattage and spotlight wattage cues are legible where practical. Render no unrelated text, logos or watermarks."
+    "- Ensure spotlight wattage cues are legible where practical. Show outlets as outlet plates only, without wattage text. Render no unrelated text, logos or watermarks."
   ].filter(Boolean).join("\n");
 }
 
@@ -3193,7 +3183,7 @@ function buildPromptItemBlock(item, index) {
     lines.push(`   - Electrical cue: ${item.watt || 0}W must be visible; do not render a floor-standing object or tall column.`);
   } else if (item.type === "power") {
     lines.push(`   - Physical fixture: two-socket outlet plate approximately W150 x D35 x H180, mounted on the ${sideEnglish(side)} wall at Z${Math.round(vertical.bottom)}..Z${Math.round(vertical.top)} near plan marker centre X${Math.round(item.x + item.width / 2)} Y${Math.round(item.y + item.depth / 2)}.`);
-    lines.push(`   - Electrical cue: ${item.watt || 0}W must be legible; do not scale the outlet to the annotation rectangle.`);
+    lines.push("   - Show the outlet plate only. Do not render wattage text, a wattage badge, or scale the outlet to the annotation rectangle.");
   } else if (item.type === "person") {
     const chair = getChairForPerson(item);
     if (chair) {
