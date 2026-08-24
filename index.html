@@ -172,6 +172,23 @@
               <option value="inventory">在庫予約領域</option>
             </select></label>
             <label>必要面積 ㎡<input id="itemRequiredAreaM2" type="number" min="0" step="0.01" placeholder="社内・会場基準を登録"></label>
+            <div id="inventoryFields" class="inventory-fields hidden">
+              <strong>在庫容量計画</strong>
+              <div class="two-col">
+                <label>総商品数 点<input id="itemInventoryTotalUnits" type="number" min="0" step="1" placeholder="会期合計"></label>
+                <label>箱入数 点/箱<input id="itemInventoryUnitsPerCarton" type="number" min="0" step="1" placeholder="梱包仕様"></label>
+                <label>補充回数<input id="itemInventoryReplenishmentCount" type="number" min="0" step="1" value="0"></label>
+                <label>最大積上高 mm<input id="itemInventoryMaxStackHeight" type="number" min="0" step="10" placeholder="安全条件確認値"></label>
+                <label>箱 W mm<input id="itemInventoryCartonWidth" type="number" min="0" step="1" placeholder="実測"></label>
+                <label>箱 D mm<input id="itemInventoryCartonDepth" type="number" min="0" step="1" placeholder="実測"></label>
+                <label>箱 H mm<input id="itemInventoryCartonHeight" type="number" min="0" step="1" placeholder="実測"></label>
+              </div>
+              <label class="check-label">箱寸法・積上高を確認済み
+                <input id="itemInventoryDimensionsConfirmed" type="checkbox">
+              </label>
+              <div id="inventoryResult" class="inventory-result"></div>
+              <p class="field-help">必要ピーク箱数は総箱数を（補充回数+1）で均等分割します。均等補充でない場合は、総商品数へ最大同時保管数を入力してください。</p>
+            </div>
             <div id="spaceResult" class="space-result"></div>
             <p class="field-help">W×Dは計画領域です。必要面積は推測せず、運用人数・社内基準・会場規定に基づく値を入力してください。</p>
           </div>
@@ -367,6 +384,12 @@
             <tbody id="spaceSummaryBody"></tbody>
           </table>
           <p id="spaceSummaryNote" class="summary-note"></p>
+          <h3>在庫容量計画</h3>
+          <table>
+            <thead><tr><th>在庫領域</th><th>商品・箱数</th><th>箱寸法・積上げ</th><th>容量判定</th></tr></thead>
+            <tbody id="inventorySummaryBody"></tbody>
+          </table>
+          <p id="inventorySummaryNote" class="summary-note"></p>
         </section>
       </article>
     </section>

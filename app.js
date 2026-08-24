@@ -1,14 +1,15 @@
 const Domain = window.BoothDomain;
 if (!Domain) throw new Error("BoothDomain failed to load");
 
-const AUTOSAVE_KEY = "booth-layout-tool-v7";
-const PREVIOUS_AUTOSAVE_KEYS = ["booth-layout-tool-v6", "booth-layout-tool-v5", "booth-layout-tool-v4", "booth-layout-tool-v3", "booth-layout-tool"];
+const AUTOSAVE_KEY = "booth-layout-tool-v8";
+const PREVIOUS_AUTOSAVE_KEYS = ["booth-layout-tool-v7", "booth-layout-tool-v6", "booth-layout-tool-v5", "booth-layout-tool-v4", "booth-layout-tool-v3", "booth-layout-tool"];
 
 const presets = {
   wof: { label: "WOF 東京 2コマ", eventName: "WOF 東京 2コマ", width: 5940, depth: 2500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   imf: { label: "IMF 大阪秋 2コマ", eventName: "IMF 大阪秋 2コマ", width: 9000, depth: 4500, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   egf: { label: "EGF 大阪春 2コマ", eventName: "EGF 大阪春 2コマ", width: 6000, depth: 3600, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   jex: { label: "JEX 東京 2小間・Aプラン", eventName: "JEX 東京 2小間・Aプラン", width: 8000, depth: 2000, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
+  neotokyo: { label: "NEO TOKYO 2026 2コマ・Plan A", eventName: "NEO TOKYO EYEWEAR SHOW 2026", width: 6000, depth: 2700, wallHeight: 0, heightLimitMm: 2400, floorLoadKgPerM2: 500, wallSide: "top", aisleSide: "bottom", spaceOnly: true },
   wide: { label: "横長 2小間", eventName: "横長 2小間", width: 6000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   deep: { label: "奥行き広め", eventName: "奥行き広め", width: 3000, depth: 4500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   custom: { label: "自由入力", eventName: "自由入力", width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" }
@@ -18,6 +19,7 @@ const jexRuleNote = "JEX 3階レンタル装飾 2小間・Aプラン: W8000 x D2
 const imfRuleNote = "IMF 2コマ: W9000 x D4500 x H2100。サンニシムラ1.5コマ（W6750）、鈴木眼鏡様0.5コマ（W2250）の共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
 const egfRuleNote = "EGF 2コマ: Aタイプ1コマ W3000 x D3600 x H2100を2コマ運用として W6000 x D3600 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kW 100Vまでは事務局負担、1.5kW超の電気使用料およびコンセント等の小間内配線工事は出展社負担。";
 const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。";
+const neoTokyoRuleNote = "NEO TOKYO EYEWEAR SHOW 2026 出展マニュアル確認済み: 1コマW3000 x D2700mm（コマ位置により変形あり）の2コマ横連結としてW6000 x D2700mm、スペース渡し、装飾高上限H2400mm、床積載荷重500kg/㎡。申込予定はPlan A（1コマ一式）1セット: 商品展示テーブルW1500 x D750 x H830を2台、商談テーブルW1000 x D600 x H730を1台、椅子4脚、スタンドライト1SET、電源1SET。追加レンタル予定は展示テーブルD W1500 x D750 x H820を3台。椅子・ライト・電源は外形寸法が資料にないため一覧だけに記録し、平面位置・3D形状は未推測。最終割当小間が変形している場合は割当図の実寸へ更新すること。根拠: 【NEO TOKYO】/【2026】/NEOTOKYO出展マニュアル2026_FIX.pdf。";
 
 const rawFixtureMasters = [
   { type: "fixture", label: "常設備品（名称を編集）", width: 900, depth: 450, height: 900, color: "#77a7d9" },
@@ -26,6 +28,9 @@ const rawFixtureMasters = [
   { type: "table", label: "受付机", width: 1200, depth: 600, color: "#f2b84b" },
   { type: "table", label: "展示台 W1500xD600", width: 1500, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#f2b84b" },
+  { type: "table", label: "NEO Plan A 商品展示テーブル W1500xD750xH830", width: 1500, depth: 750, height: 830, color: "#f2b84b", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
+  { type: "table", label: "NEO Plan A 商談テーブル W1000xD600xH730", width: 1000, depth: 600, height: 730, color: "#e6a93e", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
+  { type: "table", label: "NEO レンタル展示テーブルD W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#e6b65b", material: "ツヤありホワイト（出展マニュアル記載）", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.21 / レンタル備品D" },
   { type: "table", label: "展示台 W1500xD900", width: 1500, depth: 900, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD600", width: 1800, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD900", width: 1800, depth: 900, height: 700, color: "#f2b84b" },
@@ -51,7 +56,7 @@ const rawFixtureMasters = [
   { type: "device", label: "接続機器（名称・寸法・消費電力を編集）", width: 300, depth: 300, color: "#8a9fb5", watt: 0 },
   { type: "spotlight", label: "スポットライト", width: 350, depth: 350, color: "#ffd45f", watt: 100 },
   { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" },
-  { type: "zone", label: "接客スペース（必要面積を登録）", width: 1500, depth: 1200, height: 0, color: "#3b9e8f", spaceCategory: "contact", activationMode: "always", requiredAreaMm2: 0 },
+  { type: "zone", label: "接客スペース（必要面積を登録）", width: 1500, depth: 1200, height: 0, color: "#3b9e8f", spaceCategory: "contact", activationMode: "always", requiredAreaMm2: 0, inventoryTotalUnits: 0, inventoryUnitsPerCarton: 0, inventoryReplenishmentCount: 0, inventoryCartonWidthMm: 0, inventoryCartonDepthMm: 0, inventoryCartonHeightMm: 0, inventoryMaxStackHeightMm: 0, inventoryDimensionsConfirmed: false },
   { type: "scenario", label: "営業物品（名称・実測寸法を編集）", width: 300, depth: 300, height: 300, color: "#b98a52", operationalCategory: "stock", activationMode: "operating", dimensionsConfirmed: false },
   { type: "person", label: "人物A 179cm", width: 600, depth: 600, height: 1790, color: "#ef6fa8", image: "assets/people/person-a-standing-crop.png", standingImage: "assets/people/person-a-standing-crop.png", seatedImage: "assets/people/person-a-seated-crop.png" },
   { type: "person", label: "人物B 179cm", width: 600, depth: 600, height: 1790, color: "#3b69d8", image: "assets/people/person-b-standing-crop.png", standingImage: "assets/people/person-b-standing-crop.png", seatedImage: "assets/people/person-b-seated-crop.png" }
@@ -127,14 +132,14 @@ function normalizeFixtureMaster(item, index) {
   return Object.freeze({
     ...item,
     masterId,
-    material: item.type === "bolda" ? "材質の確定情報は未登録（提供印刷フォーマット参照）" : "未登録",
+    material: item.material || (item.type === "bolda" ? "材質の確定情報は未登録（提供印刷フォーマット参照）" : "未登録"),
     shape2d: Object.freeze({ kind: "rectangle", width: item.width, depth: item.depth }),
     model3d: Object.freeze({
       kind: item.type === "bolda" ? "parametric-reference" : "parametric-generic",
       accuracy: item.type === "bolda" ? "verified-envelope/reference-based-detail" : "generic"
     }),
-    dimensionLocked: item.type === "bolda",
-    dimensionSource: item.type === "bolda" ? (boldaDimensionSources[code] || "提供資料内に寸法根拠を特定できていません") : "未登録",
+    dimensionLocked: item.dimensionLocked === true || item.type === "bolda",
+    dimensionSource: item.dimensionSource || (item.type === "bolda" ? (boldaDimensionSources[code] || "提供資料内に寸法根拠を特定できていません") : "未登録"),
     productPlacementPositions: Object.freeze([]),
     popPlacementPositions: Object.freeze(printFaces.map((source, faceIndex) => ({ faceIndex, source }))),
     setupInfo: Object.freeze({ status: "not-registered", instructions: Object.freeze([]) })
@@ -185,7 +190,7 @@ const state = {
   contactName: "",
   notes: "",
   jointSide: "right",
-  booth: { width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
+  booth: { width: 3000, depth: 3000, wallHeight: 2400, heightLimitMm: 2400, floorLoadKgPerM2: 0, wallSide: "top", aisleSide: "bottom", spaceOnly: false },
   gridSize: 50,
   snapEnabled: true,
   viewerEyeHeight: 1600,
@@ -217,6 +222,7 @@ let threeFailedAssetCount = 0;
 let threeSceneVersion = 0;
 let operationalAudit = null;
 let spaceAudit = null;
+let inventoryAudit = null;
 const historyPast = [];
 const historyFuture = [];
 let historyApplying = false;
@@ -390,6 +396,10 @@ function bindInputs() {
       state.preset = "custom";
       $("presetSelect").value = "custom";
       state.booth[key] = Number($(id).value);
+      if (key === "wallHeight") {
+        state.booth.spaceOnly = !(state.booth.wallHeight > 0);
+        state.booth.heightLimitMm = Math.max(0, state.booth.wallHeight);
+      }
       clampItems();
       render();
     });
@@ -435,10 +445,11 @@ function bindInputs() {
     }
   });
 
-  ["itemLabel", "itemWidth", "itemDepth", "itemHeight", "itemX", "itemY", "itemZ", "itemWatt", "itemRatedCapacity", "itemPowerSourceId", "itemCableRouteMode", "itemCableSlack", "itemCircuitId", "itemPersonRole", "itemActivationMode", "itemOperationalCategory", "itemSpaceCategory", "itemRequiredAreaM2", "itemVisibilityRole", "itemTargetViewHeight", "itemTargetFrontSide"].forEach((id) => {
+  ["itemLabel", "itemWidth", "itemDepth", "itemHeight", "itemX", "itemY", "itemZ", "itemWatt", "itemRatedCapacity", "itemPowerSourceId", "itemCableRouteMode", "itemCableSlack", "itemCircuitId", "itemPersonRole", "itemActivationMode", "itemOperationalCategory", "itemSpaceCategory", "itemRequiredAreaM2", "itemInventoryTotalUnits", "itemInventoryUnitsPerCarton", "itemInventoryReplenishmentCount", "itemInventoryCartonWidth", "itemInventoryCartonDepth", "itemInventoryCartonHeight", "itemInventoryMaxStackHeight", "itemVisibilityRole", "itemTargetViewHeight", "itemTargetFrontSide"].forEach((id) => {
     $(id).addEventListener("input", updateSelectedFromForm);
   });
   $("itemDimensionsConfirmed").addEventListener("change", updateSelectedFromForm);
+  $("itemInventoryDimensionsConfirmed").addEventListener("change", updateSelectedFromForm);
   $("addPowerCircuitBtn").addEventListener("click", addPowerCircuit);
   $("powerCircuitEditor").addEventListener("input", (event) => updatePowerCircuitFromEditor(event, false));
   $("powerCircuitEditor").addEventListener("change", updatePowerCircuitFromEditor);
@@ -532,8 +543,11 @@ function applyPreset(key) {
     width: preset.width,
     depth: preset.depth,
     wallHeight: preset.wallHeight,
+    heightLimitMm: preset.heightLimitMm || preset.wallHeight,
+    floorLoadKgPerM2: preset.floorLoadKgPerM2 || 0,
     wallSide: preset.wallSide,
-    aisleSide: preset.aisleSide
+    aisleSide: preset.aisleSide,
+    spaceOnly: preset.spaceOnly === true
   };
   $("presetSelect").value = key;
   $("eventName").value = state.eventName;
@@ -551,7 +565,15 @@ function applyPreset(key) {
     state.notes = wofRuleNote;
     $("notes").value = state.notes;
     applyWofTwoBoothLayout(false);
+  } else if (key === "neotokyo") {
+    state.notes = neoTokyoRuleNote;
+    $("notes").value = state.notes;
+    applyNeoTokyoLayout(false);
   } else {
+    if ([jexRuleNote, imfRuleNote, egfRuleNote, wofRuleNote, neoTokyoRuleNote].includes(state.notes)) {
+      state.notes = "";
+      $("notes").value = "";
+    }
     clampItems();
   }
   syncJointControls();
@@ -746,6 +768,14 @@ function addItem(template) {
     operationalCategory: template.operationalCategory || "other",
     spaceCategory: template.spaceCategory || "contact",
     requiredAreaMm2: Math.max(0, Domain.finiteNumber(template.requiredAreaMm2, 0)),
+    inventoryTotalUnits: Math.max(0, Math.ceil(Domain.finiteNumber(template.inventoryTotalUnits, 0))),
+    inventoryUnitsPerCarton: Math.max(0, Math.ceil(Domain.finiteNumber(template.inventoryUnitsPerCarton, 0))),
+    inventoryReplenishmentCount: Math.max(0, Math.floor(Domain.finiteNumber(template.inventoryReplenishmentCount, 0))),
+    inventoryCartonWidthMm: Math.max(0, Domain.finiteNumber(template.inventoryCartonWidthMm, 0)),
+    inventoryCartonDepthMm: Math.max(0, Domain.finiteNumber(template.inventoryCartonDepthMm, 0)),
+    inventoryCartonHeightMm: Math.max(0, Domain.finiteNumber(template.inventoryCartonHeightMm, 0)),
+    inventoryMaxStackHeightMm: Math.max(0, Domain.finiteNumber(template.inventoryMaxStackHeightMm, 0)),
+    inventoryDimensionsConfirmed: template.inventoryDimensionsConfirmed === true,
     dimensionsConfirmed: template.dimensionsConfirmed === true,
     visibilityRole: template.visibilityRole || "none",
     targetViewHeightMm: Math.max(0, Domain.finiteNumber(template.targetViewHeightMm, 0)),
@@ -762,6 +792,10 @@ function addItem(template) {
 }
 
 function applyStandardLayout() {
+  if (state.preset === "neotokyo") {
+    applyNeoTokyoLayout(true);
+    return;
+  }
   if (state.preset === "jex") {
     applyJexTwoBoothLayout(true);
     return;
@@ -874,6 +908,14 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
     operationalCategory: "other",
     spaceCategory: "contact",
     requiredAreaMm2: 0,
+    inventoryTotalUnits: 0,
+    inventoryUnitsPerCarton: 0,
+    inventoryReplenishmentCount: 0,
+    inventoryCartonWidthMm: 0,
+    inventoryCartonDepthMm: 0,
+    inventoryCartonHeightMm: 0,
+    inventoryMaxStackHeightMm: 0,
+    inventoryDimensionsConfirmed: false,
     dimensionsConfirmed: type !== "scenario",
     visibilityRole: "none",
     targetViewHeightMm: 0,
@@ -885,6 +927,26 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
     rotationDeg: 0,
     rotationQuarterTurns: 0
   };
+}
+
+function applyNeoTokyoLayout(renderNow = true) {
+  const placeMaster = (masterLabel, label, x, y) => {
+    const master = itemTypes.find((entry) => entry.label === masterLabel);
+    const item = makeItem(master.type, label, master.width, master.depth, master.color, x, y, master.watt || 0, master.height || 0, master.image || "");
+    item.masterId = master.masterId;
+    return item;
+  };
+  state.items = [
+    placeMaster("NEO Plan A 商品展示テーブル W1500xD750xH830", "Plan A 商品展示テーブル 1", 0, 1950),
+    placeMaster("NEO Plan A 商品展示テーブル W1500xD750xH830", "Plan A 商品展示テーブル 2", 1500, 1950),
+    placeMaster("NEO Plan A 商談テーブル W1000xD600xH730", "Plan A 商談テーブル", 1000, 350),
+    placeMaster("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 1", 3000, 150),
+    placeMaster("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 2", 4500, 150),
+    placeMaster("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 3", 3750, 1000)
+  ];
+  state.items.forEach(clampItem);
+  state.selectedId = state.items[0]?.id || null;
+  if (renderNow) render();
 }
 
 function selectedItem() {
@@ -971,6 +1033,14 @@ function updateSelectedFromForm() {
     item.z = 0;
     item.spaceCategory = $("itemSpaceCategory").value;
     item.requiredAreaMm2 = Math.max(0, Domain.finiteNumber($("itemRequiredAreaM2").value, 0) * 1000000);
+    item.inventoryTotalUnits = Math.max(0, Math.ceil(Domain.finiteNumber($("itemInventoryTotalUnits").value, 0)));
+    item.inventoryUnitsPerCarton = Math.max(0, Math.ceil(Domain.finiteNumber($("itemInventoryUnitsPerCarton").value, 0)));
+    item.inventoryReplenishmentCount = Math.max(0, Math.floor(Domain.finiteNumber($("itemInventoryReplenishmentCount").value, 0)));
+    item.inventoryCartonWidthMm = Math.max(0, Domain.finiteNumber($("itemInventoryCartonWidth").value, 0));
+    item.inventoryCartonDepthMm = Math.max(0, Domain.finiteNumber($("itemInventoryCartonDepth").value, 0));
+    item.inventoryCartonHeightMm = Math.max(0, Domain.finiteNumber($("itemInventoryCartonHeight").value, 0));
+    item.inventoryMaxStackHeightMm = Math.max(0, Domain.finiteNumber($("itemInventoryMaxStackHeight").value, 0));
+    item.inventoryDimensionsConfirmed = $("itemInventoryDimensionsConfirmed").checked;
   }
   if (canBeVisibilityTarget(item)) {
     item.visibilityRole = $("itemVisibilityRole").value;
@@ -1088,6 +1158,14 @@ function normalizeItems() {
     item.operationalCategory = ["stock", "packing", "bag", "waste", "promotion", "pc", "cable", "other"].includes(item.operationalCategory) ? item.operationalCategory : "other";
     item.spaceCategory = ["contact", "staff", "inventory"].includes(item.spaceCategory) ? item.spaceCategory : "contact";
     item.requiredAreaMm2 = Math.max(0, Domain.finiteNumber(item.requiredAreaMm2, 0));
+    item.inventoryTotalUnits = Math.max(0, Math.ceil(Domain.finiteNumber(item.inventoryTotalUnits, 0)));
+    item.inventoryUnitsPerCarton = Math.max(0, Math.ceil(Domain.finiteNumber(item.inventoryUnitsPerCarton, 0)));
+    item.inventoryReplenishmentCount = Math.max(0, Math.floor(Domain.finiteNumber(item.inventoryReplenishmentCount, 0)));
+    item.inventoryCartonWidthMm = Math.max(0, Domain.finiteNumber(item.inventoryCartonWidthMm, 0));
+    item.inventoryCartonDepthMm = Math.max(0, Domain.finiteNumber(item.inventoryCartonDepthMm, 0));
+    item.inventoryCartonHeightMm = Math.max(0, Domain.finiteNumber(item.inventoryCartonHeightMm, 0));
+    item.inventoryMaxStackHeightMm = Math.max(0, Domain.finiteNumber(item.inventoryMaxStackHeightMm, 0));
+    item.inventoryDimensionsConfirmed = item.inventoryDimensionsConfirmed === true;
     item.dimensionsConfirmed = item.type === "scenario" ? item.dimensionsConfirmed === true : true;
     item.visibilityRole = ["none", "main-product", "product", "pop"].includes(item.visibilityRole) ? item.visibilityRole : "none";
     item.targetViewHeightMm = Math.max(0, Domain.finiteNumber(item.targetViewHeightMm, 0));
@@ -1184,6 +1262,7 @@ function render() {
   syncOperationMode();
   operationalAudit = getOperationalAudit();
   spaceAudit = getSpaceAudit();
+  inventoryAudit = getInventoryAudit();
   recordHistorySnapshot();
   syncHeader();
   syncPowerCircuitEditor();
@@ -1211,9 +1290,11 @@ function recordHistorySnapshot() {
 }
 
 function restoreHistorySnapshot(snapshot) {
+  const previousSelectedId = state.selectedId;
   historyApplying = true;
   try {
     applyLoadedState(JSON.parse(snapshot));
+    if (state.items.some((item) => item.id === previousSelectedId)) state.selectedId = previousSelectedId;
     render();
   } finally {
     historyApplying = false;
@@ -1244,7 +1325,9 @@ function syncHeader() {
   $("metaBoothNo").textContent = state.boothNo || "-";
   $("metaCompany").textContent = state.companyName || "-";
   $("metaDate").textContent = new Date().toLocaleDateString("ja-JP");
-  $("boothSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm / 壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`;
+  $("boothSpec").textContent = state.booth.spaceOnly
+    ? `W${state.booth.width} x D${state.booth.depth}mm / スペース渡し・装飾高上限H${state.booth.heightLimitMm || "未登録"}mm / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`
+    : `W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm / 壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`;
   $("printNotes").textContent = state.notes || "-";
 }
 
@@ -1291,7 +1374,18 @@ function syncSelectionEditor() {
   $("spaceFields").classList.toggle("hidden", item.type !== "zone");
   $("itemSpaceCategory").value = item.spaceCategory || "contact";
   $("itemRequiredAreaM2").value = item.requiredAreaMm2 ? formatSquareMetres(item.requiredAreaMm2) : "";
+  const inventoryZone = item.type === "zone" && item.spaceCategory === "inventory";
+  $("inventoryFields").classList.toggle("hidden", !inventoryZone);
+  $("itemInventoryTotalUnits").value = item.inventoryTotalUnits || "";
+  $("itemInventoryUnitsPerCarton").value = item.inventoryUnitsPerCarton || "";
+  $("itemInventoryReplenishmentCount").value = item.inventoryReplenishmentCount || 0;
+  $("itemInventoryCartonWidth").value = item.inventoryCartonWidthMm || "";
+  $("itemInventoryCartonDepth").value = item.inventoryCartonDepthMm || "";
+  $("itemInventoryCartonHeight").value = item.inventoryCartonHeightMm || "";
+  $("itemInventoryMaxStackHeight").value = item.inventoryMaxStackHeightMm || "";
+  $("itemInventoryDimensionsConfirmed").checked = item.inventoryDimensionsConfirmed === true;
   syncSelectedSpaceResult(item);
+  syncSelectedInventoryResult(item);
   const targetCapable = canBeVisibilityTarget(item);
   $("visibilityRoleField").classList.toggle("hidden", !targetCapable);
   $("itemVisibilityRole").value = item.visibilityRole || "none";
@@ -1343,6 +1437,25 @@ function syncSelectedSpaceResult(item) {
   }
   const required = item.requiredAreaMm2 > 0 ? `${formatSquareMetres(item.requiredAreaMm2)}㎡` : "未登録";
   wrap.textContent = `計画${formatSquareMetres(result.areaMm2)}㎡｜障害物${formatSquareMetres(result.occupiedMm2)}㎡｜通路到達${formatSquareMetres(result.publicReachableMm2)}㎡｜スタッフ到達${result.staffReachableMm2 === null ? "起点未登録" : `${formatSquareMetres(result.staffReachableMm2)}㎡`}｜必要${required}`;
+}
+
+function syncSelectedInventoryResult(item) {
+  const wrap = $("inventoryResult");
+  if (item?.type !== "zone" || item.spaceCategory !== "inventory") {
+    wrap.textContent = "";
+    return;
+  }
+  const entry = inventoryAudit?.entries.find((candidate) => candidate.item.id === item.id);
+  if (!entry) {
+    wrap.textContent = "現在の状態では無効です。登録値は保存されますが容量検査から除外します。";
+    return;
+  }
+  if (!entry.capacity.complete) {
+    wrap.textContent = `判定不能: ${inventoryMissingFieldLabels(entry.capacity.missingFields).join("・")}`;
+    return;
+  }
+  const capacity = entry.capacity;
+  wrap.textContent = `必要ピーク${capacity.peakCartons}箱（総${capacity.totalCartons}箱・均等補充${capacity.replenishmentCount}回）｜容量${capacity.capacityCartons}箱（1段${capacity.cartonsPerLayer}箱×${capacity.layers}段）${capacity.shortageCartons ? `｜不足${capacity.shortageCartons}箱` : "｜不足なし"}`;
 }
 
 function isPoweredLoad(item) {
@@ -1413,7 +1526,9 @@ function syncView() {
   $("preview3dView").classList.toggle("hidden", state.view !== "preview3d");
   if (state.view === "preview3d") {
     $("preview3dTitle").textContent = `${state.eventName || "展示ブース"} 3D配置確認`;
-    $("preview3dSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`;
+    $("preview3dSpec").textContent = state.booth.spaceOnly
+      ? `W${state.booth.width} x D${state.booth.depth}mm / スペース渡し・装飾高上限H${state.booth.heightLimitMm || "未登録"}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`
+      : `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`;
     $("viewerEyeHeight").value = Math.round(state.viewerEyeHeight || 1600);
     draw3dScene();
     syncThreeSelectionUi();
@@ -1501,18 +1616,20 @@ function drawBooth(boothPxW, boothPxH) {
   ctx.lineWidth = 3;
   ctx.strokeRect(origin.x, origin.y, boothPxW, boothPxH);
 
-  ["top", "bottom", "left", "right"].forEach((side) => {
-    if (side === state.booth.aisleSide) return;
-    ctx.strokeStyle = side === state.booth.wallSide ? "#23875b" : "#7bcb9d";
-    ctx.lineWidth = side === state.booth.wallSide ? 10 : 5;
-    drawSide(side, boothPxW, boothPxH);
-  });
+  if (!state.booth.spaceOnly) {
+    ["top", "bottom", "left", "right"].forEach((side) => {
+      if (side === state.booth.aisleSide) return;
+      ctx.strokeStyle = side === state.booth.wallSide ? "#23875b" : "#7bcb9d";
+      ctx.lineWidth = side === state.booth.wallSide ? 10 : 5;
+      drawSide(side, boothPxW, boothPxH);
+    });
+  }
 
   ctx.fillStyle = "#334346";
   const boothLabelFont = printRenderMode ? 58 : 16;
   ctx.font = `${boothLabelFont}px sans-serif`;
   ctx.textAlign = "center";
-  ctx.fillText(`壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)}`, origin.x + boothPxW / 2, origin.y + boothPxH + (printRenderMode ? 88 : 36));
+  ctx.fillText(state.booth.spaceOnly ? `スペース渡し（壁未登録） / 通路側: ${sideLabel(state.booth.aisleSide)}` : `壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)}`, origin.x + boothPxW / 2, origin.y + boothPxH + (printRenderMode ? 88 : 36));
   ctx.restore();
 }
 
@@ -1524,6 +1641,25 @@ function drawSide(side, boothPxW, boothPxH) {
 }
 
 function drawJointSplit() {
+  if (state.preset === "neotokyo") {
+    const splitX = origin.x + 3000 * scale;
+    const top = origin.y;
+    const height = state.booth.depth * scale;
+    ctx.save();
+    ctx.setLineDash([8, 7]);
+    ctx.strokeStyle = "#8a6500";
+    ctx.lineWidth = printRenderMode ? 7 : 2;
+    line(splitX, top, splitX, top + height);
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#6d5200";
+    ctx.font = `bold ${printRenderMode ? 42 : 11}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("1コマ目 W3000", origin.x + 1500 * scale, top + Math.max(6, height * 0.02));
+    ctx.fillText("2コマ目 W3000", origin.x + 4500 * scale, top + Math.max(6, height * 0.02));
+    ctx.restore();
+    return;
+  }
   if (!isImfEgfPreset()) return;
   const suzukiWidth = state.booth.width * 0.25;
   const splitXmm = state.jointSide === "left" ? suzukiWidth : state.booth.width - suzukiWidth;
@@ -1709,7 +1845,11 @@ function drawSpaceZone(item) {
   ctx.font = `bold ${printRenderMode ? 42 : 11}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(fitCanvasText(`${spaceCategoryLabel(item.spaceCategory)} ${formatSquareMetres(item.width * item.depth)}㎡`, Math.max(10, w - 8)), x + w / 2, y + h / 2);
+  const capacity = item.spaceCategory === "inventory"
+    ? inventoryAudit?.entries.find((entry) => entry.item.id === item.id)?.capacity
+    : null;
+  const capacityText = capacity?.complete ? ` ${capacity.capacityCartons}/${capacity.peakCartons}箱` : "";
+  ctx.fillText(fitCanvasText(`${spaceCategoryLabel(item.spaceCategory)} ${formatSquareMetres(item.width * item.depth)}㎡${capacityText}`, Math.max(10, w - 8)), x + w / 2, y + h / 2);
   drawActivationBadge(item, x, y, w, h);
   ctx.restore();
 }
@@ -2305,6 +2445,76 @@ function getSpaceAudit() {
   };
 }
 
+function inventoryMissingFieldLabels(fields) {
+  const labels = {
+    zoneWidthMm: "在庫領域W",
+    zoneDepthMm: "在庫領域D",
+    totalUnits: "総商品数",
+    unitsPerCarton: "箱入数",
+    cartonWidthMm: "箱W",
+    cartonDepthMm: "箱D",
+    cartonHeightMm: "箱H",
+    maxStackHeightMm: "最大積上高"
+  };
+  return (fields || []).map((key) => labels[key] || key);
+}
+
+function getInventoryAudit() {
+  const all = state.items.filter((item) => item.type === "zone" && item.spaceCategory === "inventory");
+  const active = all.filter((item) => isItemActive(item));
+  const spaces = spaceAudit || getSpaceAudit();
+  const entries = active.map((item) => ({
+    item,
+    space: spaces.zones.find((entry) => entry.item.id === item.id) || null,
+    capacity: Domain.calculateInventoryCapacity({
+      zoneWidthMm: item.width,
+      zoneDepthMm: item.depth,
+      totalUnits: item.inventoryTotalUnits,
+      unitsPerCarton: item.inventoryUnitsPerCarton,
+      replenishmentCount: item.inventoryReplenishmentCount,
+      cartonWidthMm: item.inventoryCartonWidthMm,
+      cartonDepthMm: item.inventoryCartonDepthMm,
+      cartonHeightMm: item.inventoryCartonHeightMm,
+      maxStackHeightMm: item.inventoryMaxStackHeightMm
+    })
+  }));
+  return {
+    all,
+    active,
+    entries,
+    incomplete: entries.filter((entry) => !entry.capacity.complete),
+    unconfirmed: entries.filter((entry) => !entry.item.inventoryDimensionsConfirmed),
+    occupied: entries.filter((entry) => (entry.space?.occupiedMm2 || 0) > 0),
+    overHeight: entries.filter((entry) => (state.booth.heightLimitMm || state.booth.wallHeight || 0) > 0 && entry.item.inventoryMaxStackHeightMm > (state.booth.heightLimitMm || state.booth.wallHeight)),
+    shortages: entries.filter((entry) => entry.capacity.complete && entry.capacity.shortageCartons > 0)
+  };
+}
+
+function inventoryAuditStatus(audit) {
+  if (!audit.active.length) {
+    return { level: "warn", message: `問題箇所: ${operationModeLabel(state.operationMode)}の在庫容量。理由: 有効な在庫予約領域がなく、必要商品数を収容できるか判定できません。改善案: 用途領域を追加して「在庫予約領域」を選び、実際の箱情報を登録してください。` };
+  }
+  if (audit.incomplete.length) {
+    return { level: "warn", message: `問題箇所: ${audit.incomplete.map((entry) => `${entry.item.label}（${inventoryMissingFieldLabels(entry.capacity.missingFields).join("・")}）`).join("、")}。理由: 箱数・平面収容数・積上段数を確定できません。改善案: 商品数量、箱入数、実測箱W/D/H、補充回数、現場で許容された最大積上高を登録してください。` };
+  }
+  if (audit.unconfirmed.length) {
+    return { level: "warn", message: `問題箇所: ${audit.unconfirmed.map((entry) => entry.item.label).join("、")}。理由: 箱寸法または最大積上高が確認済みになっていません。改善案: 梱包仕様・現物・会場安全条件と照合し「箱寸法・積上高を確認済み」を有効にしてください。` };
+  }
+  if (audit.occupied.length) {
+    return { level: "bad", message: `問題箇所: ${audit.occupied.map((entry) => `${entry.item.label}（障害物${formatSquareMetres(entry.space.occupiedMm2)}㎡）`).join("、")}。理由: 容量計算に使った矩形へ什器・営業物品が重なっています。改善案: 在庫領域または障害物を移動し、箱を置ける全矩形を確保してください。` };
+  }
+  if (audit.overHeight.length) {
+    const limit = state.booth.heightLimitMm || state.booth.wallHeight;
+    return { level: "bad", message: `問題箇所: ${audit.overHeight.map((entry) => `${entry.item.label} 積上H${entry.item.inventoryMaxStackHeightMm}mm`).join("、")}。理由: 登録装飾高上限H${limit}mmを超えています。改善案: 最大積上高を安全条件内へ下げ、必要なら在庫領域を増やしてください。` };
+  }
+  if (audit.shortages.length) {
+    return { level: "bad", message: `問題箇所: ${audit.shortages.map((entry) => `${entry.item.label} ${entry.capacity.capacityCartons}箱/${entry.capacity.peakCartons}箱（不足${entry.capacity.shortageCartons}箱）`).join("、")}。理由: 登録領域・積上高では均等補充計画時の最大同時箱数を収容できません。改善案: 在庫領域を広げる、許容根拠のある積上高へ見直す、または実行可能な補充計画を増やしてください。` };
+  }
+  const totalCapacity = audit.entries.reduce((sum, entry) => sum + entry.capacity.capacityCartons, 0);
+  const totalPeak = audit.entries.reduce((sum, entry) => sum + entry.capacity.peakCartons, 0);
+  return { level: "ok", message: `在庫領域${audit.entries.length}点で必要ピーク${totalPeak}箱に対し${totalCapacity}箱を収容できます。箱は平面90°回転を比較し、最大積上高以内の整数段、補充は会期中に均等分割する計画として算出しています。` };
+}
+
 function spaceAuditStatus(audit) {
   if (!audit.activeZones.length) {
     return { level: "warn", message: `問題箇所: ${operationModeLabel(state.operationMode)}の用途領域。理由: 接客・スタッフ・在庫の計画面積が未登録です。改善案: 「接客スペース」を追加し、実際の運用基準に基づく必要面積を入力してください。` };
@@ -2377,6 +2587,8 @@ function getChecks() {
   const scenarioStatus = scenarioAuditStatus(scenario);
   const spaces = spaceAudit || getSpaceAudit();
   const spaceStatus = spaceAuditStatus(spaces);
+  const inventories = inventoryAudit || getInventoryAudit();
+  const inventoryStatus = inventoryAuditStatus(inventories);
   const overlapPairs = findOverlapPairs();
   const overlaps = overlapPairs.length;
   const outOfBounds = state.items.filter((item) => Domain.isOutOfBounds(item, state.booth));
@@ -2385,11 +2597,17 @@ function getChecks() {
   const seatedPeople = people.filter((item) => getChairForPerson(item)).length;
   const personCollisions = countPersonCollisions();
   const tightClearances = countTightPersonClearances();
+  const heightLimitMm = Math.max(0, state.booth.heightLimitMm || state.booth.wallHeight || 0);
+  const overHeight = heightLimitMm
+    ? activeItems().filter((item) => item.type !== "zone" && getItemVerticalRange(item).top > heightLimitMm)
+    : [];
   const checks = [
     {
       name: "寸法エージェント",
-      level: state.booth.width && state.booth.depth && state.booth.wallHeight ? "ok" : "bad",
-      message: `ブース W${state.booth.width} x D${state.booth.depth}、壁H${state.booth.wallHeight}mm。必要に応じて自由入力へ変更できます。`
+      level: state.booth.width && state.booth.depth && (state.booth.wallHeight || state.booth.spaceOnly) ? "ok" : "bad",
+      message: state.booth.spaceOnly
+        ? `ブース W${state.booth.width} x D${state.booth.depth}mm、スペース渡し（壁高・壁面未登録）。装飾高上限H${state.booth.heightLimitMm || "未登録"}mm。`
+        : `ブース W${state.booth.width} x D${state.booth.depth}、壁H${state.booth.wallHeight}mm。必要に応じて自由入力へ変更できます。`
     },
     {
       name: "配置エージェント",
@@ -2408,6 +2626,15 @@ function getChecks() {
         : people.length
           ? `身長1790mmの人物を${people.length}人配置中（着座${seatedPeople}人）。${tightClearances ? `${tightClearances}人は周囲800mmの通過目安が狭めです。` : "各人物の周囲に800mmの通過目安があります。"}`
           : "人物を配置すると、身長比較・着座・周囲800mmの導線目安を確認できます。"
+    },
+    {
+      name: "高さ制限エージェント",
+      level: !heightLimitMm ? "warn" : overHeight.length ? "bad" : "ok",
+      message: !heightLimitMm
+        ? "装飾高上限が未登録です。会場マニュアルまたは施工規定の実数値を入力データへ登録してください。"
+        : overHeight.length
+          ? `問題箇所: ${overHeight.map((item) => `${item.label} 上端H${Math.round(getItemVerticalRange(item).top)}mm`).join("、")}。理由: 登録装飾高上限H${heightLimitMm}mmを超えています。改善案: HまたはZを下げ、会場承認条件へ合わせてください。`
+          : `全配置物の上端は登録装飾高上限H${heightLimitMm}mm以内です。`
     },
     {
       name: "通路幅エージェント",
@@ -2435,6 +2662,11 @@ function getChecks() {
       name: "床面積・用途領域エージェント",
       level: spaceStatus.level,
       message: spaceStatus.message
+    },
+    {
+      name: "在庫容量エージェント",
+      level: inventoryStatus.level,
+      message: inventoryStatus.message
     },
     {
       name: "電源エージェント",
@@ -2480,6 +2712,19 @@ function getChecks() {
         : "WOFの正式外形または標準備品数と一致しません。標準レイアウトを置き直すか、変更根拠を備考へ記録してください。"
     });
   }
+  if (state.preset === "neotokyo") {
+    const planDisplayTables = state.items.filter((item) => item.masterId && item.label.startsWith("Plan A 商品展示テーブル") && item.width === 1500 && item.depth === 750 && item.height === 830).length;
+    const planMeetingTables = state.items.filter((item) => item.label === "Plan A 商談テーブル" && item.width === 1000 && item.depth === 600 && item.height === 730).length;
+    const rentalTables = state.items.filter((item) => item.label.startsWith("追加レンタル展示テーブルD") && item.width === 1500 && item.depth === 750 && item.height === 820).length;
+    const presetOk = state.booth.width === 6000 && state.booth.depth === 2700 && state.booth.wallHeight === 0 && state.booth.heightLimitMm === 2400 && state.booth.floorLoadKgPerM2 === 500 && state.booth.spaceOnly === true && planDisplayTables === 2 && planMeetingTables === 1 && rentalTables === 3;
+    checks.unshift({
+      name: "NEO TOKYO 2026ルール",
+      level: presetOk ? "ok" : "warn",
+      message: presetOk
+        ? "2コマ横連結W6000 x D2700、スペース渡し、装飾高上限H2400、床積載荷重500kg/㎡、Plan Aの寸法確認済み机3台、追加レンタル展示テーブルD 3台を確認しました。Plan Aの椅子4脚・スタンドライト1SET・電源1SETは寸法未記載のため配置未確定です。"
+        : "NEO TOKYO 2コマ・Plan A・追加レンタル机の基準構成から変更されています。標準レイアウトを置き直すか、変更根拠を備考へ記録してください。"
+    });
+  }
   if (isImfEgfPreset()) {
     const preset = presets[state.preset];
     const presetOk = state.booth.width === preset.width && state.booth.depth === preset.depth && state.booth.wallHeight === preset.wallHeight;
@@ -2510,6 +2755,9 @@ function renderSubmissionSummary() {
   $("fixtureSummaryBody").innerHTML = groups.size
     ? [...groups.values()].map(({ item, count }) => `<tr><td>${escapeHtml(item.masterId || "未登録")}<br>${escapeHtml(item.label)}</td><td>${escapeHtml(itemSizeLabel(item))}</td><td>${count}</td></tr>`).join("")
     : '<tr><td colspan="3">什器・備品なし</td></tr>';
+  if (state.preset === "neotokyo") {
+    $("fixtureSummaryBody").insertAdjacentHTML("beforeend", '<tr><td>NEO Plan A 椅子</td><td>外形寸法未記載・配置未確定</td><td>4</td></tr>');
+  }
 
   const powerGroups = new Map();
   currentItems.filter((item) => ["power", "powerstrip", "device", "spotlight"].includes(item.type)).forEach((item) => {
@@ -2521,6 +2769,10 @@ function renderSubmissionSummary() {
   $("powerSummaryBody").innerHTML = powerGroups.size
     ? [...powerGroups.values()].map(({ item, spec, count }) => `<tr><td>${escapeHtml(item.label)}</td><td>${escapeHtml(spec)}</td><td>${count}</td></tr>`).join("")
     : '<tr><td colspan="3">電源・照明なし</td></tr>';
+  if (state.preset === "neotokyo") {
+    if (!powerGroups.size) $("powerSummaryBody").innerHTML = "";
+    $("powerSummaryBody").insertAdjacentHTML("beforeend", '<tr><td>NEO Plan A スタンドライト</td><td>1SET・外形/灯数/消費電力未記載・配置未確定</td><td>1</td></tr><tr><td>NEO Plan A 電源</td><td>1SET・口数/容量/位置未記載・配置未確定</td><td>1</td></tr>');
+  }
   const audit = getElectricalAudit();
   const routeLength = audit.routes.reduce((sum, route) => sum + route.totalLengthMm, 0);
   const circuitSummary = state.powerCircuits.map((circuit) => `${circuit.name}: ${audit.circuitLoads.get(circuit.id) || 0}W/${circuit.capacityW ? `${circuit.capacityW}W` : "容量未登録"}`).join("、");
@@ -2529,7 +2781,9 @@ function renderSubmissionSummary() {
   const wallItems = currentItems.filter((item) => ["wall", "power", "spotlight"].includes(item.type));
   const floorItems = currentItems.filter((item) => !["wall", "power", "spotlight", "zone"].includes(item.type));
   const steps = [
-    `ブース外形 W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm、壁側${sideLabel(state.booth.wallSide)}・通路側${sideLabel(state.booth.aisleSide)}を墨出し確認。`,
+    state.booth.spaceOnly
+      ? `ブース外形 W${state.booth.width} x D${state.booth.depth}mm、装飾高上限H${state.booth.heightLimitMm || "未登録"}mmを墨出し確認。スペース渡しのため壁面は未支給。`
+      : `ブース外形 W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm、壁側${sideLabel(state.booth.wallSide)}・通路側${sideLabel(state.booth.aisleSide)}を墨出し確認。`,
     ...wallItems.map((item) => `${item.label}: X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(getItemVerticalRange(item).center)}mm付近へ取付。`),
     ...floorItems.map((item) => `${item.label}: X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(item.z || 0)}mm、${Domain.normalizeRotationDegrees(item.rotationDeg)}°で配置。`)
   ];
@@ -2538,12 +2792,15 @@ function renderSubmissionSummary() {
     const master = getFixtureMaster(item);
     return !master || master.setupInfo.status !== "registered";
   }).length;
-  $("setupDataWarning").textContent = missingSetup
-    ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。現場設営指示として確定する前に、メーカー組立図と会場施工規定を添付してください。`
+  $("setupDataWarning").textContent = state.preset === "neotokyo"
+    ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。Plan Aの椅子4脚・スタンドライト1SET・電源1SETは外形/位置/電気仕様が資料にないため、平面・3Dへ未配置です。事務局の最終レイアウトと備品仕様を入手後に確定してください。`
+    : missingSetup
+      ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。現場設営指示として確定する前に、メーカー組立図と会場施工規定を添付してください。`
     : "全配置物にマスター設営情報が登録されています。";
   renderVisibilitySummary();
   renderScenarioSummary();
   renderSpaceSummary();
+  renderInventorySummary();
 }
 
 function renderVisibilitySummary() {
@@ -2584,6 +2841,26 @@ function renderSpaceSummary() {
     : '<tr><td colspan="5">現在の状態に有効な用途領域なし</td></tr>';
   const analysis = audit.operationalAnalysis;
   $("spaceSummaryNote").textContent = `${operationModeLabel(state.operationMode)}｜ブース${formatSquareMetres(analysis.boothAreaMm2)}㎡、障害物${formatSquareMetres(analysis.occupiedAreaMm2)}㎡、通路側から到達可能${formatSquareMetres(analysis.reachableAreaMm2)}㎡、デッドスペース候補${formatSquareMetres(analysis.deadAreaMm2)}㎡。90度矩形の全境界で分割したmm²集計です。スタッフ起点自体の通路到達性も検査します。斜め形状・扉・段差は別途実測確認してください。`;
+}
+
+function renderInventorySummary() {
+  const audit = inventoryAudit || getInventoryAudit();
+  $("inventorySummaryBody").innerHTML = audit.entries.length
+    ? audit.entries.map((entry) => {
+      const capacity = entry.capacity;
+      const packageSpec = capacity.complete
+        ? `${capacity.totalUnits}点 / ${capacity.unitsPerCarton}点入 / 総${capacity.totalCartons}箱`
+        : `未登録: ${inventoryMissingFieldLabels(capacity.missingFields).join("・")}`;
+      const stack = capacity.complete
+        ? `箱W${capacity.cartonWidthMm} x D${capacity.cartonDepthMm} x H${capacity.cartonHeightMm} / 上限H${capacity.maxStackHeightMm} / ${capacity.layers}段`
+        : "判定不能";
+      const result = capacity.complete
+        ? `${capacity.capacityCartons}箱 / 必要ピーク${capacity.peakCartons}箱${capacity.shortageCartons ? ` / 不足${capacity.shortageCartons}箱` : " / 適合"}`
+        : "判定不能";
+      return `<tr><td>${escapeHtml(entry.item.label)}</td><td>${escapeHtml(packageSpec)}</td><td>${escapeHtml(stack)}</td><td>${escapeHtml(result)}</td></tr>`;
+    }).join("")
+    : '<tr><td colspan="4">現在の状態に有効な在庫予約領域なし</td></tr>';
+  $("inventorySummaryNote").textContent = "平面は箱の90°回転2方向を比較し、積上げは整数段で算出します。必要ピーク箱数は総箱数を（補充回数+1）で均等分割した計画値です。実際の補充便が均等でない場合は、総商品数へ最大同時保管数を入力してください。耐荷重・消防・避難・荷崩れ防止条件は別途確認が必要です。";
 }
 
 function findOverlapPairs() {
@@ -2764,8 +3041,11 @@ function applyLoadedState(incoming) {
     width: Math.max(500, Domain.finiteNumber(nextBooth.width, fallbackBooth.width)),
     depth: Math.max(500, Domain.finiteNumber(nextBooth.depth, fallbackBooth.depth)),
     wallHeight: Math.max(0, Domain.finiteNumber(nextBooth.wallHeight, fallbackBooth.wallHeight)),
+    heightLimitMm: Math.max(0, Domain.finiteNumber(nextBooth.heightLimitMm, nextBooth.wallHeight || fallbackBooth.wallHeight)),
+    floorLoadKgPerM2: Math.max(0, Domain.finiteNumber(nextBooth.floorLoadKgPerM2, fallbackBooth.floorLoadKgPerM2 || 0)),
     wallSide: sides.includes(nextBooth.wallSide) ? nextBooth.wallSide : "top",
-    aisleSide: sides.includes(nextBooth.aisleSide) ? nextBooth.aisleSide : "bottom"
+    aisleSide: sides.includes(nextBooth.aisleSide) ? nextBooth.aisleSide : "bottom",
+    spaceOnly: nextBooth.spaceOnly === true
   };
   state.items = incoming.items.map((source, index) => ({
     ...source,
@@ -2998,6 +3278,7 @@ function addThreeBoothFloor(scene) {
 }
 
 function addThreeBoothWalls(scene) {
+  if (state.booth.spaceOnly) return;
   ["top", "right", "bottom", "left"].forEach((side) => {
     if (side === state.booth.aisleSide) return;
     const isMain = side === state.booth.wallSide;
@@ -3062,11 +3343,12 @@ function addThreeItem(scene, item) {
 function addThreeSpaceZone(scene, item) {
   const T = window.THREE;
   const color = { contact: 0x188778, staff: 0x6b55a3, inventory: 0x9a6b37 }[item.spaceCategory] || 0x188778;
+  const volumeHeight = item.spaceCategory === "inventory" ? Math.max(0, item.inventoryMaxStackHeightMm || 0) : 0;
   const mesh = new T.Mesh(
-    new T.BoxGeometry(item.width, 8, item.depth),
-    new T.MeshStandardMaterial({ color, transparent: true, opacity: 0.28, roughness: 0.9, metalness: 0, depthWrite: false })
+    new T.BoxGeometry(item.width, volumeHeight || 8, item.depth),
+    new T.MeshStandardMaterial({ color, transparent: true, opacity: volumeHeight ? 0.16 : 0.28, roughness: 0.9, metalness: 0, depthWrite: false, wireframe: volumeHeight > 0 })
   );
-  mesh.position.set(threeWorldX(item.x + item.width / 2), 8, threeWorldZ(item.y + item.depth / 2));
+  mesh.position.set(threeWorldX(item.x + item.width / 2), volumeHeight ? volumeHeight / 2 : 8, threeWorldZ(item.y + item.depth / 2));
   mesh.userData.itemId = item.id;
   mesh.receiveShadow = true;
   mesh.renderOrder = 2;
@@ -3186,7 +3468,10 @@ function syncSelectedMeasurements(item) {
 function syncFixtureMasterInfo(item, master) {
   const wrap = $("fixtureMasterInfo");
   if (item.type === "zone") {
-    wrap.innerHTML = `<strong>用途領域｜${escapeHtml(spaceCategoryLabel(item.spaceCategory))}</strong>床上の計画矩形で、什器ではありません。衝突障害物にはせず、登録W/D、通路側・スタッフ起点からの到達性、重複障害物をmm²で集計します。必要面積は推測せず運用基準を登録してください。`;
+    const inventoryNote = item.spaceCategory === "inventory"
+      ? " 箱は登録した実測W/D/Hだけを使い、平面90°回転2方向と整数積上段を比較します。3Dのワイヤー枠は登録最大積上高であり、箱形状や耐荷重は推測しません。"
+      : "";
+    wrap.innerHTML = `<strong>用途領域｜${escapeHtml(spaceCategoryLabel(item.spaceCategory))}</strong>床上の計画矩形で、什器ではありません。衝突障害物にはせず、登録W/D、通路側・スタッフ起点からの到達性、重複障害物をmm²で集計します。必要面積は推測せず運用基準を登録してください。${escapeHtml(inventoryNote)}`;
     return;
   }
   if (item.type === "scenario") {
@@ -3764,7 +4049,7 @@ function configureThreeCamera(reset) {
   }
   const w = state.booth.width;
   const d = state.booth.depth;
-  const h = state.booth.wallHeight;
+  const h = state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
   const maxSize = Math.max(w, d);
   const side = state.booth.aisleSide;
   const outward = {
@@ -3930,7 +4215,7 @@ function syncThreeSelectionUi() {
       : item?.type === "scenario"
         ? ` / ${operationalCategoryLabel(item.operationalCategory)} / ${activationModeLabel(item.activationMode)} / ${item.dimensionsConfirmed ? "実測済み" : "仮寸法"}`
         : item?.type === "zone"
-          ? ` / ${spaceCategoryLabel(item.spaceCategory)} / 必要${item.requiredAreaMm2 > 0 ? `${formatSquareMetres(item.requiredAreaMm2)}㎡` : "未登録"} / ${activationModeLabel(item.activationMode)}`
+          ? ` / ${spaceCategoryLabel(item.spaceCategory)} / 必要${item.requiredAreaMm2 > 0 ? `${formatSquareMetres(item.requiredAreaMm2)}㎡` : "未登録"}${item.spaceCategory === "inventory" ? ` / 在庫${inventoryAudit?.entries.find((entry) => entry.item.id === item.id)?.capacity.complete ? `${inventoryAudit.entries.find((entry) => entry.item.id === item.id).capacity.capacityCartons}箱容量` : "容量未判定"}` : ""} / ${activationModeLabel(item.activationMode)}`
           : item && item.visibilityRole !== "none" ? ` / ${visibilityRoleLabel(item.visibilityRole)} Z${item.targetViewHeightMm || "未登録"}` : "";
     text.textContent = item
       ? `選択中: ${item.label} / ${itemSizeLabel(item)} / X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(item.z || 0)} / ${Domain.normalizeRotationDegrees(item.rotationDeg)}°${operational}${isItemActive(item) ? "" : " / 現在モードでは非表示"}`
@@ -3945,7 +4230,7 @@ function createIsoProjector(cw, ch) {
   const isoX = 0.75;
   const isoY = 0.34;
   const zScale = 0.42;
-  const wallH = state.booth.wallHeight;
+  const wallH = state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
   const raw = [
     rawIsoPoint(0, 0, 0, isoX, isoY, zScale),
     rawIsoPoint(state.booth.width, 0, 0, isoX, isoY, zScale),
@@ -3984,6 +4269,7 @@ function rawIsoPoint(x, y, z, isoX, isoY, zScale) {
 }
 
 function drawBoothWalls3d(ctx3, iso) {
+  if (state.booth.spaceOnly) return;
   const sides = {
     top: [[0, 0], [state.booth.width, 0]],
     bottom: [[0, state.booth.depth], [state.booth.width, state.booth.depth]],
@@ -4591,9 +4877,13 @@ function buildImagePrompt() {
     "GEOMETRY PRIORITY",
     "Treat the attached 2D plan and every coordinate below as construction constraints, not inspiration. Establish the booth shell and all object volumes first, then add materials, graphics and products. Never improve the composition by moving, rotating, spreading, duplicating or resizing an object.",
     "All dimensions and coordinates below are millimetres.",
-    `Booth shell: interior W${state.booth.width} x D${state.booth.depth}; main wall height H${state.booth.wallHeight}.`,
+    state.booth.spaceOnly
+      ? `Booth shell: exact floor allocation W${state.booth.width} x D${state.booth.depth}; space-only handover. No wall or panel is supplied. Maximum decoration height is H${state.booth.heightLimitMm || "unregistered"}.`
+      : `Booth shell: interior W${state.booth.width} x D${state.booth.depth}; main wall height H${state.booth.wallHeight}.`,
     `Plan coordinate system: origin X0 Y0 is the upper-left/back-left corner. X increases left-to-right. Y increases from the back edge toward the front/depth edge. Vertical height is Z, with floor Z0.`,
-    `Main wall side: ${sideLabel(state.booth.wallSide)} (${sideEnglish(state.booth.wallSide)}). Fully open aisle side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}). The other non-aisle side panels may be H${Math.min(1200, state.booth.wallHeight)} unless the attached layout shows otherwise.`,
+    state.booth.spaceOnly
+      ? `Do not render or infer any back wall, side panel, fascia, light, power outlet or included fixture. Aisle reference side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}).`
+      : `Main wall side: ${sideLabel(state.booth.wallSide)} (${sideEnglish(state.booth.wallSide)}). Fully open aisle side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}). The other non-aisle side panels may be H${Math.min(1200, state.booth.wallHeight)} unless the attached layout shows otherwise.`,
     `The customer-facing front of counters, tables and chairs points toward the ${sideEnglish(state.booth.aisleSide)} aisle.`,
     joint.trim(),
     "",
@@ -4719,7 +5009,8 @@ function buildPromptCameraInstruction() {
   const w = state.booth.width;
   const d = state.booth.depth;
   const maxSize = Math.max(w, d);
-  const z = Math.round(Math.max(state.booth.wallHeight * 1.08, maxSize * 0.46));
+  const shellHeight = state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
+  const z = Math.round(Math.max(shellHeight * 1.08, maxSize * 0.46));
   const cameras = {
     bottom: { x: Math.round(w * 0.78), y: Math.round(d + maxSize * 1.15) },
     top: { x: Math.round(w * 0.22), y: Math.round(-maxSize * 1.15) },
@@ -4727,7 +5018,7 @@ function buildPromptCameraInstruction() {
     right: { x: Math.round(w + maxSize * 1.15), y: Math.round(d * 0.22) }
   };
   const camera = cameras[state.booth.aisleSide] || cameras.bottom;
-  return `Camera is outside the ${sideEnglish(state.booth.aisleSide)} aisle, approximately plan X${camera.x} Y${camera.y} at Z${z}, looking toward target X${Math.round(w / 2)} Y${Math.round(d / 2)} Z${Math.round(Math.min(state.booth.wallHeight * 0.38, 900))}. Use an elevated front three-quarter viewpoint that clearly shows the floor plan and the main wall.`;
+  return `Camera is outside the ${sideEnglish(state.booth.aisleSide)} aisle, approximately plan X${camera.x} Y${camera.y} at Z${z}, looking toward target X${Math.round(w / 2)} Y${Math.round(d / 2)} Z${Math.round(Math.min(shellHeight * 0.38, 900))}. Use an elevated front three-quarter viewpoint that clearly shows the floor plan${state.booth.spaceOnly ? " without inventing walls" : " and the main wall"}.`;
 }
 
 function buildPromptCountSummary() {
@@ -4746,8 +5037,9 @@ function sideEnglish(side) {
 
 function buildBoothSpecification() {
   const currentSpaceAudit = spaceAudit || getSpaceAudit();
+  const currentInventoryAudit = inventoryAudit || getInventoryAudit();
   return {
-    schema: "booth-render-spec-v6",
+    schema: "booth-render-spec-v7",
     units: "mm",
     event: state.eventName,
     operationMode: state.operationMode,
@@ -4755,8 +5047,12 @@ function buildBoothSpecification() {
       width: state.booth.width,
       depth: state.booth.depth,
       wallHeight: state.booth.wallHeight,
+      heightLimitMm: state.booth.heightLimitMm || null,
+      floorLoadKgPerM2: state.booth.floorLoadKgPerM2 || null,
       wallSide: state.booth.wallSide,
-      aisleSide: state.booth.aisleSide
+      aisleSide: state.booth.aisleSide,
+      handover: state.booth.spaceOnly ? "space-only" : "wall-shell",
+      spaceOnly: state.booth.spaceOnly === true
     },
     coordinateSystem: { origin: "upper-left/back-left", x: "left-to-right", y: "back-to-aisle", z: "floor-up" },
     cameraInstruction: buildPromptCameraInstruction(),
@@ -4820,6 +5116,32 @@ function buildBoothSpecification() {
         requiredAreaMm2: entry.item.requiredAreaMm2 || null
       }))
     },
+    inventoryAnalysis: {
+      method: "axis-aligned-carton-packing-two-plan-orientations-integer-stack-layers",
+      replenishmentAssumption: "total cartons divided evenly across initial stock plus replenishment count",
+      zones: currentInventoryAudit.entries.map((entry) => ({
+        objectId: entry.item.id,
+        dimensionsConfirmed: entry.item.inventoryDimensionsConfirmed === true,
+        complete: entry.capacity.complete,
+        missingFields: entry.capacity.missingFields,
+        totalUnits: entry.capacity.totalUnits,
+        unitsPerCarton: entry.capacity.unitsPerCarton,
+        replenishmentCount: entry.capacity.replenishmentCount,
+        cartonDimensionsMm: {
+          width: entry.capacity.cartonWidthMm,
+          depth: entry.capacity.cartonDepthMm,
+          height: entry.capacity.cartonHeightMm
+        },
+        maxStackHeightMm: entry.capacity.maxStackHeightMm,
+        totalCartons: entry.capacity.totalCartons,
+        peakCartons: entry.capacity.peakCartons,
+        cartonsPerLayer: entry.capacity.cartonsPerLayer,
+        layers: entry.capacity.layers,
+        capacityCartons: entry.capacity.capacityCartons,
+        shortageCartons: entry.capacity.shortageCartons,
+        orientation: entry.capacity.orientation?.name || null
+      }))
+    },
     objects: state.items.map((item, index) => {
       const vertical = getItemVerticalRange(item);
       return {
@@ -4853,6 +5175,16 @@ function buildBoothSpecification() {
         dimensionsConfirmed: item.type === "scenario" ? item.dimensionsConfirmed === true : null,
         spaceCategory: item.type === "zone" ? item.spaceCategory : null,
         requiredAreaMm2: item.type === "zone" ? item.requiredAreaMm2 || null : null,
+        inventoryPlan: item.type === "zone" && item.spaceCategory === "inventory" ? {
+          totalUnits: item.inventoryTotalUnits || null,
+          unitsPerCarton: item.inventoryUnitsPerCarton || null,
+          replenishmentCount: item.inventoryReplenishmentCount || 0,
+          cartonWidthMm: item.inventoryCartonWidthMm || null,
+          cartonDepthMm: item.inventoryCartonDepthMm || null,
+          cartonHeightMm: item.inventoryCartonHeightMm || null,
+          maxStackHeightMm: item.inventoryMaxStackHeightMm || null,
+          dimensionsConfirmed: item.inventoryDimensionsConfirmed === true
+        } : null,
         visibilityRole: canBeVisibilityTarget(item) ? item.visibilityRole : null,
         targetViewHeightMm: canBeVisibilityTarget(item) ? item.targetViewHeightMm || null : null,
         targetFrontSide: canBeVisibilityTarget(item) ? item.targetFrontSide || null : null,

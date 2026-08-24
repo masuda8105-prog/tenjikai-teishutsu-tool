@@ -34,7 +34,7 @@ test("壁距離とはみ出しをmmで判定する", () => {
   assert.equal(domain.isOutOfBounds({ x: 2200, y: 200, width: 900, depth: 600 }, booth), true);
 });
 
-test("v7保存データと旧形式を可逆に読み込む", () => {
+test("v8保存データと旧形式を可逆に読み込む", () => {
   const state = {
     booth: { width: 3000, depth: 3000 },
     powerCircuits: [{ id: "c1", name: "回路A", voltageV: 100, capacityW: 1500 }],
@@ -42,13 +42,57 @@ test("v7保存データと旧形式を可逆に読み込む", () => {
   };
   const document = domain.createProjectDocument(state);
   const parsed = domain.parseProjectDocument(JSON.stringify(document));
-  assert.equal(parsed.version, 7);
+  assert.equal(parsed.version, 8);
   assert.equal(parsed.legacy, false);
   assert.deepEqual(parsed.state, state);
 
   const legacy = domain.parseProjectDocument(JSON.stringify(state));
   assert.equal(legacy.legacy, true);
   assert.deepEqual(legacy.state, state);
+});
+
+test("在庫箱は平面90度回転を比較し、補充回数込みの最大同時箱数と容量を算出する", () => {
+  const result = domain.calculateInventoryCapacity({
+    zoneWidthMm: 1200,
+    zoneDepthMm: 800,
+    totalUnits: 640,
+    unitsPerCarton: 10,
+    replenishmentCount: 1,
+    cartonWidthMm: 400,
+    cartonDepthMm: 300,
+    cartonHeightMm: 250,
+    maxStackHeightMm: 1000
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.orientation.name, "rotated");
+  assert.equal(result.cartonsPerLayer, 8);
+  assert.equal(result.layers, 4);
+  assert.equal(result.capacityCartons, 32);
+  assert.equal(result.totalCartons, 64);
+  assert.equal(result.peakCartons, 32);
+  assert.equal(result.shortageCartons, 0);
+});
+
+test("在庫容量不足と未登録入力を合格扱いにしない", () => {
+  const shortage = domain.calculateInventoryCapacity({
+    zoneWidthMm: 1200,
+    zoneDepthMm: 800,
+    totalUnits: 800,
+    unitsPerCarton: 10,
+    replenishmentCount: 0,
+    cartonWidthMm: 400,
+    cartonDepthMm: 300,
+    cartonHeightMm: 250,
+    maxStackHeightMm: 1000
+  });
+  assert.equal(shortage.capacityCartons, 32);
+  assert.equal(shortage.peakCartons, 80);
+  assert.equal(shortage.shortageCartons, 48);
+
+  const missing = domain.calculateInventoryCapacity({ zoneWidthMm: 1200, zoneDepthMm: 800 });
+  assert.equal(missing.complete, false);
+  assert.ok(missing.missingFields.includes("cartonWidthMm"));
+  assert.equal(missing.capacityCartons, null);
 });
 
 test("設計・営業中・混雑時の有効物品を互換性を保って判定する", () => {

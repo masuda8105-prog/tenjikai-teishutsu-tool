@@ -124,13 +124,28 @@ textarea { resize: vertical; }
 }
 
 .scenario-fields,
-.space-fields {
+.space-fields,
+.inventory-fields {
   display: grid;
   gap: 8px;
   padding: 10px;
   border: 1px solid #dfd4c6;
   border-radius: 7px;
   background: #fbf7f0;
+}
+
+.inventory-fields {
+  border-color: #d5bd97;
+  background: #fffaf1;
+}
+
+.inventory-result {
+  padding: 8px 9px;
+  border-left: 4px solid #9a6b37;
+  background: #fff;
+  color: #5b442b;
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 button {

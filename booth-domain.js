@@ -6,7 +6,7 @@
   "use strict";
 
   const PROJECT_SCHEMA = "exhibition-booth-project";
-  const PROJECT_VERSION = 7;
+  const PROJECT_VERSION = 8;
   const VALID_GRID_SIZES = Object.freeze([10, 50, 100]);
   const VALID_OPERATION_MODES = Object.freeze(["design", "operating", "crowded"]);
 
@@ -370,6 +370,85 @@
     };
   }
 
+  function calculateInventoryCapacity(options) {
+    const source = options || {};
+    const values = {
+      zoneWidthMm: Math.max(0, finiteNumber(source.zoneWidthMm, 0)),
+      zoneDepthMm: Math.max(0, finiteNumber(source.zoneDepthMm, 0)),
+      totalUnits: Math.max(0, Math.ceil(finiteNumber(source.totalUnits, 0))),
+      unitsPerCarton: Math.max(0, Math.ceil(finiteNumber(source.unitsPerCarton, 0))),
+      replenishmentCount: Math.max(0, Math.floor(finiteNumber(source.replenishmentCount, 0))),
+      cartonWidthMm: Math.max(0, finiteNumber(source.cartonWidthMm, 0)),
+      cartonDepthMm: Math.max(0, finiteNumber(source.cartonDepthMm, 0)),
+      cartonHeightMm: Math.max(0, finiteNumber(source.cartonHeightMm, 0)),
+      maxStackHeightMm: Math.max(0, finiteNumber(source.maxStackHeightMm, 0))
+    };
+    const requiredPositive = [
+      "zoneWidthMm", "zoneDepthMm", "totalUnits", "unitsPerCarton",
+      "cartonWidthMm", "cartonDepthMm", "cartonHeightMm", "maxStackHeightMm"
+    ];
+    const missingFields = requiredPositive.filter((key) => !(values[key] > 0));
+    if (missingFields.length) {
+      return {
+        ...values,
+        complete: false,
+        missingFields,
+        totalCartons: null,
+        peakCartons: null,
+        cartonsPerLayer: null,
+        layers: null,
+        capacityCartons: null,
+        capacityUnits: null,
+        shortageCartons: null,
+        shortageUnits: null,
+        utilizationRatio: null,
+        orientation: null
+      };
+    }
+
+    const orientations = [
+      {
+        name: "normal",
+        cartonWidthMm: values.cartonWidthMm,
+        cartonDepthMm: values.cartonDepthMm,
+        columns: Math.floor(values.zoneWidthMm / values.cartonWidthMm),
+        rows: Math.floor(values.zoneDepthMm / values.cartonDepthMm)
+      },
+      {
+        name: "rotated",
+        cartonWidthMm: values.cartonDepthMm,
+        cartonDepthMm: values.cartonWidthMm,
+        columns: Math.floor(values.zoneWidthMm / values.cartonDepthMm),
+        rows: Math.floor(values.zoneDepthMm / values.cartonWidthMm)
+      }
+    ].map((entry) => ({ ...entry, cartonsPerLayer: entry.columns * entry.rows }));
+    const orientation = orientations.sort((a, b) => b.cartonsPerLayer - a.cartonsPerLayer)[0];
+    const layers = Math.floor(values.maxStackHeightMm / values.cartonHeightMm);
+    const capacityCartons = orientation.cartonsPerLayer * layers;
+    const totalCartons = Math.ceil(values.totalUnits / values.unitsPerCarton);
+    const peakCartons = Math.ceil(totalCartons / (values.replenishmentCount + 1));
+    const peakUnits = Math.ceil(values.totalUnits / (values.replenishmentCount + 1));
+    const capacityUnits = capacityCartons * values.unitsPerCarton;
+    const shortageCartons = Math.max(0, peakCartons - capacityCartons);
+    const shortageUnits = Math.max(0, peakUnits - capacityUnits);
+    return {
+      ...values,
+      complete: true,
+      missingFields: [],
+      totalCartons,
+      peakCartons,
+      peakUnits,
+      cartonsPerLayer: orientation.cartonsPerLayer,
+      layers,
+      capacityCartons,
+      capacityUnits,
+      shortageCartons,
+      shortageUnits,
+      utilizationRatio: capacityCartons > 0 ? peakCartons / capacityCartons : null,
+      orientation
+    };
+  }
+
   function createProjectDocument(state) {
     return {
       schema: PROJECT_SCHEMA,
@@ -419,6 +498,7 @@
     expandRectangle,
     findGridPath,
     analyzeOrthogonalSpace,
+    calculateInventoryCapacity,
     createProjectDocument,
     parseProjectDocument
   });
