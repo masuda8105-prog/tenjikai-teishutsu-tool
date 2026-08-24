@@ -34,7 +34,7 @@ test("壁距離とはみ出しをmmで判定する", () => {
   assert.equal(domain.isOutOfBounds({ x: 2200, y: 200, width: 900, depth: 600 }, booth), true);
 });
 
-test("v8保存データと旧形式を可逆に読み込む", () => {
+test("v9保存データと旧形式を可逆に読み込む", () => {
   const state = {
     booth: { width: 3000, depth: 3000 },
     powerCircuits: [{ id: "c1", name: "回路A", voltageV: 100, capacityW: 1500 }],
@@ -42,13 +42,40 @@ test("v8保存データと旧形式を可逆に読み込む", () => {
   };
   const document = domain.createProjectDocument(state);
   const parsed = domain.parseProjectDocument(JSON.stringify(document));
-  assert.equal(parsed.version, 8);
+  assert.equal(parsed.version, 9);
   assert.equal(parsed.legacy, false);
   assert.deepEqual(parsed.state, state);
 
   const legacy = domain.parseProjectDocument(JSON.stringify(state));
   assert.equal(legacy.legacy, true);
   assert.deepEqual(legacy.state, state);
+});
+
+test("机上物を支持面中央へ実寸配置し、支持面のZを加算する", () => {
+  const table = { x: 1000, y: 500, z: 0, width: 1500, depth: 750, height: 820 };
+  const machine = { width: 240, depth: 370, height: 440 };
+  const placement = domain.calculateSupportPlacement(machine, table);
+  assert.equal(placement.complete, true);
+  assert.equal(placement.fits, true);
+  assert.equal(placement.x, 1630);
+  assert.equal(placement.y, 690);
+  assert.equal(placement.z, 820);
+  assert.equal(placement.maximumOverhangMm, 0);
+});
+
+test("メーカー指定のA0002＋A0007組合せだけ、実測外形の張り出しと公称設置高を保持する", () => {
+  const stand = { x: 200, y: 300, z: 830, width: 250, depth: 315, height: 100 };
+  const machine = { width: 240, depth: 370, height: 440 };
+  const rejected = domain.calculateSupportPlacement(machine, stand, { zOffsetMm: 90 });
+  assert.equal(rejected.fits, false);
+  assert.equal(rejected.maximumOverhangMm, 27.5);
+
+  const approved = domain.calculateSupportPlacement(machine, stand, { zOffsetMm: 90, allowOverhang: true });
+  assert.equal(approved.fits, true);
+  assert.equal(approved.x, 205);
+  assert.equal(approved.y, 272.5);
+  assert.equal(approved.z, 920);
+  assert.equal(approved.z + machine.height, 1360);
 });
 
 test("在庫箱は平面90度回転を比較し、補充回数込みの最大同時箱数と容量を算出する", () => {

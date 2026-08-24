@@ -242,6 +242,42 @@ input:disabled {
   font-weight: 700;
 }
 
+.surface-placement-fields {
+  margin: 0 0 12px;
+  padding: 10px;
+  border: 1px solid #8dc9c3;
+  border-radius: 7px;
+  background: #f1fbf9;
+}
+
+.surface-placement-fields > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #075f58;
+}
+
+.surface-placement-info {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 5px;
+  background: #fff;
+  color: #244947;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+#itemTable tr[role="button"] {
+  cursor: pointer;
+}
+
+#itemTable tr[role="button"]:hover,
+#itemTable tr[role="button"]:focus-visible,
+#itemTable tr.selected-row {
+  outline: 2px solid #168b82;
+  outline-offset: -2px;
+  background: #eefaf8;
+}
+
 .circuit-help { margin: 0 0 10px; }
 
 .power-circuit-editor {

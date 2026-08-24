@@ -6,7 +6,7 @@
   "use strict";
 
   const PROJECT_SCHEMA = "exhibition-booth-project";
-  const PROJECT_VERSION = 8;
+  const PROJECT_VERSION = 9;
   const VALID_GRID_SIZES = Object.freeze([10, 50, 100]);
   const VALID_OPERATION_MODES = Object.freeze(["design", "operating", "crowded"]);
 
@@ -75,6 +75,39 @@
     return {
       x: finiteNumber(item.x) + finiteNumber(item.width) / 2,
       y: finiteNumber(item.y) + finiteNumber(item.depth) / 2
+    };
+  }
+
+  function calculateSupportPlacement(item, support, options = {}) {
+    const itemWidth = Math.max(0, finiteNumber(item?.width));
+    const itemDepth = Math.max(0, finiteNumber(item?.depth));
+    const supportWidth = Math.max(0, finiteNumber(support?.width));
+    const supportDepth = Math.max(0, finiteNumber(support?.depth));
+    const centeredOffsetX = (supportWidth - itemWidth) / 2;
+    const centeredOffsetY = (supportDepth - itemDepth) / 2;
+    const offsetX = finiteNumber(options.offsetX, centeredOffsetX);
+    const offsetY = finiteNumber(options.offsetY, centeredOffsetY);
+    const zOffsetMm = Math.max(0, finiteNumber(options.zOffsetMm, Math.max(0, finiteNumber(support?.height))));
+    const overhang = {
+      left: Math.max(0, -offsetX),
+      right: Math.max(0, offsetX + itemWidth - supportWidth),
+      top: Math.max(0, -offsetY),
+      bottom: Math.max(0, offsetY + itemDepth - supportDepth)
+    };
+    const maximumOverhangMm = Math.max(...Object.values(overhang));
+    const allowOverhang = options.allowOverhang === true;
+    return {
+      complete: itemWidth > 0 && itemDepth > 0 && supportWidth > 0 && supportDepth > 0,
+      fits: itemWidth > 0 && itemDepth > 0 && supportWidth > 0 && supportDepth > 0 && (allowOverhang || maximumOverhangMm === 0),
+      allowOverhang,
+      offsetX,
+      offsetY,
+      zOffsetMm,
+      x: finiteNumber(support?.x) + offsetX,
+      y: finiteNumber(support?.y) + offsetY,
+      z: Math.max(0, finiteNumber(support?.z)) + zOffsetMm,
+      overhang,
+      maximumOverhangMm
     };
   }
 
@@ -488,6 +521,7 @@
     wallClearances,
     isOutOfBounds,
     rectangleCenter,
+    calculateSupportPlacement,
     orthogonalRoute,
     polylineLength,
     segmentIntersectsRectangle,

@@ -1,8 +1,8 @@
 const Domain = window.BoothDomain;
 if (!Domain) throw new Error("BoothDomain failed to load");
 
-const AUTOSAVE_KEY = "booth-layout-tool-v8";
-const PREVIOUS_AUTOSAVE_KEYS = ["booth-layout-tool-v7", "booth-layout-tool-v6", "booth-layout-tool-v5", "booth-layout-tool-v4", "booth-layout-tool-v3", "booth-layout-tool"];
+const AUTOSAVE_KEY = "booth-layout-tool-v9";
+const PREVIOUS_AUTOSAVE_KEYS = ["booth-layout-tool-v8", "booth-layout-tool-v7", "booth-layout-tool-v6", "booth-layout-tool-v5", "booth-layout-tool-v4", "booth-layout-tool-v3", "booth-layout-tool"];
 
 const presets = {
   wof: { label: "WOF 東京 2コマ", eventName: "WOF 東京 2コマ", width: 5940, depth: 2500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
@@ -31,6 +31,9 @@ const rawFixtureMasters = [
   { type: "table", label: "NEO Plan A 商品展示テーブル W1500xD750xH830", width: 1500, depth: 750, height: 830, color: "#f2b84b", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
   { type: "table", label: "NEO Plan A 商談テーブル W1000xD600xH730", width: 1000, depth: 600, height: 730, color: "#e6a93e", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
   { type: "table", label: "NEO レンタル展示テーブルD W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#e6b65b", material: "ツヤありホワイト（出展マニュアル記載）", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.21 / レンタル備品D" },
+  { type: "product", productCategory: "gacha-machine", productCode: "A0002", masterId: "AMUZU-A0002", label: "ガチャコップ 白 メダル仕様 A0002", width: 240, depth: 370, height: 440, weightKg: 5, color: "#eef1ef", material: "ABS外装、鉄、アクリル、アルミ、塩ビ、ダイキャスト、ポリアセタール樹脂（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ A0002公式商品ページ / 本体サイズW240×D370×H440mm", sourceUrl: "https://www.a-muzu.com/category/GACHA_MACHINE_001/A0002.html", surfacePlaceable: true, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["卓上設置タイプ", "電源不要", "約5kg", "A0007設置時は公式公称高さ約530mmを使用"] } },
+  { type: "product", productCategory: "gacha-stand", productCode: "A0007", masterId: "AMUZU-A0007", label: "ガチャコップ専用 簡易卓上台 白 A0007", width: 250, depth: 315, height: 100, color: "#f6f4ec", material: "紙製（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ A0007公式商品ページ / 組立後W250×D315×H100mm", sourceUrl: "https://www.a-muzu.com/item/A0007.html", surfacePlaceable: true, supportSurface: true, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, productPlacementPositions: [{ itemMasterId: "AMUZU-A0002", zOffsetMm: 90, allowOverhang: true, source: "A0007公式記載のマシン設置時高さ約530mm - A0002本体H440mm" }], setupInfo: { status: "official-source", instructions: ["カプセル受けを含む奥行315mm", "A0002との組合せ時は公称全高約530mm"] } },
+  { type: "product", productCategory: "capsule-recovery-box", productCode: "E1237", masterId: "AMUZU-E1237", label: "簡易カプセル回収ボックス E1237", width: 275, depth: 275, height: 460, color: "#d4a65d", material: "段ボール（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ E1237公式商品ページ / 組立後W275×D275×H460mm", sourceUrl: "https://www.a-muzu.com/item/E1237.html", surfacePlaceable: false, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["回収口直径約85mm", "対応カプセル75mmまで", "床置き運用"] } },
   { type: "table", label: "展示台 W1500xD900", width: 1500, depth: 900, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD600", width: 1800, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD900", width: 1800, depth: 900, height: 700, color: "#f2b84b" },
@@ -125,24 +128,26 @@ function masterIdSuffix(item) {
 
 function normalizeFixtureMaster(item, index) {
   const code = item.boldaCode || (item.type === "bolda" ? Object.keys(boldaDetails).find((candidate) => `${item.label} ${item.image}`.includes(candidate)) : "");
-  const masterId = item.type === "bolda"
+  const masterId = item.masterId || (item.type === "bolda"
     ? `BOLDA-${code || `UNVERIFIED-${index + 1}`}-${masterIdSuffix(item)}`
-    : `STD-${String(index + 1).padStart(3, "0")}-${item.type.toUpperCase()}`;
+    : `STD-${String(index + 1).padStart(3, "0")}-${item.type.toUpperCase()}`);
   const printFaces = [item.frontTexture, ...(item.tierTextures || []), item.riserTexture].filter(Boolean);
   return Object.freeze({
     ...item,
     masterId,
     material: item.material || (item.type === "bolda" ? "材質の確定情報は未登録（提供印刷フォーマット参照）" : "未登録"),
     shape2d: Object.freeze({ kind: "rectangle", width: item.width, depth: item.depth }),
-    model3d: Object.freeze({
+    model3d: Object.freeze(item.model3d || {
       kind: item.type === "bolda" ? "parametric-reference" : "parametric-generic",
       accuracy: item.type === "bolda" ? "verified-envelope/reference-based-detail" : "generic"
     }),
     dimensionLocked: item.dimensionLocked === true || item.type === "bolda",
     dimensionSource: item.dimensionSource || (item.type === "bolda" ? (boldaDimensionSources[code] || "提供資料内に寸法根拠を特定できていません") : "未登録"),
-    productPlacementPositions: Object.freeze([]),
+    productPlacementPositions: Object.freeze((item.productPlacementPositions || []).map((position) => Object.freeze({ ...position }))),
     popPlacementPositions: Object.freeze(printFaces.map((source, faceIndex) => ({ faceIndex, source }))),
-    setupInfo: Object.freeze({ status: "not-registered", instructions: Object.freeze([]) })
+    setupInfo: Object.freeze(item.setupInfo
+      ? { ...item.setupInfo, instructions: Object.freeze([...(item.setupInfo.instructions || [])]) }
+      : { status: "not-registered", instructions: Object.freeze([]) })
   });
 }
 
@@ -266,6 +271,7 @@ function paletteVisual(item) {
 }
 
 function buildPaletteSvg(item) {
+  if (item.type === "product") return buildProductPaletteSvg(item);
   if (item.type === "spotlight" || item.type === "power") return buildUtilityPaletteSvg(item);
   if (item.type === "wall") return buildSignPaletteSvg(item);
   if (item.type === "chair") return buildChairPaletteSvg(item);
@@ -457,6 +463,9 @@ function bindInputs() {
   $("rotateBtn").addEventListener("click", rotateSelected);
   $("duplicateBtn").addEventListener("click", duplicateSelected);
   $("resetMasterDimensionsBtn").addEventListener("click", resetSelectedToMasterDimensions);
+  $("placeOnSupportBtn").addEventListener("click", placeSelectedOnSupport);
+  $("detachFromSupportBtn").addEventListener("click", detachSelectedFromSupport);
+  $("itemSupportId").addEventListener("change", syncSurfacePlacementPreview);
   $("deleteBtn").addEventListener("click", deleteSelected);
   $("undoBtn").addEventListener("click", undoDesignChange);
   $("redoBtn").addEventListener("click", redoDesignChange);
@@ -588,6 +597,19 @@ function syncBoothInputs() {
   $("aisleSide").value = state.booth.aisleSide;
   syncGridInputs();
   syncJointControls();
+}
+
+function buildProductPaletteSvg(item) {
+  const code = escapeHtml(item.productCode || "商品");
+  let shape = "";
+  if (item.productCategory === "gacha-machine") {
+    shape = '<rect x="39" y="18" width="42" height="72" rx="4" fill="#f4f5f2" stroke="#6f7979" stroke-width="2"/><rect x="44" y="22" width="32" height="34" rx="5" fill="#d8f1f4" stroke="#6f7979" stroke-width="2"/><circle cx="60" cy="70" r="6" fill="#c7ccd0" stroke="#5b6264" stroke-width="2"/><rect x="47" y="79" width="26" height="7" rx="2" fill="#d5d9da"/>';
+  } else if (item.productCategory === "gacha-stand") {
+    shape = '<polygon points="32,52 78,44 89,57 43,66" fill="#fff" stroke="#7c8585" stroke-width="2"/><polygon points="43,66 89,57 89,76 43,85" fill="#f1efe8" stroke="#7c8585" stroke-width="2"/><path d="M32 52 L43 66 L43 85 L32 71 Z" fill="#e5e3dc" stroke="#7c8585" stroke-width="2"/>';
+  } else {
+    shape = '<rect x="38" y="24" width="44" height="64" fill="#d4a65d" stroke="#75542a" stroke-width="2"/><circle cx="60" cy="43" r="10" fill="#f7f1e5" stroke="#75542a" stroke-width="2"/><path d="M44 66 H76" stroke="#946a32" stroke-width="2"/>';
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="112" viewBox="0 0 120 112" role="img" aria-label="${escapeHtml(item.label)}"><rect x="10" y="10" width="100" height="86" rx="5" fill="#f8faf9"/>${shape}<text x="60" y="107" text-anchor="middle" font-size="10" font-weight="700" fill="#172225">${code} W${item.width} D${item.depth} H${item.height}</text></svg>`;
 }
 
 function syncGridInputs() {
@@ -742,6 +764,16 @@ function addItem(template) {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     type: template.type,
     masterId: template.masterId,
+    productCategory: template.productCategory || "",
+    productCode: template.productCode || "",
+    sourceUrl: template.sourceUrl || "",
+    weightKg: Math.max(0, Domain.finiteNumber(template.weightKg, 0)),
+    surfacePlaceable: template.surfacePlaceable === true,
+    supportSurface: template.supportSurface === true,
+    supportItemId: "",
+    supportOffsetX: 0,
+    supportOffsetY: 0,
+    supportZOffsetMm: 0,
     label: template.label,
     width: template.width,
     depth: template.depth,
@@ -892,6 +924,16 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
   return {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     type,
+    productCategory: "",
+    productCode: "",
+    sourceUrl: "",
+    weightKg: 0,
+    surfacePlaceable: false,
+    supportSurface: false,
+    supportItemId: "",
+    supportOffsetX: 0,
+    supportOffsetY: 0,
+    supportZOffsetMm: 0,
     label,
     width,
     depth,
@@ -963,6 +1005,145 @@ function getFixtureMaster(item) {
     || null;
 }
 
+function supportChildren(itemOrId) {
+  const id = typeof itemOrId === "string" ? itemOrId : itemOrId?.id;
+  return state.items.filter((item) => item.supportItemId === id);
+}
+
+function createsSupportCycle(itemId, supportId) {
+  let currentId = supportId;
+  const visited = new Set();
+  while (currentId && !visited.has(currentId)) {
+    if (currentId === itemId) return true;
+    visited.add(currentId);
+    currentId = state.items.find((item) => item.id === currentId)?.supportItemId || "";
+  }
+  return false;
+}
+
+function getSupportPlacementDefinition(item, support) {
+  if (!item || !support || item.id === support.id || createsSupportCycle(item.id, support.id)) return null;
+  const supportMaster = getFixtureMaster(support);
+  const exactPosition = supportMaster?.productPlacementPositions?.find((position) => position.itemMasterId === item.masterId);
+  if (exactPosition) {
+    return {
+      kind: "official-fixed",
+      source: exactPosition.source || supportMaster.dimensionSource,
+      placement: Domain.calculateSupportPlacement(item, support, {
+        zOffsetMm: exactPosition.zOffsetMm,
+        allowOverhang: exactPosition.allowOverhang === true
+      })
+    };
+  }
+  if (support.type !== "table") return null;
+  return {
+    kind: "table-surface",
+    source: `${support.label}の登録天板W/D/H`,
+    placement: Domain.calculateSupportPlacement(item, support)
+  };
+}
+
+function availableSupportSurfaces(item) {
+  if (!item?.surfacePlaceable) return [];
+  return state.items.filter((support) => getSupportPlacementDefinition(item, support)?.placement.fits);
+}
+
+function detachItemFromSupport(item, clampToBooth = true, syncNow = true) {
+  if (!item) return;
+  item.supportItemId = "";
+  item.supportOffsetX = 0;
+  item.supportOffsetY = 0;
+  item.supportZOffsetMm = 0;
+  item.z = 0;
+  if (clampToBooth) clampItem(item);
+  if (syncNow) syncSupportedItems();
+}
+
+function syncSupportedItems() {
+  const byId = new Map(state.items.map((item) => [item.id, item]));
+  state.items.forEach((item) => {
+    if (!item.supportItemId) return;
+    const support = byId.get(item.supportItemId);
+    if (!support || createsSupportCycle(item.id, support.id)) detachItemFromSupport(item, false, false);
+  });
+  for (let pass = 0; pass < state.items.length; pass += 1) {
+    let changed = false;
+    state.items.forEach((item) => {
+      if (!item.supportItemId) return;
+      const support = byId.get(item.supportItemId);
+      if (!support) return;
+      const definition = getSupportPlacementDefinition(item, support);
+      if (!definition?.placement.fits) {
+        detachItemFromSupport(item, false, false);
+        changed = true;
+        return;
+      }
+      if (definition.kind === "official-fixed") {
+        item.supportOffsetX = definition.placement.offsetX;
+        item.supportOffsetY = definition.placement.offsetY;
+        item.supportZOffsetMm = definition.placement.zOffsetMm;
+      } else {
+        item.supportOffsetX = Math.max(0, Math.min(support.width - item.width, Domain.finiteNumber(item.supportOffsetX, definition.placement.offsetX)));
+        item.supportOffsetY = Math.max(0, Math.min(support.depth - item.depth, Domain.finiteNumber(item.supportOffsetY, definition.placement.offsetY)));
+        item.supportZOffsetMm = support.height || defaultItemHeight(support);
+      }
+      const nextX = support.x + item.supportOffsetX;
+      const nextY = support.y + item.supportOffsetY;
+      const nextZ = (support.z || 0) + item.supportZOffsetMm;
+      if (item.x !== nextX || item.y !== nextY || item.z !== nextZ) changed = true;
+      item.x = nextX;
+      item.y = nextY;
+      item.z = nextZ;
+    });
+    if (!changed) break;
+  }
+}
+
+function moveItemTo(item, x, y) {
+  if (!item) return;
+  if (item.supportItemId) {
+    const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+    const definition = getSupportPlacementDefinition(item, support);
+    if (!support || !definition?.placement.fits) {
+      detachItemFromSupport(item, false, false);
+      item.x = x;
+      item.y = y;
+      clampItem(item);
+    } else if (definition.kind === "table-surface") {
+      item.supportOffsetX = Math.max(0, Math.min(support.width - item.width, x - support.x));
+      item.supportOffsetY = Math.max(0, Math.min(support.depth - item.depth, y - support.y));
+    }
+  } else {
+    item.x = x;
+    item.y = y;
+    clampItem(item);
+  }
+  syncSupportedItems();
+}
+
+function placeSelectedOnSupport() {
+  const item = selectedItem();
+  const support = state.items.find((candidate) => candidate.id === $("itemSupportId").value);
+  const definition = getSupportPlacementDefinition(item, support);
+  if (!item || !support || !definition?.placement.fits) {
+    alert("選択した台には実寸のまま載せられません。台のW/Dまたは組合せを確認してください。");
+    return;
+  }
+  item.supportItemId = support.id;
+  item.supportOffsetX = definition.placement.offsetX;
+  item.supportOffsetY = definition.placement.offsetY;
+  item.supportZOffsetMm = definition.placement.zOffsetMm;
+  syncSupportedItems();
+  render();
+}
+
+function detachSelectedFromSupport() {
+  const item = selectedItem();
+  if (!item?.supportItemId) return;
+  detachItemFromSupport(item);
+  render();
+}
+
 function expectedMasterPlanDimensions(item, master) {
   const oddTurn = itemRotationQuarterTurns(item) % 2 === 1;
   return oddTurn
@@ -1002,6 +1183,8 @@ function updateSelectedFromForm() {
   const item = selectedItem();
   if (!item) return;
   const master = getFixtureMaster(item);
+  const desiredX = Number($("itemX").value) || 0;
+  const desiredY = Number($("itemY").value) || 0;
   item.label = $("itemLabel").value;
   if (!master?.dimensionLocked) {
     item.width = Math.max(50, Number($("itemWidth").value) || 50);
@@ -1009,9 +1192,7 @@ function updateSelectedFromForm() {
     const heightInput = $("itemHeight").value.trim();
     item.height = heightInput ? Math.max(20, Number(heightInput) || 20) : 0;
   }
-  item.x = Number($("itemX").value) || 0;
-  item.y = Number($("itemY").value) || 0;
-  item.z = Math.max(0, Number($("itemZ").value) || 0);
+  if (!item.supportItemId) item.z = Math.max(0, Number($("itemZ").value) || 0);
   if (["spotlight", "device"].includes(item.type)) {
     item.watt = Math.max(0, Number($("itemWatt").value) || 0);
   }
@@ -1047,17 +1228,33 @@ function updateSelectedFromForm() {
     item.targetViewHeightMm = Math.max(0, Number($("itemTargetViewHeight").value) || 0);
     item.targetFrontSide = $("itemTargetFrontSide").value;
   }
-  clampItem(item);
+  moveItemTo(item, desiredX, desiredY);
   render();
 }
 
 function rotateSelected() {
   const item = selectedItem();
   if (!item) return;
+  if (supportChildren(item).length) {
+    alert("上に載せた物があるため回転できません。先に机上配置から床へ降ろしてください。");
+    return;
+  }
+  const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+  const currentDefinition = getSupportPlacementDefinition(item, support);
+  if (currentDefinition?.kind === "official-fixed") {
+    alert("メーカー指定の組合せ配置です。向きを変える場合は支持台側を先に回転してください。");
+    return;
+  }
+  const previous = { width: item.width, depth: item.depth, rotationDeg: item.rotationDeg, rotationQuarterTurns: item.rotationQuarterTurns };
   [item.width, item.depth] = [item.depth, item.width];
   item.rotationDeg = Domain.normalizeRotationDegrees((item.rotationDeg || itemRotationQuarterTurns(item) * 90) + 90);
   item.rotationQuarterTurns = item.rotationDeg / 90;
-  clampItem(item);
+  if (support && !getSupportPlacementDefinition(item, support)?.placement.fits) {
+    Object.assign(item, previous);
+    alert("回転後の実寸では選択中の天板に収まりません。");
+    return;
+  }
+  moveItemTo(item, item.x, item.y);
   render();
 }
 
@@ -1079,8 +1276,10 @@ function moveSelectedLayer(direction) {
 
 function deleteSelected() {
   if (!state.selectedId) return;
+  supportChildren(state.selectedId).forEach((child) => detachItemFromSupport(child, true, false));
   state.items = state.items.filter((item) => item.id !== state.selectedId);
   state.selectedId = null;
+  syncSupportedItems();
   render();
 }
 
@@ -1094,6 +1293,11 @@ function duplicateSelected() {
     label: `${source.label}（複製）`,
     tierTextures: [...(source.tierTextures || [])],
     referenceImages: [...(source.referenceImages || [])],
+    supportItemId: "",
+    supportOffsetX: 0,
+    supportOffsetY: 0,
+    supportZOffsetMm: 0,
+    z: 0,
     x: source.x + offset,
     y: source.y + offset
   };
@@ -1137,7 +1341,8 @@ function resetLayout() {
 
 function clampItems() {
   normalizeItems();
-  state.items.forEach(clampItem);
+  state.items.filter((item) => !item.supportItemId).forEach(clampItem);
+  syncSupportedItems();
 }
 
 function normalizeItems() {
@@ -1145,6 +1350,16 @@ function normalizeItems() {
     hydrateLegacyItem(item);
     const master = getFixtureMaster(item);
     if (master && !item.masterId) item.masterId = master.masterId;
+    item.productCategory = String(item.productCategory || master?.productCategory || "");
+    item.productCode = String(item.productCode || master?.productCode || "");
+    item.sourceUrl = String(item.sourceUrl || master?.sourceUrl || "");
+    item.weightKg = Math.max(0, Domain.finiteNumber(item.weightKg, master?.weightKg || 0));
+    item.surfacePlaceable = master ? master.surfacePlaceable === true : item.surfacePlaceable === true;
+    item.supportSurface = master ? master.supportSurface === true : item.supportSurface === true;
+    item.supportItemId = String(item.supportItemId || "");
+    item.supportOffsetX = Domain.finiteNumber(item.supportOffsetX, 0);
+    item.supportOffsetY = Domain.finiteNumber(item.supportOffsetY, 0);
+    item.supportZOffsetMm = Math.max(0, Domain.finiteNumber(item.supportZOffsetMm, 0));
     item.rotationDeg = Domain.normalizeRotationDegrees(item.rotationDeg ?? (Number(item.rotationQuarterTurns) || 0) * 90);
     item.rotationQuarterTurns = item.rotationDeg / 90;
     item.z = Math.max(0, Domain.finiteNumber(item.z, 0));
@@ -1206,6 +1421,7 @@ function normalizeItems() {
       item.label = item.label.includes("左") ? "JEX付属テーブル 左 W1500xD600" : "JEX付属テーブル 右 W1500xD600";
     }
   });
+  syncSupportedItems();
 }
 
 function hydrateLegacyItem(item) {
@@ -1250,6 +1466,7 @@ function inferWallPanelHeight(item) {
 }
 
 function clampItem(item) {
+  if (item.supportItemId) return;
   item.width = Math.min(item.width, state.booth.width);
   item.depth = Math.min(item.depth, state.booth.depth);
   item.x = Math.min(Math.max(0, item.x), state.booth.width - item.width);
@@ -1349,9 +1566,11 @@ function syncSelectionEditor() {
   const master = getFixtureMaster(item);
   ["itemWidth", "itemDepth"].forEach((id) => $(id).disabled = Boolean(master?.dimensionLocked));
   $("itemHeight").disabled = Boolean(master?.dimensionLocked) || item.type === "zone";
+  $("itemZ").disabled = Boolean(item.supportItemId) || item.type === "zone";
   $("resetMasterDimensionsBtn").classList.toggle("hidden", !master?.dimensionLocked || dimensionsMatchMaster(item, master));
   syncSelectedMeasurements(item);
   syncFixtureMasterInfo(item, master);
+  syncSurfacePlacementEditor(item);
   $("wattField").classList.toggle("hidden", !["spotlight", "device"].includes(item.type));
   $("wattFieldLabel").textContent = item.type === "spotlight" ? "照明消費電力 W" : "機器消費電力 W";
   $("itemWatt").value = item.watt || 0;
@@ -1398,8 +1617,44 @@ function syncSelectionEditor() {
   }
 }
 
+function syncSurfacePlacementEditor(item) {
+  const wrap = $("surfacePlacementFields");
+  const show = item?.surfacePlaceable === true;
+  wrap.classList.toggle("hidden", !show);
+  if (!show) return;
+  const supports = availableSupportSurfaces(item);
+  const currentSupport = state.items.find((candidate) => candidate.id === item.supportItemId);
+  $("itemSupportId").innerHTML = supports.length
+    ? supports.map((support) => `<option value="${escapeHtml(support.id)}">${escapeHtml(support.label)}｜${escapeHtml(itemSizeLabel(support))}｜天板Z${Math.round((support.z || 0) + (support.height || defaultItemHeight(support)))}mm</option>`).join("")
+    : '<option value="">実寸適合する机・専用台なし</option>';
+  if (currentSupport && supports.some((support) => support.id === currentSupport.id)) $("itemSupportId").value = currentSupport.id;
+  $("placeOnSupportBtn").disabled = !supports.length;
+  $("detachFromSupportBtn").classList.toggle("hidden", !item.supportItemId);
+  syncSurfacePlacementPreview();
+}
+
+function syncSurfacePlacementPreview() {
+  const item = selectedItem();
+  const info = $("surfacePlacementInfo");
+  if (!item?.surfacePlaceable) {
+    info.textContent = "";
+    return;
+  }
+  const support = state.items.find((candidate) => candidate.id === $("itemSupportId").value);
+  const definition = getSupportPlacementDefinition(item, support);
+  if (!support || !definition?.placement.fits) {
+    info.textContent = "先に実寸が収まる机または専用台を配置してください。";
+    return;
+  }
+  const placement = definition.placement;
+  const overhang = placement.maximumOverhangMm > 0 ? `｜メーカー指定張り出し 最大${placement.maximumOverhangMm}mm` : "｜天板内に収容";
+  const current = item.supportItemId === support.id ? "配置中" : "配置候補";
+  const position = current === "配置中" ? item : placement;
+  info.textContent = `${current}: ${support.label}｜X${Math.round(position.x)} Y${Math.round(position.y)} Z${Math.round(position.z)}mm｜上端H${Math.round(position.z + item.height)}mm${overhang}`;
+}
+
 function canBeVisibilityTarget(item) {
-  return Boolean(item && ["table", "fixture", "bolda", "wall", "device"].includes(item.type));
+  return Boolean(item && ["table", "fixture", "bolda", "wall", "device", "product"].includes(item.type));
 }
 
 function visibilityRoleLabel(role) {
@@ -1556,7 +1811,7 @@ function drawCanvas() {
   drawSpaceAnalysis();
   drawPowerRoutes();
   drawOperationalOverlays();
-  state.items.filter((item) => item.type !== "zone").forEach(drawItem);
+  state.items.filter((item) => item.type !== "zone").sort((a, b) => getItemVerticalRange(a).bottom - getItemVerticalRange(b).bottom).forEach(drawItem);
   if (!printRenderMode) drawSelectedMeasurements(selectedItem());
   drawDimensions(boothPxW, boothPxH);
 }
@@ -1821,6 +2076,19 @@ function drawItem(item) {
   drawItemText(item, x, y, w, h);
   drawVisibilityBadge(item, x, y, w, h);
   drawActivationBadge(item, x, y, w, h);
+  drawSupportBadge(item, x, y, w, h);
+  ctx.restore();
+}
+
+function drawSupportBadge(item, x, y, w, h) {
+  if (!item.supportItemId) return;
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#075f58";
+  ctx.font = `bold ${printRenderMode ? 34 : 9}px sans-serif`;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "top";
+  ctx.fillText(`机上 Z${Math.round(item.z || 0)}`, x + w - Math.max(3, w * 0.03), y + Math.max(3, h * 0.03));
   ctx.restore();
 }
 
@@ -2095,7 +2363,7 @@ function onPointerDown(event) {
     point.x <= candidate.x + candidate.width &&
     point.y >= candidate.y &&
     point.y <= candidate.y + candidate.depth;
-  const reversed = [...state.items].reverse();
+  const reversed = [...state.items].sort((a, b) => getItemVerticalRange(b).bottom - getItemVerticalRange(a).bottom);
   const item = reversed.find((candidate) => candidate.type !== "zone" && hit(candidate))
     || reversed.find((candidate) => candidate.type === "zone" && hit(candidate));
   state.selectedId = item ? item.id : null;
@@ -2111,9 +2379,11 @@ function onPointerMove(event) {
   const item = selectedItem();
   if (!item) return;
   const point = canvasToMm(event);
-  item.x = Domain.snapMm(point.x - drag.dx, state.gridSize, state.snapEnabled);
-  item.y = Domain.snapMm(point.y - drag.dy, state.gridSize, state.snapEnabled);
-  clampItem(item);
+  moveItemTo(
+    item,
+    Domain.snapMm(point.x - drag.dx, state.gridSize, state.snapEnabled),
+    Domain.snapMm(point.y - drag.dy, state.gridSize, state.snapEnabled)
+  );
   render();
 }
 
@@ -2130,9 +2400,25 @@ function renderTable() {
   }
   state.items.forEach((item) => {
     const tr = document.createElement("tr");
+    tr.tabIndex = 0;
+    tr.setAttribute("role", "button");
+    tr.setAttribute("aria-label", `${item.label}を選択`);
+    tr.classList.toggle("selected-row", item.id === state.selectedId);
     const power = itemPowerSummaryText(item);
     const modeNote = ["scenario", "person", "zone"].includes(item.type) && item.activationMode !== "always" ? `<br><small>${escapeHtml(activationModeLabel(item.activationMode))}${isItemActive(item) ? "・有効" : "・現在無効"}</small>` : "";
-    tr.innerHTML = `<td>${typeLabel(item.type)}</td><td>${escapeHtml(item.label)}${modeNote}</td><td>${itemSizeLabel(item)}</td><td>X${Math.round(item.x)} / Y${Math.round(item.y)} / Z${Math.round(item.z || 0)}mm / ${Domain.normalizeRotationDegrees(item.rotationDeg)}°</td><td>${escapeHtml(power)}</td><td>1</td>`;
+    const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+    const supportNote = support ? `<br><small>机上: ${escapeHtml(support.label)}</small>` : "";
+    tr.innerHTML = `<td>${typeLabel(item.type)}</td><td>${escapeHtml(item.label)}${modeNote}${supportNote}</td><td>${itemSizeLabel(item)}</td><td>X${Math.round(item.x)} / Y${Math.round(item.y)} / Z${Math.round(item.z || 0)}mm / ${Domain.normalizeRotationDegrees(item.rotationDeg)}°</td><td>${escapeHtml(power)}</td><td>1</td>`;
+    const selectRow = () => {
+      state.selectedId = item.id;
+      render();
+    };
+    tr.addEventListener("click", selectRow);
+    tr.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      selectRow();
+    });
     tbody.append(tr);
   });
 }
@@ -2572,6 +2858,31 @@ function spaceAuditStatus(audit) {
   return { level: "ok", message: `床${formatSquareMetres(audit.operationalAnalysis.boothAreaMm2)}㎡のうち障害物${formatSquareMetres(audit.operationalAnalysis.occupiedAreaMm2)}㎡、到達可能床${formatSquareMetres(audit.operationalAnalysis.reachableAreaMm2)}㎡、デッドスペース候補0.00㎡。用途領域${audit.zones.length}点は登録必要面積を満たします。` };
 }
 
+function supportPlacementAuditStatus() {
+  const surfaceItems = activeItems().filter((item) => item.surfacePlaceable);
+  if (!surfaceItems.length) return { level: "ok", message: "机上配置対象の商品はありません。" };
+  const unsupported = surfaceItems.filter((item) => !item.supportItemId);
+  const invalid = surfaceItems.filter((item) => {
+    if (!item.supportItemId) return false;
+    const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+    const definition = getSupportPlacementDefinition(item, support);
+    if (!support || !definition?.placement.fits) return true;
+    const expectedZ = (support.z || 0) + (definition.kind === "official-fixed" ? definition.placement.zOffsetMm : support.height || defaultItemHeight(support));
+    return Math.abs(item.z - expectedZ) > 0.01;
+  });
+  if (invalid.length) {
+    return { level: "bad", message: `問題箇所: ${invalid.map((item) => item.label).join("、")}。理由: 支持台との実寸関係またはZ位置が不正です。改善案: 机上配置から実寸適合する台を選び直してください。` };
+  }
+  if (unsupported.length) {
+    return { level: "warn", message: `問題箇所: ${unsupported.map((item) => item.label).join("、")}。理由: 卓上用商品ですが支持する机・専用台が未指定です。改善案: 商品を選択し「机上・専用台への配置」から実寸適合する台へ載せてください。` };
+  }
+  const officialPairs = surfaceItems.filter((item) => {
+    const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+    return getSupportPlacementDefinition(item, support)?.kind === "official-fixed";
+  }).length;
+  return { level: "ok", message: `卓上用商品${surfaceItems.length}点は支持台に追従し、Z位置と天板内収容を確認済みです。メーカー指定組合せ${officialPairs}点。` };
+}
+
 function getChecks() {
   const required = [];
   if (!state.eventName) required.push("展示会名");
@@ -2589,6 +2900,7 @@ function getChecks() {
   const spaceStatus = spaceAuditStatus(spaces);
   const inventories = inventoryAudit || getInventoryAudit();
   const inventoryStatus = inventoryAuditStatus(inventories);
+  const supportStatus = supportPlacementAuditStatus();
   const overlapPairs = findOverlapPairs();
   const overlaps = overlapPairs.length;
   const outOfBounds = state.items.filter((item) => Domain.isOutOfBounds(item, state.booth));
@@ -2617,6 +2929,11 @@ function getChecks() {
         : overlaps
           ? `問題箇所: ${overlapPairs.slice(0, 3).map(([a, b]) => `${a.label}×${b.label}`).join("、")}${overlaps > 3 ? `ほか${overlaps - 3}件` : ""}。理由: 立体占有範囲が重なっています。改善案: 移動または高さ位置を見直してください。`
           : "ブース範囲外と立体衝突はありません。"
+    },
+    {
+      name: "机上配置エージェント",
+      level: supportStatus.level,
+      message: supportStatus.message
     },
     {
       name: "導線エージェント",
@@ -2905,6 +3222,7 @@ function getAisleOpeningMm() {
 
 function isAllowedOverlap(a, b) {
   if (a.type === "zone" || b.type === "zone") return true;
+  if (a.supportItemId === b.id || b.supportItemId === a.id) return true;
   const person = a.type === "person" ? a : b.type === "person" ? b : null;
   const chair = a.type === "chair" ? a : b.type === "chair" ? b : null;
   if (person && chair && getChairForPerson(person)?.id === chair.id) return true;
@@ -2973,7 +3291,7 @@ function oppositeSide(side) {
 }
 
 function typeLabel(type) {
-  return { table: "机", fixture: "什器", bolda: "自社什器 bolda", power: "コンセント", powerstrip: "電源タップ", device: "接続機器", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "導線確認用人物", scenario: "営業状態物品", zone: "用途領域" }[type] || type;
+  return { table: "机", fixture: "什器", product: "実在商品", bolda: "自社什器 bolda", power: "コンセント", powerstrip: "電源タップ", device: "接続機器", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "導線確認用人物", scenario: "営業状態物品", zone: "用途領域" }[type] || type;
 }
 
 function itemSizeLabel(item) {
@@ -3332,6 +3650,7 @@ function addThreeItem(scene, item) {
   if (item.type === "scenario") return addThreeScenarioPlaceholder(scene, displayItem);
   if (item.type === "powerstrip") return addThreePowerStrip(scene, displayItem);
   if (item.type === "device") return addThreeGenericDevice(scene, displayItem);
+  if (item.type === "product") return addThreeOfficialProduct(scene, displayItem);
   if (item.type === "chair") return addThreeChair(scene, displayItem);
   if (item.type === "bolda") return addThreeBolda(scene, displayItem);
   if (item.type === "fixture" && String(item.label || "").includes("姿見")) return addThreeMirror(scene, displayItem);
@@ -3488,13 +3807,17 @@ function syncFixtureMasterInfo(item, master) {
     : (matchesMaster ? "マスター初期寸法一致（編集可）" : "個別寸法登録（マスター初期値から変更）");
   const modelNote = master.type === "bolda"
     ? "外形W/D/Hは提供ファイル名で確認済み。段差・棚板等の詳細3D形状は組立画像基準で、製造CAD未確認です。"
+    : master.type === "product"
+      ? "登録W/D/Hは公式商品ページで確認済み。3Dは正確な外形寸法内の参照簡略形状で、製造CADではありません。"
     : "汎用3D形状。正確な製品型番・図面は未登録です。";
+  const sourceLink = master.sourceUrl?.startsWith("https://") ? `<br>公式情報: <a href="${escapeHtml(master.sourceUrl)}" target="_blank" rel="noreferrer">商品ページを開く</a>` : "";
+  const setupText = master.setupInfo?.instructions?.length ? `<br>設営情報: ${escapeHtml(master.setupInfo.instructions.join(" / "))}` : "";
   wrap.innerHTML = `
     <strong>${escapeHtml(master.masterId)}｜${escapeHtml(dimensionState)}</strong>
     材質: ${escapeHtml(master.material)}<br>
     寸法根拠: ${escapeHtml(master.dimensionSource)}<br>
     POP面: ${master.popPlacementPositions.length}面 / 商品設置位置: ${master.productPlacementPositions.length ? `${master.productPlacementPositions.length}か所` : "未登録"}<br>
-    <span class="${master.type === "bolda" ? "accuracy-warn" : ""}">${escapeHtml(modelNote)}</span>
+    <span class="${master.type === "bolda" ? "accuracy-warn" : ""}">${escapeHtml(modelNote)}</span>${sourceLink}${setupText}
   `;
 }
 
@@ -3566,6 +3889,56 @@ function addThreeGenericDevice(scene, item) {
   const face = threeStandardMaterial(0xeaf0f4, { roughness: 0.58 });
   addLocalBox(group, item.width, height, item.depth, 0, height / 2, 0, body);
   addLocalBox(group, item.width * 0.72, height * 0.46, 8, 0, height * 0.56, item.depth / 2 + 5, face, false);
+  scene.add(group);
+}
+
+function addThreeOfficialProduct(scene, item) {
+  if (item.productCategory === "gacha-machine") return addThreeGachaMachine(scene, item);
+  if (item.productCategory === "gacha-stand") return addThreeGachaStand(scene, item);
+  if (item.productCategory === "capsule-recovery-box") return addThreeCapsuleRecoveryBox(scene, item);
+  addThreeCounter(scene, item);
+}
+
+function addThreeGachaMachine(scene, item) {
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const h = item.height;
+  const shell = threeStandardMaterial(0xf2f3ef, { roughness: 0.6 });
+  const metal = threeStandardMaterial(0xb6bdbd, { roughness: 0.28, metalness: 0.7 });
+  const clear = new T.MeshPhysicalMaterial({ color: 0xd8f2f4, transparent: true, opacity: 0.34, roughness: 0.12, transmission: 0.34, depthWrite: false });
+  const baseH = Math.min(165, h * 0.38);
+  addLocalBox(group, item.width, baseH, item.depth, 0, baseH / 2, 0, shell);
+  addLocalBox(group, item.width * 0.92, h - baseH - 18, item.depth * 0.68, 0, baseH + (h - baseH - 18) / 2, -item.depth * 0.08, clear);
+  addLocalBox(group, item.width, 18, item.depth * 0.72, 0, h - 9, -item.depth * 0.06, shell);
+  const handle = new T.Mesh(new T.CylinderGeometry(26, 26, 22, 20), metal);
+  handle.rotation.x = Math.PI / 2;
+  handle.position.set(0, baseH * 0.58, item.depth / 2 - 12);
+  handle.userData.itemId = item.id;
+  group.add(handle);
+  addLocalBox(group, item.width * 0.56, 14, 24, 0, 30, item.depth / 2 - 12, metal, false);
+  scene.add(group);
+}
+
+function addThreeGachaStand(scene, item) {
+  const group = createFacingGroup(item);
+  const paper = threeStandardMaterial(0xf7f5ed, { roughness: 0.9 });
+  const edge = threeStandardMaterial(0xc7c4ba, { roughness: 0.82 });
+  addLocalBox(group, item.width, item.height, item.depth, 0, item.height / 2, 0, paper);
+  addLocalBox(group, item.width - 18, 8, item.depth - 18, 0, item.height - 4, 0, edge, false);
+  scene.add(group);
+}
+
+function addThreeCapsuleRecoveryBox(scene, item) {
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const cardboard = threeStandardMaterial(0xc9944e, { roughness: 0.94 });
+  const print = threeStandardMaterial(0x9c6d32, { roughness: 0.86 });
+  addLocalBox(group, item.width, item.height, item.depth, 0, item.height / 2, 0, cardboard);
+  const ring = new T.Mesh(new T.TorusGeometry(Math.min(42.5, item.width * 0.18), 5, 10, 30), print);
+  ring.position.set(0, item.height * 0.72, item.depth / 2 + 1);
+  ring.userData.itemId = item.id;
+  group.add(ring);
+  addLocalBox(group, item.width * 0.64, 12, 8, 0, item.height * 0.35, item.depth / 2 + 1, print, false);
   scene.add(group);
 }
 
@@ -4927,7 +5300,7 @@ function buildImagePrompt() {
     "FINAL VALIDATION BEFORE RENDERING",
     "- Confirm that every visible movable object appears in the placed-object specification. Delete any inferred merchandise, eyewear, tools, trays, bottles, people or decorative props.",
     "- Compare every footprint edge to the 2D plan and preserve touching/near-touching edges without artificial gaps.",
-    "- Keep equal X or Y edges in straight rows. Keep all furniture level on floor Z0 and all wall equipment attached to its specified wall and Z range.",
+    "- Keep equal X or Y edges in straight rows. Keep floor-standing roots level on Z0. Keep every supported tabletop object at its specified support Z and never drop it to the floor or float it above the surface. Keep all wall equipment attached to its specified wall and Z range.",
     "- A plan marker for an outlet or spotlight is an annotation zone, not the physical size of the device. Never create a 300mm outlet box or a 350mm furniture block for a spotlight.",
     "- Signboards are shallow H300 wall-mounted panels at the stated Z elevation, not floor-to-ceiling wall panels.",
     "- Keep the specified aisle side fully open. Do not add doors, extra counters, unlisted people, decorative structures or ceiling truss. Preserve every explicitly listed person's position and standing/seated state.",
@@ -4955,6 +5328,11 @@ function buildPromptItemBlock(item, index) {
       ? `   - Vertical extent: Z${Math.round(item.z || 0)}..Z${Math.round((item.z || 0) + h)}; registered physical size W${Math.round(item.width)} x D${Math.round(item.depth)} x H${h}.`
       : `   - Height is not registered. The local 3D preview uses provisional H${h} only; confirm the actual height before build or image generation.`);
     lines.push(`   - Orientation: plan W is parallel to X and plan D to Y after ${Domain.normalizeRotationDegrees(item.rotationDeg)}° rotation; front/customer face points ${sideEnglish(state.booth.aisleSide)} toward the aisle.`);
+    const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+    if (support) {
+      const definition = getSupportPlacementDefinition(item, support);
+      lines.push(`   - Supported placement: rests on ${support.label}; support relationship ${definition?.kind === "official-fixed" ? "manufacturer-specified fixed combination" : "contained within the registered tabletop"}; item bottom is exact Z${Math.round(item.z || 0)}. Do not place this object on the floor.`);
+    }
   }
 
   if (item.type === "wall") {
@@ -5022,7 +5400,7 @@ function buildPromptCameraInstruction() {
 }
 
 function buildPromptCountSummary() {
-  const labels = { table: "tables/counters", fixture: "fixtures", bolda: "bolda fixtures", wall: "signboards", power: "outlets", powerstrip: "power strips", device: "electrical devices", spotlight: "spotlights", chair: "chairs", person: "people", scenario: "operational occupied zones" };
+  const labels = { table: "tables/counters", fixture: "fixtures", product: "registered real products", bolda: "bolda fixtures", wall: "signboards", power: "outlets", powerstrip: "power strips", device: "electrical devices", spotlight: "spotlights", chair: "chairs", person: "people", scenario: "operational occupied zones" };
   const currentItems = activeItems().filter((item) => item.type !== "zone");
   const counts = currentItems.reduce((map, item) => {
     map[item.type] = (map[item.type] || 0) + 1;
@@ -5039,7 +5417,7 @@ function buildBoothSpecification() {
   const currentSpaceAudit = spaceAudit || getSpaceAudit();
   const currentInventoryAudit = inventoryAudit || getInventoryAudit();
   return {
-    schema: "booth-render-spec-v7",
+    schema: "booth-render-spec-v8",
     units: "mm",
     event: state.eventName,
     operationMode: state.operationMode,
@@ -5148,6 +5526,9 @@ function buildBoothSpecification() {
         index: index + 1,
         id: item.id,
         fixtureMasterId: item.masterId || null,
+        productCode: item.productCode || null,
+        sourceUrl: item.sourceUrl || null,
+        weightKg: item.weightKg || null,
         label: item.label,
         type: item.type,
         planRectangle: { x1: Math.round(item.x), y1: Math.round(item.y), x2: Math.round(item.x + item.width), y2: Math.round(item.y + item.depth) },
@@ -5161,7 +5542,14 @@ function buildBoothSpecification() {
           rotationDeg: Domain.normalizeRotationDegrees(item.rotationDeg)
         },
         nearestWall: ["wall", "spotlight", "power"].includes(item.type) ? nearestBoothSide(item) : null,
-        frontDirection: ["table", "fixture", "bolda", "chair", "person"].includes(item.type) ? state.booth.aisleSide : null,
+        frontDirection: ["table", "fixture", "product", "bolda", "chair", "person"].includes(item.type) ? state.booth.aisleSide : null,
+        supportPlacement: item.supportItemId ? {
+          supportObjectId: item.supportItemId,
+          offsetX: item.supportOffsetX,
+          offsetY: item.supportOffsetY,
+          zOffsetMm: item.supportZOffsetMm,
+          relationship: getSupportPlacementDefinition(item, state.items.find((candidate) => candidate.id === item.supportItemId))?.kind || "unresolved"
+        } : null,
         watt: item.watt || null,
         circuitId: item.circuitId || null,
         powerSourceId: item.powerSourceId || null,
@@ -5203,6 +5591,14 @@ function buildBoothSpecification() {
 function buildItemVisualInstruction(item, bolda) {
   if (item.type === "person") return `, visual form: the exact referenced 1790mm-tall character, ${getChairForPerson(item) ? "naturally seated on the overlapping chair" : "standing upright on the floor"}`;
   if (bolda) return `, visual form: assembled bolda fixture, ${bolda.visual}`;
+  if (item.type === "product") {
+    const forms = {
+      "gacha-machine": "official A0002 tabletop Gacha Cop machine inside the exact W240 x D370 x H440mm envelope; white body; do not change overall dimensions or invent a different machine model",
+      "gacha-stand": "official A0007 white paper tabletop stand inside the exact W250 x D315 x H100mm envelope; depth includes the capsule receiver",
+      "capsule-recovery-box": "official E1237 cardboard capsule recovery box inside the exact W275 x D275 x H460mm envelope; circular collection opening approximately 85mm"
+    };
+    return `, visual form: ${forms[item.productCategory] || "registered real product using only the official dimensions"}; source ${item.sourceUrl || "not registered"}`;
+  }
   if (item.type === "table" && String(item.label || "").includes("展示台")) {
     return `, visual form: display counter/plinth with the exact footprint proportions and ${item.height ? `H${Math.round(item.height)}mm` : "height not registered (confirm before build)"}; a W1500xD900 stand must look deeper than W1500xD600, and W1800 stands must look wider than W1500 stands`;
   }

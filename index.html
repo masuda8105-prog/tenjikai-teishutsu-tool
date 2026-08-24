@@ -124,6 +124,16 @@
           <div id="selectedMeasurements" class="selected-measurements"></div>
           <div id="fixtureMasterInfo" class="fixture-master-info"></div>
           <button id="resetMasterDimensionsBtn" class="secondary hidden" type="button">マスター寸法へ戻す</button>
+          <div id="surfacePlacementFields" class="surface-placement-fields hidden">
+            <strong>机上・専用台への配置</strong>
+            <label>載せる机／台<select id="itemSupportId"></select></label>
+            <div class="button-row">
+              <button id="placeOnSupportBtn" class="primary" type="button">中央へ正確に載せる</button>
+              <button id="detachFromSupportBtn" class="secondary hidden" type="button">床へ降ろす</button>
+            </div>
+            <div id="surfacePlacementInfo" class="surface-placement-info"></div>
+            <p class="field-help">載せた物は机・専用台の移動に追従し、Zは天板高から自動計算します。メーカー指定組合せ以外の張り出しは許可しません。</p>
+          </div>
           <label id="wattField" class="hidden"><span id="wattFieldLabel">消費電力 W</span><input id="itemWatt" type="number" min="0" step="10"></label>
           <label id="circuitField" class="hidden">接続回路<select id="itemCircuitId"></select></label>
           <label id="ratedCapacityField" class="hidden">電源タップ定格容量 W<input id="itemRatedCapacity" type="number" min="0" step="100" placeholder="未登録"></label>
