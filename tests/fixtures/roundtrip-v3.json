@@ -1,0 +1,36 @@
+{
+  "schema": "exhibition-booth-project",
+  "version": 3,
+  "units": "mm",
+  "savedAt": "2026-08-24T00:00:00.000Z",
+  "state": {
+    "preset": "custom",
+    "eventName": "回帰テスト",
+    "boothNo": "QA-1",
+    "companyName": "株式会社サンニシムラ",
+    "contactName": "QA",
+    "notes": "保存読込の数値不変テスト",
+    "jointSide": "right",
+    "booth": { "width": 3333, "depth": 2222, "wallHeight": 1234, "wallSide": "top", "aisleSide": "bottom" },
+    "gridSize": 10,
+    "snapEnabled": true,
+    "items": [
+      {
+        "id": "qa-fixture-1",
+        "type": "fixture",
+        "label": "回帰テスト什器",
+        "width": 321,
+        "depth": 654,
+        "height": 987,
+        "x": 123,
+        "y": 456,
+        "z": 78,
+        "rotationDeg": 270,
+        "color": "#77a7d9",
+        "watt": 0
+      }
+    ],
+    "selectedId": "qa-fixture-1",
+    "view": "layout"
+  }
+}

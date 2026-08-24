@@ -1,3 +1,9 @@
+const Domain = window.BoothDomain;
+if (!Domain) throw new Error("BoothDomain failed to load");
+
+const AUTOSAVE_KEY = "booth-layout-tool-v7";
+const PREVIOUS_AUTOSAVE_KEYS = ["booth-layout-tool-v6", "booth-layout-tool-v5", "booth-layout-tool-v4", "booth-layout-tool-v3", "booth-layout-tool"];
+
 const presets = {
   wof: { label: "WOF 東京 2コマ", eventName: "WOF 東京 2コマ", width: 5940, depth: 2500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   imf: { label: "IMF 大阪秋 2コマ", eventName: "IMF 大阪秋 2コマ", width: 9000, depth: 4500, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
@@ -8,13 +14,12 @@ const presets = {
   custom: { label: "自由入力", eventName: "自由入力", width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" }
 };
 
-const OUTLET_WATT = 100;
 const jexRuleNote = "JEX 3階レンタル装飾 2小間・Aプラン: W8000 x D2000、壁面パネルH2100。標準装備: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント。常設備品・レンタル備品はパレットから追加し、名称・寸法を実際の申込内容に合わせて編集してください。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
 const imfRuleNote = "IMF 2コマ: W9000 x D4500 x H2100。サンニシムラ1.5コマ（W6750）、鈴木眼鏡様0.5コマ（W2250）の共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
 const egfRuleNote = "EGF 2コマ: Aタイプ1コマ W3000 x D3600 x H2100を2コマ運用として W6000 x D3600 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kW 100Vまでは事務局負担、1.5kW超の電気使用料およびコンセント等の小間内配線工事は出展社負担。";
 const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。";
 
-const itemTypes = [
+const rawFixtureMasters = [
   { type: "fixture", label: "常設備品（名称を編集）", width: 900, depth: 450, height: 900, color: "#77a7d9" },
   { type: "fixture", label: "レンタル備品（名称を編集）", width: 900, depth: 450, height: 900, color: "#77a7d9" },
   { type: "table", label: "長机", width: 1800, depth: 600, color: "#f2b84b" },
@@ -41,9 +46,13 @@ const itemTypes = [
   { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB13.png"] },
   { type: "bolda", label: "bolda VB01_600CB", width: 600, depth: 600, height: 600, color: "#5fb7b2", image: "assets/bolda/VB01_600CB.png" },
   { type: "wall", label: "サイン", width: 1200, depth: 80, height: 300, color: "#7bcb9d" },
-  { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: OUTLET_WATT },
+  { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: 0 },
+  { type: "powerstrip", label: "電源タップ（名称・定格を編集）", width: 300, depth: 150, color: "#e38354", watt: 0 },
+  { type: "device", label: "接続機器（名称・寸法・消費電力を編集）", width: 300, depth: 300, color: "#8a9fb5", watt: 0 },
   { type: "spotlight", label: "スポットライト", width: 350, depth: 350, color: "#ffd45f", watt: 100 },
   { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" },
+  { type: "zone", label: "接客スペース（必要面積を登録）", width: 1500, depth: 1200, height: 0, color: "#3b9e8f", spaceCategory: "contact", activationMode: "always", requiredAreaMm2: 0 },
+  { type: "scenario", label: "営業物品（名称・実測寸法を編集）", width: 300, depth: 300, height: 300, color: "#b98a52", operationalCategory: "stock", activationMode: "operating", dimensionsConfirmed: false },
   { type: "person", label: "人物A 179cm", width: 600, depth: 600, height: 1790, color: "#ef6fa8", image: "assets/people/person-a-standing-crop.png", standingImage: "assets/people/person-a-standing-crop.png", seatedImage: "assets/people/person-a-seated-crop.png" },
   { type: "person", label: "人物B 179cm", width: 600, depth: 600, height: 1790, color: "#3b69d8", image: "assets/people/person-b-standing-crop.png", standingImage: "assets/people/person-b-standing-crop.png", seatedImage: "assets/people/person-b-seated-crop.png" }
 ];
@@ -85,6 +94,54 @@ const boldaDetails = {
     printData: "共通アイテム/【bolda】/to/bolda_Sannishimura_260310/VB01_600CB"
   }
 };
+
+const boldaDimensionSources = Object.freeze({
+  AS01: "AS01_900x250x300_8.4KAB_print_format_ol.zip",
+  ED04: "ED04_900x600x1100_8.4KAB_print_format_ol.zip",
+  SF03: "SF03_350X400X1490_print_format_ol.zip",
+  TB05: "TB05_900x600x800_8.4KAB_print_format_ol.zip",
+  TB13: "TB13_02_900x500x800_8.4KAB_print_format_ol.zip",
+  VB01_600CB: "VB01_600CB_600x600x600_8.4KAB_print_format_ol.zip",
+  TB05_AS01: "TB05 900x600x800 + AS01 900x250x300（提供フォーマット2点）"
+});
+
+function masterIdSuffix(item) {
+  const theme = String(item.printTheme || item.label || "STANDARD").toUpperCase();
+  if (theme.includes("CUSTOM") || theme.includes("装着感")) return "CUSTOM";
+  if (theme.includes("SCREW") || theme.includes("ネジ")) return "SCREW";
+  if (theme.includes("TRIAL") || theme.includes("試験")) return "TRIAL";
+  if (theme.includes("RECOMMENDED")) return "RECOMMENDED";
+  if (theme.includes("NEW")) return "NEW";
+  if (theme.includes("ドライバー")) return "DRIVERS";
+  if (theme.includes("ヒーター")) return "HEATER";
+  if (theme.includes("工具")) return "TOOLS";
+  return "STANDARD";
+}
+
+function normalizeFixtureMaster(item, index) {
+  const code = item.boldaCode || (item.type === "bolda" ? Object.keys(boldaDetails).find((candidate) => `${item.label} ${item.image}`.includes(candidate)) : "");
+  const masterId = item.type === "bolda"
+    ? `BOLDA-${code || `UNVERIFIED-${index + 1}`}-${masterIdSuffix(item)}`
+    : `STD-${String(index + 1).padStart(3, "0")}-${item.type.toUpperCase()}`;
+  const printFaces = [item.frontTexture, ...(item.tierTextures || []), item.riserTexture].filter(Boolean);
+  return Object.freeze({
+    ...item,
+    masterId,
+    material: item.type === "bolda" ? "材質の確定情報は未登録（提供印刷フォーマット参照）" : "未登録",
+    shape2d: Object.freeze({ kind: "rectangle", width: item.width, depth: item.depth }),
+    model3d: Object.freeze({
+      kind: item.type === "bolda" ? "parametric-reference" : "parametric-generic",
+      accuracy: item.type === "bolda" ? "verified-envelope/reference-based-detail" : "generic"
+    }),
+    dimensionLocked: item.type === "bolda",
+    dimensionSource: item.type === "bolda" ? (boldaDimensionSources[code] || "提供資料内に寸法根拠を特定できていません") : "未登録",
+    productPlacementPositions: Object.freeze([]),
+    popPlacementPositions: Object.freeze(printFaces.map((source, faceIndex) => ({ faceIndex, source }))),
+    setupInfo: Object.freeze({ status: "not-registered", instructions: Object.freeze([]) })
+  });
+}
+
+const itemTypes = Object.freeze(rawFixtureMasters.map(normalizeFixtureMaster));
 
 const furnitureReferenceImage = "assets/furniture/exhibition-furniture-reference.png";
 
@@ -129,6 +186,13 @@ const state = {
   notes: "",
   jointSide: "right",
   booth: { width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
+  gridSize: 50,
+  snapEnabled: true,
+  viewerEyeHeight: 1600,
+  routeClearanceMm: 800,
+  routeGridMm: 100,
+  operationMode: "design",
+  powerCircuits: [{ id: "circuit-1", name: "回路1", voltageV: 100, capacityW: 0 }],
   items: [],
   selectedId: null,
   view: "layout"
@@ -151,6 +215,11 @@ let threeExpectedAssetCount = 0;
 let threeLoadedAssetCount = 0;
 let threeFailedAssetCount = 0;
 let threeSceneVersion = 0;
+let operationalAudit = null;
+let spaceAudit = null;
+const historyPast = [];
+const historyFuture = [];
+let historyApplying = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -166,7 +235,7 @@ function init() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "palette-item";
-    const detail = item.type === "spotlight" ? `${item.watt}W` : item.type === "power" ? "" : itemSizeLabel(item);
+    const detail = paletteDetail(item);
     button.innerHTML = `${paletteVisual(item)}<span>${item.label}</span>${detail ? `<small>${detail}</small>` : ""}`;
     button.addEventListener("click", () => addItem(item));
     $("itemPalette").append(button);
@@ -335,6 +404,28 @@ function bindInputs() {
     });
   });
 
+  $("gridSizeSelect").addEventListener("change", () => {
+    state.gridSize = Domain.sanitizeGridSize($("gridSizeSelect").value);
+    syncGridInputs();
+    render();
+  });
+  $("snapEnabled").addEventListener("change", () => {
+    state.snapEnabled = $("snapEnabled").checked;
+    render();
+  });
+  $("routeClearanceMm").addEventListener("input", () => {
+    state.routeClearanceMm = Math.max(300, Math.min(2000, Domain.finiteNumber($("routeClearanceMm").value, 800)));
+    render();
+  });
+  $("routeGridMm").addEventListener("change", () => {
+    state.routeGridMm = [50, 100, 200].includes(Number($("routeGridMm").value)) ? Number($("routeGridMm").value) : 100;
+    render();
+  });
+  $("operationMode").addEventListener("change", () => {
+    state.operationMode = Domain.normalizeOperationMode($("operationMode").value);
+    render();
+  });
+
   $("jointSide").addEventListener("change", () => {
     state.jointSide = $("jointSide").value;
     if (isImfEgfPreset()) {
@@ -344,11 +435,20 @@ function bindInputs() {
     }
   });
 
-  ["itemLabel", "itemWidth", "itemDepth", "itemHeight", "itemX", "itemY", "itemWatt"].forEach((id) => {
+  ["itemLabel", "itemWidth", "itemDepth", "itemHeight", "itemX", "itemY", "itemZ", "itemWatt", "itemRatedCapacity", "itemPowerSourceId", "itemCableRouteMode", "itemCableSlack", "itemCircuitId", "itemPersonRole", "itemActivationMode", "itemOperationalCategory", "itemSpaceCategory", "itemRequiredAreaM2", "itemVisibilityRole", "itemTargetViewHeight", "itemTargetFrontSide"].forEach((id) => {
     $(id).addEventListener("input", updateSelectedFromForm);
   });
+  $("itemDimensionsConfirmed").addEventListener("change", updateSelectedFromForm);
+  $("addPowerCircuitBtn").addEventListener("click", addPowerCircuit);
+  $("powerCircuitEditor").addEventListener("input", (event) => updatePowerCircuitFromEditor(event, false));
+  $("powerCircuitEditor").addEventListener("change", updatePowerCircuitFromEditor);
+  $("powerCircuitEditor").addEventListener("click", onPowerCircuitEditorClick);
   $("rotateBtn").addEventListener("click", rotateSelected);
+  $("duplicateBtn").addEventListener("click", duplicateSelected);
+  $("resetMasterDimensionsBtn").addEventListener("click", resetSelectedToMasterDimensions);
   $("deleteBtn").addEventListener("click", deleteSelected);
+  $("undoBtn").addEventListener("click", undoDesignChange);
+  $("redoBtn").addEventListener("click", redoDesignChange);
   $("bringForwardBtn").addEventListener("click", () => moveSelectedLayer(1));
   $("sendBackwardBtn").addEventListener("click", () => moveSelectedLayer(-1));
   $("bringToFrontBtn").addEventListener("click", () => moveSelectedLayer("front"));
@@ -359,6 +459,10 @@ function bindInputs() {
   $("generate3dBtn").addEventListener("click", generate3dPreview);
   $("backToLayoutBtn").addEventListener("click", () => setView("layout"));
   $("reset3dViewBtn").addEventListener("click", resetThreeCamera);
+  $("viewerEyeHeight").addEventListener("input", () => {
+    state.viewerEyeHeight = Math.max(1000, Math.min(2200, Domain.finiteNumber($("viewerEyeHeight").value, 1600)));
+    render();
+  });
   document.querySelectorAll("[data-three-camera]").forEach((button) => {
     button.addEventListener("click", () => setThreeCameraPreset(button.dataset.threeCamera));
   });
@@ -460,7 +564,130 @@ function syncBoothInputs() {
   $("wallHeight").value = state.booth.wallHeight;
   $("wallSide").value = state.booth.wallSide || "top";
   $("aisleSide").value = state.booth.aisleSide;
+  syncGridInputs();
   syncJointControls();
+}
+
+function syncGridInputs() {
+  state.gridSize = Domain.sanitizeGridSize(state.gridSize);
+  state.snapEnabled = state.snapEnabled !== false;
+  $("gridSizeSelect").value = String(state.gridSize);
+  $("snapEnabled").checked = state.snapEnabled;
+  state.routeClearanceMm = Math.max(300, Math.min(2000, Domain.finiteNumber(state.routeClearanceMm, 800)));
+  state.routeGridMm = [50, 100, 200].includes(Number(state.routeGridMm)) ? Number(state.routeGridMm) : 100;
+  $("routeClearanceMm").value = state.routeClearanceMm;
+  $("routeGridMm").value = String(state.routeGridMm);
+  ["itemX", "itemY"].forEach((id) => $(id).step = String(state.gridSize));
+}
+
+function isItemActive(item, mode = state.operationMode) {
+  return Domain.isActiveInOperationMode(item, mode);
+}
+
+function activeItems() {
+  return state.items.filter((item) => isItemActive(item));
+}
+
+function operationModeLabel(mode) {
+  return { design: "設計モード", operating: "営業中モード", crowded: "混雑時モード" }[mode] || "設計モード";
+}
+
+function activationModeLabel(mode) {
+  return { always: "全モード", operating: "営業中・混雑時", crowded: "混雑時のみ" }[mode] || "全モード";
+}
+
+function operationalCategoryLabel(category) {
+  return {
+    stock: "在庫・予備品", packing: "ダンボール・梱包材", bag: "バッグ・紙袋", waste: "ゴミ箱・廃棄物",
+    promotion: "販促物・ガチャ用品", pc: "PC・端末", cable: "ケーブル養生領域", other: "その他"
+  }[category] || "その他";
+}
+
+function spaceCategoryLabel(category) {
+  return { contact: "接客スペース", staff: "スタッフ専用領域", inventory: "在庫予約領域" }[category] || "接客スペース";
+}
+
+function formatSquareMetres(areaMm2) {
+  return (Math.round(Math.max(0, Domain.finiteNumber(areaMm2, 0)) / 10000) / 100).toFixed(2);
+}
+
+function syncOperationMode() {
+  state.operationMode = Domain.normalizeOperationMode(state.operationMode);
+  $("operationMode").value = state.operationMode;
+  const scenarioItems = state.items.filter((item) => item.type === "scenario");
+  const activeScenario = scenarioItems.filter((item) => isItemActive(item));
+  const activeCrowd = state.items.filter((item) => item.type === "person" && item.personRole === "crowd" && isItemActive(item));
+  const zoneItems = state.items.filter((item) => item.type === "zone");
+  const activeZones = zoneItems.filter((item) => isItemActive(item));
+  $("operationModeStatus").textContent = `${operationModeLabel(state.operationMode)}｜営業物品 ${activeScenario.length}/${scenarioItems.length}点・用途領域 ${activeZones.length}/${zoneItems.length}点を有効化${state.operationMode === "crowded" ? `｜混雑負荷 ${activeCrowd.length}人` : ""}。無効項目は編集用に薄く表示し、状態別の衝突・視認・動線・床面積、3D・PDFから除外します。ブース範囲は全項目で確認します。`;
+}
+
+function normalizePowerCircuits() {
+  if (!Array.isArray(state.powerCircuits)) state.powerCircuits = [];
+  state.powerCircuits = state.powerCircuits.map((source, index) => ({
+    id: String(source.id || `circuit-${index + 1}`),
+    name: String(source.name || `回路${index + 1}`),
+    voltageV: Math.max(0, Domain.finiteNumber(source.voltageV, 100)),
+    capacityW: Math.max(0, Domain.finiteNumber(source.capacityW, 0))
+  }));
+}
+
+function syncPowerCircuitEditor() {
+  normalizePowerCircuits();
+  const editor = $("powerCircuitEditor");
+  editor.innerHTML = state.powerCircuits.length
+    ? state.powerCircuits.map((circuit) => `
+      <div class="power-circuit-card" data-circuit-id="${escapeHtml(circuit.id)}">
+        <label>回路名<input data-circuit-field="name" type="text" value="${escapeHtml(circuit.name)}"></label>
+        <div class="two-col">
+          <label>電圧 V<input data-circuit-field="voltageV" type="number" min="0" step="1" value="${circuit.voltageV || ""}" placeholder="未登録"></label>
+          <label>容量 W<input data-circuit-field="capacityW" type="number" min="0" step="100" value="${circuit.capacityW || ""}" placeholder="未登録"></label>
+        </div>
+        <button class="danger circuit-delete" data-circuit-action="delete" type="button">回路を削除</button>
+      </div>
+    `).join("")
+    : '<p class="muted">回路がありません。施工会社の確定情報に合わせて追加してください。</p>';
+}
+
+function addPowerCircuit() {
+  state.powerCircuits.push({
+    id: crypto.randomUUID ? crypto.randomUUID() : `circuit-${Date.now()}`,
+    name: `回路${state.powerCircuits.length + 1}`,
+    voltageV: 100,
+    capacityW: 0
+  });
+  render();
+}
+
+function updatePowerCircuitFromEditor(event, renderNow = true) {
+  const field = event.target.dataset.circuitField;
+  const card = event.target.closest("[data-circuit-id]");
+  if (!field || !card) return;
+  const circuit = state.powerCircuits.find((entry) => entry.id === card.dataset.circuitId);
+  if (!circuit) return;
+  if (field === "name") circuit.name = event.target.value.trim() || "名称未登録";
+  if (field === "voltageV" || field === "capacityW") circuit[field] = Math.max(0, Domain.finiteNumber(event.target.value, 0));
+  if (renderNow) {
+    render();
+  } else {
+    renderSubmissionSummary();
+    renderAgents();
+    autosave();
+  }
+}
+
+function onPowerCircuitEditorClick(event) {
+  if (event.target.dataset.circuitAction !== "delete") return;
+  const card = event.target.closest("[data-circuit-id]");
+  if (!card) return;
+  const circuitId = card.dataset.circuitId;
+  const referenced = state.items.filter((item) => item.circuitId === circuitId);
+  if (referenced.length) {
+    alert(`この回路は${referenced.length}点のコンセントから参照されています。先に接続回路を未割当にしてください。`);
+    return;
+  }
+  state.powerCircuits = state.powerCircuits.filter((entry) => entry.id !== circuitId);
+  render();
 }
 
 function keepWallAndAisleDifferent(changedKey) {
@@ -492,6 +719,7 @@ function addItem(template) {
   const item = {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     type: template.type,
+    masterId: template.masterId,
     label: template.label,
     width: template.width,
     depth: template.depth,
@@ -508,8 +736,25 @@ function addItem(template) {
     seatedImage: template.seatedImage || "",
     color: template.color,
     watt: template.watt || 0,
-    x: Math.max(0, Math.round((state.booth.width - template.width) / 2 / 50) * 50),
-    y: Math.max(0, Math.round((state.booth.depth - template.depth) / 2 / 50) * 50)
+    circuitId: template.circuitId || "",
+    powerSourceId: template.powerSourceId || "",
+    ratedCapacityW: template.ratedCapacityW || 0,
+    cableRouteMode: template.cableRouteMode === "y-then-x" ? "y-then-x" : "x-then-y",
+    cableSlackMm: Math.max(0, Domain.finiteNumber(template.cableSlackMm, 0)),
+    personRole: template.personRole || "reference",
+    activationMode: ["always", "operating", "crowded"].includes(template.activationMode) ? template.activationMode : "always",
+    operationalCategory: template.operationalCategory || "other",
+    spaceCategory: template.spaceCategory || "contact",
+    requiredAreaMm2: Math.max(0, Domain.finiteNumber(template.requiredAreaMm2, 0)),
+    dimensionsConfirmed: template.dimensionsConfirmed === true,
+    visibilityRole: template.visibilityRole || "none",
+    targetViewHeightMm: Math.max(0, Domain.finiteNumber(template.targetViewHeightMm, 0)),
+    targetFrontSide: ["top", "right", "bottom", "left"].includes(template.targetFrontSide) ? template.targetFrontSide : "",
+    x: Math.max(0, Domain.snapMm((state.booth.width - template.width) / 2, state.gridSize, state.snapEnabled)),
+    y: Math.max(0, Domain.snapMm((state.booth.depth - template.depth) / 2, state.gridSize, state.snapEnabled)),
+    z: 0,
+    rotationDeg: 0,
+    rotationQuarterTurns: 0
   };
   state.items.push(item);
   state.selectedId = item.id;
@@ -522,21 +767,11 @@ function applyStandardLayout() {
     return;
   }
   if (state.preset === "wof") {
-    const wofOk = state.booth.width === 5940 && state.booth.depth === 2500 && state.booth.wallHeight === 2400;
-    checks.unshift({
-      name: "WOF 2コマルール",
-      level: wofOk ? "ok" : "warn",
-      message: wofOk
-        ? "WOF 2小間 ブースプランAの正式寸法 W5940 x D2500 x H2400 です。展示台4台、イス4脚、サインパネル1枚が標準です。"
-        : "WOF 2コマの標準寸法から変更されています。必要に応じて標準レイアウトを置き直してください。"
-    });
+    applyWofTwoBoothLayout(true);
+    return;
   }
   if (isImfEgfPreset()) {
     applyImfEgfLayout(true);
-    return;
-  }
-  if (state.preset === "wof") {
-    applyWofTwoBoothLayout(true);
     return;
   }
   const w = state.booth.width;
@@ -547,7 +782,7 @@ function applyStandardLayout() {
     makeItem("fixture", "什器棚", 900, 350, "#77a7d9", 150, 250),
     makeItem("wall", "壁面サイン", Math.min(1600, w - 400), 80, "#7bcb9d", 200, 0, 0, 300),
     makeItem("spotlight", "スポットライト", 350, 350, "#ffd45f", Math.max(100, w / 2 - 175), 150, 100),
-    makeItem("power", "コンセント", 300, 300, "#d85a5a", Math.max(100, w - 450), Math.max(100, d - 500), OUTLET_WATT)
+    makeItem("power", "コンセント", 300, 300, "#d85a5a", Math.max(100, w - 450), Math.max(100, d - 500), 0)
   ];
   state.items.forEach(clampItem);
   state.selectedId = state.items[0].id;
@@ -559,20 +794,20 @@ function applyWofTwoBoothLayout(renderNow = true) {
   const d = state.booth.depth;
   state.items = [
     makeItem("wall", "サインパネル W1500xH300", 1500, 80, "#7bcb9d", Math.max(200, w / 2 - 750), 0, 0, 300),
-    makeItem("table", "展示台 1 W1500xD600xH700", 1500, 600, "#f2b84b", 0, d - 650),
-    makeItem("table", "展示台 2 W1500xD600xH700", 1500, 600, "#f2b84b", 1480, d - 650),
-    makeItem("table", "展示台 3 W1500xD600xH700", 1500, 600, "#f2b84b", 2960, d - 650),
-    makeItem("table", "展示台 4 W1500xD600xH700", 1500, 600, "#f2b84b", 4440, d - 650),
-    makeItem("chair", "イス 1", 450, 450, "#9b8ad6", 550, d - 1200),
-    makeItem("chair", "イス 2", 450, 450, "#9b8ad6", 2000, d - 1200),
-    makeItem("chair", "イス 3", 450, 450, "#9b8ad6", 3450, d - 1200),
-    makeItem("chair", "イス 4", 450, 450, "#9b8ad6", 4900, d - 1200),
+    makeItem("table", "展示台 1 W1500xD600xH700", 1500, 600, "#f2b84b", 200, 250, 0, 700),
+    makeItem("table", "展示台 2 W1500xD600xH700", 1500, 600, "#f2b84b", w - 1700, 250, 0, 700),
+    makeItem("table", "展示台 3 W1500xD600xH700", 1500, 600, "#f2b84b", 200, d - 850, 0, 700),
+    makeItem("table", "展示台 4 W1500xD600xH700", 1500, 600, "#f2b84b", w - 1700, d - 850, 0, 700),
+    makeItem("chair", "イス 1", 450, 450, "#9b8ad6", 1900, 450),
+    makeItem("chair", "イス 2", 450, 450, "#9b8ad6", w - 2350, 450),
+    makeItem("chair", "イス 3", 450, 450, "#9b8ad6", 1900, d - 950),
+    makeItem("chair", "イス 4", 450, 450, "#9b8ad6", w - 2350, d - 950),
     makeItem("spotlight", "アームスポット 1", 350, 350, "#ffd45f", 750, 120, 100),
     makeItem("spotlight", "アームスポット 2", 350, 350, "#ffd45f", 2200, 120, 100),
     makeItem("spotlight", "アームスポット 3", 350, 350, "#ffd45f", 3650, 120, 100),
     makeItem("spotlight", "アームスポット 4", 350, 350, "#ffd45f", 5100, 120, 100),
-    makeItem("power", "2口コンセント 左", 300, 300, "#d85a5a", 160, d - 1150, OUTLET_WATT),
-    makeItem("power", "2口コンセント 右", 300, 300, "#d85a5a", Math.max(160, w - 460), d - 1150, OUTLET_WATT)
+    makeItem("power", "2口コンセント 左", 300, 300, "#d85a5a", 160, d - 1150, 0),
+    makeItem("power", "2口コンセント 右", 300, 300, "#d85a5a", Math.max(160, w - 460), d - 1150, 0)
   ];
   state.items.forEach(clampItem);
   state.selectedId = state.items[0]?.id || null;
@@ -607,7 +842,7 @@ function applyJexTwoBoothLayout(renderNow = true) {
     makeItem("wall", "社名板 右 W1800xH300", 1800, 80, "#7bcb9d", w - 2100, 0, 0, 300),
     makeItem("table", "JEX付属テーブル 左 W1500xD600", 1500, 600, "#f2b84b", 2100, d - 850),
     makeItem("table", "JEX付属テーブル 右 W1500xD600", 1500, 600, "#f2b84b", 4400, d - 850),
-    makeItem("power", "100V2口コンセント", 300, 300, "#d85a5a", 350, d - 420, OUTLET_WATT)
+    makeItem("power", "100V2口コンセント", 300, 300, "#d85a5a", 350, d - 420, 0)
   ];
 
   for (let i = 0; i < 8; i += 1) {
@@ -629,9 +864,25 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
     height,
     color,
     watt,
+    circuitId: "",
+    powerSourceId: "",
+    ratedCapacityW: 0,
+    cableRouteMode: "x-then-y",
+    cableSlackMm: 0,
+    personRole: "reference",
+    activationMode: "always",
+    operationalCategory: "other",
+    spaceCategory: "contact",
+    requiredAreaMm2: 0,
+    dimensionsConfirmed: type !== "scenario",
+    visibilityRole: "none",
+    targetViewHeightMm: 0,
+    targetFrontSide: "",
     image,
     x,
     y,
+    z: 0,
+    rotationDeg: 0,
     rotationQuarterTurns: 0
   };
 }
@@ -640,17 +891,91 @@ function selectedItem() {
   return state.items.find((item) => item.id === state.selectedId) || null;
 }
 
+function getFixtureMaster(item) {
+  if (!item) return null;
+  const byId = itemTypes.find((master) => master.masterId === item.masterId);
+  if (byId) return byId;
+  if (item.type !== "bolda") return null;
+  return itemTypes.find((master) => master.type === "bolda" && master.label === item.label)
+    || itemTypes.find((master) => master.type === "bolda" && master.boldaCode === item.boldaCode && master.printTheme === item.printTheme)
+    || null;
+}
+
+function expectedMasterPlanDimensions(item, master) {
+  const oddTurn = itemRotationQuarterTurns(item) % 2 === 1;
+  return oddTurn
+    ? { width: master.depth, depth: master.width, height: master.height || 0 }
+    : { width: master.width, depth: master.depth, height: master.height || 0 };
+}
+
+function dimensionsMatchMaster(item, master) {
+  if (!master) return true;
+  const expected = expectedMasterPlanDimensions(item, master);
+  return item.width === expected.width && item.depth === expected.depth && (item.height || 0) === expected.height;
+}
+
+function resetSelectedToMasterDimensions() {
+  const item = selectedItem();
+  const master = getFixtureMaster(item);
+  if (!item || !master) return;
+  const expected = expectedMasterPlanDimensions(item, master);
+  item.width = expected.width;
+  item.depth = expected.depth;
+  item.height = expected.height;
+  clampItem(item);
+  render();
+}
+
+function paletteDetail(item) {
+  if (item.type === "zone") return `用途領域 ${formatSquareMetres(item.width * item.depth)}㎡・必要面積を要登録`;
+  if (item.type === "scenario") return "仮W300×D300×H300mm・実測必須";
+  if (item.type === "spotlight") return `${item.watt}W`;
+  if (item.type === "power") return "回路容量は未登録";
+  if (item.type === "powerstrip") return "定格容量は未登録";
+  if (item.type === "device") return "消費電力・寸法を要入力";
+  return itemSizeLabel(item);
+}
+
 function updateSelectedFromForm() {
   const item = selectedItem();
   if (!item) return;
+  const master = getFixtureMaster(item);
   item.label = $("itemLabel").value;
-  item.width = Math.max(50, Number($("itemWidth").value) || 50);
-  item.depth = Math.max(50, Number($("itemDepth").value) || 50);
-  item.height = Math.max(20, Number($("itemHeight").value) || defaultItemHeight(item));
+  if (!master?.dimensionLocked) {
+    item.width = Math.max(50, Number($("itemWidth").value) || 50);
+    item.depth = Math.max(50, Number($("itemDepth").value) || 50);
+    const heightInput = $("itemHeight").value.trim();
+    item.height = heightInput ? Math.max(20, Number(heightInput) || 20) : 0;
+  }
   item.x = Number($("itemX").value) || 0;
   item.y = Number($("itemY").value) || 0;
-  if (item.type === "spotlight") {
+  item.z = Math.max(0, Number($("itemZ").value) || 0);
+  if (["spotlight", "device"].includes(item.type)) {
     item.watt = Math.max(0, Number($("itemWatt").value) || 0);
+  }
+  if (item.type === "power") item.circuitId = $("itemCircuitId").value;
+  if (item.type === "powerstrip") item.ratedCapacityW = Math.max(0, Number($("itemRatedCapacity").value) || 0);
+  if (isPoweredLoad(item)) {
+    item.powerSourceId = $("itemPowerSourceId").value;
+    item.cableRouteMode = $("itemCableRouteMode").value === "y-then-x" ? "y-then-x" : "x-then-y";
+    item.cableSlackMm = Math.max(0, Number($("itemCableSlack").value) || 0);
+  }
+  if (item.type === "person") item.personRole = $("itemPersonRole").value;
+  if (["person", "scenario", "zone"].includes(item.type)) item.activationMode = $("itemActivationMode").value;
+  if (item.type === "scenario") {
+    item.operationalCategory = $("itemOperationalCategory").value;
+    item.dimensionsConfirmed = $("itemDimensionsConfirmed").checked;
+  }
+  if (item.type === "zone") {
+    item.height = 0;
+    item.z = 0;
+    item.spaceCategory = $("itemSpaceCategory").value;
+    item.requiredAreaMm2 = Math.max(0, Domain.finiteNumber($("itemRequiredAreaM2").value, 0) * 1000000);
+  }
+  if (canBeVisibilityTarget(item)) {
+    item.visibilityRole = $("itemVisibilityRole").value;
+    item.targetViewHeightMm = Math.max(0, Number($("itemTargetViewHeight").value) || 0);
+    item.targetFrontSide = $("itemTargetFrontSide").value;
   }
   clampItem(item);
   render();
@@ -660,7 +985,8 @@ function rotateSelected() {
   const item = selectedItem();
   if (!item) return;
   [item.width, item.depth] = [item.depth, item.width];
-  item.rotationQuarterTurns = (itemRotationQuarterTurns(item) + 1) % 4;
+  item.rotationDeg = Domain.normalizeRotationDegrees((item.rotationDeg || itemRotationQuarterTurns(item) * 90) + 90);
+  item.rotationQuarterTurns = item.rotationDeg / 90;
   clampItem(item);
   render();
 }
@@ -688,8 +1014,43 @@ function deleteSelected() {
   render();
 }
 
+function duplicateSelected() {
+  const source = selectedItem();
+  if (!source) return;
+  const offset = Domain.sanitizeGridSize(state.gridSize);
+  const copy = {
+    ...source,
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    label: `${source.label}（複製）`,
+    tierTextures: [...(source.tierTextures || [])],
+    referenceImages: [...(source.referenceImages || [])],
+    x: source.x + offset,
+    y: source.y + offset
+  };
+  clampItem(copy);
+  state.items.push(copy);
+  state.selectedId = copy.id;
+  render();
+}
+
 function onKeyDown(event) {
   const editingText = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName);
+  const command = event.ctrlKey || event.metaKey;
+  if (!editingText && command && event.key.toLowerCase() === "z") {
+    event.preventDefault();
+    if (event.shiftKey) redoDesignChange(); else undoDesignChange();
+    return;
+  }
+  if (!editingText && command && event.key.toLowerCase() === "y") {
+    event.preventDefault();
+    redoDesignChange();
+    return;
+  }
+  if (!editingText && command && event.key.toLowerCase() === "d" && state.selectedId) {
+    event.preventDefault();
+    duplicateSelected();
+    return;
+  }
   if (editingText || !state.selectedId) return;
   if (event.key === "Delete" || event.key === "Backspace") {
     event.preventDefault();
@@ -712,14 +1073,46 @@ function clampItems() {
 function normalizeItems() {
   state.items.forEach((item) => {
     hydrateLegacyItem(item);
-    item.rotationQuarterTurns = itemRotationQuarterTurns(item);
+    const master = getFixtureMaster(item);
+    if (master && !item.masterId) item.masterId = master.masterId;
+    item.rotationDeg = Domain.normalizeRotationDegrees(item.rotationDeg ?? (Number(item.rotationQuarterTurns) || 0) * 90);
+    item.rotationQuarterTurns = item.rotationDeg / 90;
+    item.z = Math.max(0, Domain.finiteNumber(item.z, 0));
+    item.circuitId = String(item.circuitId || "");
+    item.powerSourceId = String(item.powerSourceId || "");
+    item.ratedCapacityW = Math.max(0, Domain.finiteNumber(item.ratedCapacityW, 0));
+    item.cableRouteMode = item.cableRouteMode === "y-then-x" ? "y-then-x" : "x-then-y";
+    item.cableSlackMm = Math.max(0, Domain.finiteNumber(item.cableSlackMm, 0));
+    item.personRole = ["reference", "visitor", "staff", "crowd"].includes(item.personRole) ? item.personRole : "reference";
+    item.activationMode = ["always", "operating", "crowded"].includes(item.activationMode) ? item.activationMode : "always";
+    item.operationalCategory = ["stock", "packing", "bag", "waste", "promotion", "pc", "cable", "other"].includes(item.operationalCategory) ? item.operationalCategory : "other";
+    item.spaceCategory = ["contact", "staff", "inventory"].includes(item.spaceCategory) ? item.spaceCategory : "contact";
+    item.requiredAreaMm2 = Math.max(0, Domain.finiteNumber(item.requiredAreaMm2, 0));
+    item.dimensionsConfirmed = item.type === "scenario" ? item.dimensionsConfirmed === true : true;
+    item.visibilityRole = ["none", "main-product", "product", "pop"].includes(item.visibilityRole) ? item.visibilityRole : "none";
+    item.targetViewHeightMm = Math.max(0, Domain.finiteNumber(item.targetViewHeightMm, 0));
+    item.targetFrontSide = ["top", "right", "bottom", "left"].includes(item.targetFrontSide) ? item.targetFrontSide : "";
     if (item.type === "power") {
-      item.watt = OUTLET_WATT;
+      item.watt = 0;
+      item.width = item.width || 300;
+      item.depth = item.depth || 300;
+    }
+    if (item.type === "zone") {
+      item.height = 0;
+      item.z = 0;
+    }
+    if (item.type === "powerstrip") {
+      item.watt = 0;
+      item.width = item.width || 300;
+      item.depth = item.depth || 150;
+    }
+    if (item.type === "device") {
+      item.watt = Math.max(0, Domain.finiteNumber(item.watt, 0));
       item.width = item.width || 300;
       item.depth = item.depth || 300;
     }
     if (item.type === "spotlight") {
-      item.watt = Number(item.watt) || 100;
+      item.watt = Math.max(0, Domain.finiteNumber(item.watt, 100));
       item.width = item.width || 350;
       item.depth = item.depth || 350;
       item.height = item.height || 180;
@@ -786,14 +1179,64 @@ function clampItem(item) {
 }
 
 function render() {
+  normalizePowerCircuits();
   normalizeItems();
+  syncOperationMode();
+  operationalAudit = getOperationalAudit();
+  spaceAudit = getSpaceAudit();
+  recordHistorySnapshot();
   syncHeader();
+  syncPowerCircuitEditor();
   syncSelectionEditor();
   syncView();
   drawCanvas();
   renderTable();
+  renderSubmissionSummary();
   renderAgents();
+  syncHistoryButtons();
   autosave();
+}
+
+function historySnapshot() {
+  return JSON.stringify({ ...state, selectedId: null, view: "layout" });
+}
+
+function recordHistorySnapshot() {
+  if (historyApplying) return;
+  const snapshot = historySnapshot();
+  if (historyPast[historyPast.length - 1] === snapshot) return;
+  historyPast.push(snapshot);
+  if (historyPast.length > 60) historyPast.shift();
+  historyFuture.length = 0;
+}
+
+function restoreHistorySnapshot(snapshot) {
+  historyApplying = true;
+  try {
+    applyLoadedState(JSON.parse(snapshot));
+    render();
+  } finally {
+    historyApplying = false;
+  }
+  syncHistoryButtons();
+}
+
+function undoDesignChange() {
+  if (historyPast.length < 2) return;
+  historyFuture.push(historyPast.pop());
+  restoreHistorySnapshot(historyPast[historyPast.length - 1]);
+}
+
+function redoDesignChange() {
+  if (!historyFuture.length) return;
+  const snapshot = historyFuture.pop();
+  historyPast.push(snapshot);
+  restoreHistorySnapshot(snapshot);
+}
+
+function syncHistoryButtons() {
+  $("undoBtn").disabled = historyPast.length < 2;
+  $("redoBtn").disabled = historyFuture.length === 0;
 }
 
 function syncHeader() {
@@ -801,7 +1244,7 @@ function syncHeader() {
   $("metaBoothNo").textContent = state.boothNo || "-";
   $("metaCompany").textContent = state.companyName || "-";
   $("metaDate").textContent = new Date().toLocaleDateString("ja-JP");
-  $("boothSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm / 壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)}`;
+  $("boothSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm / 壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`;
   $("printNotes").textContent = state.notes || "-";
 }
 
@@ -814,11 +1257,140 @@ function syncSelectionEditor() {
   $("itemLabel").value = item.label;
   $("itemWidth").value = item.width;
   $("itemDepth").value = item.depth;
-  $("itemHeight").value = Math.round(item.height || defaultItemHeight(item));
+  $("itemHeight").value = item.height ? Math.round(item.height) : "";
+  $("itemHeight").placeholder = item.height ? "" : `未登録（3D仮寸法 ${defaultItemHeight(item)}mm）`;
   $("itemX").value = Math.round(item.x);
   $("itemY").value = Math.round(item.y);
-  $("wattField").classList.toggle("hidden", item.type !== "spotlight");
+  $("itemZ").value = Math.round(item.z || 0);
+  $("itemRotation").value = `${Domain.normalizeRotationDegrees(item.rotationDeg)}°`;
+  const master = getFixtureMaster(item);
+  ["itemWidth", "itemDepth"].forEach((id) => $(id).disabled = Boolean(master?.dimensionLocked));
+  $("itemHeight").disabled = Boolean(master?.dimensionLocked) || item.type === "zone";
+  $("resetMasterDimensionsBtn").classList.toggle("hidden", !master?.dimensionLocked || dimensionsMatchMaster(item, master));
+  syncSelectedMeasurements(item);
+  syncFixtureMasterInfo(item, master);
+  $("wattField").classList.toggle("hidden", !["spotlight", "device"].includes(item.type));
+  $("wattFieldLabel").textContent = item.type === "spotlight" ? "照明消費電力 W" : "機器消費電力 W";
   $("itemWatt").value = item.watt || 0;
+  $("circuitField").classList.toggle("hidden", item.type !== "power");
+  $("itemCircuitId").innerHTML = `<option value="">未割当</option>${state.powerCircuits.map((circuit) => `<option value="${escapeHtml(circuit.id)}">${escapeHtml(circuit.name)} / ${circuit.capacityW ? `${circuit.capacityW}W` : "容量未登録"}</option>`).join("")}`;
+  $("itemCircuitId").value = item.circuitId || "";
+  $("ratedCapacityField").classList.toggle("hidden", item.type !== "powerstrip");
+  $("itemRatedCapacity").value = item.ratedCapacityW || "";
+  const powered = isPoweredLoad(item);
+  $("powerConnectionFields").classList.toggle("hidden", !powered);
+  if (powered) syncPowerConnectionEditor(item);
+  $("personRoleField").classList.toggle("hidden", item.type !== "person");
+  $("itemPersonRole").value = item.personRole || "reference";
+  const modeScoped = ["person", "scenario", "zone"].includes(item.type);
+  $("activationModeField").classList.toggle("hidden", !modeScoped);
+  $("itemActivationMode").value = item.activationMode || "always";
+  $("scenarioFields").classList.toggle("hidden", item.type !== "scenario");
+  $("itemOperationalCategory").value = item.operationalCategory || "other";
+  $("itemDimensionsConfirmed").checked = item.dimensionsConfirmed === true;
+  $("spaceFields").classList.toggle("hidden", item.type !== "zone");
+  $("itemSpaceCategory").value = item.spaceCategory || "contact";
+  $("itemRequiredAreaM2").value = item.requiredAreaMm2 ? formatSquareMetres(item.requiredAreaMm2) : "";
+  syncSelectedSpaceResult(item);
+  const targetCapable = canBeVisibilityTarget(item);
+  $("visibilityRoleField").classList.toggle("hidden", !targetCapable);
+  $("itemVisibilityRole").value = item.visibilityRole || "none";
+  const visibilityEnabled = targetCapable && item.visibilityRole !== "none";
+  $("visibilitySettings").classList.toggle("hidden", !visibilityEnabled);
+  if (visibilityEnabled) {
+    $("itemTargetViewHeight").value = item.targetViewHeightMm || "";
+    $("itemTargetFrontSide").value = item.targetFrontSide || "";
+    syncSelectedVisibilityResult(item);
+  }
+}
+
+function canBeVisibilityTarget(item) {
+  return Boolean(item && ["table", "fixture", "bolda", "wall", "device"].includes(item.type));
+}
+
+function visibilityRoleLabel(role) {
+  return { "main-product": "メイン商品", product: "商品", pop: "POP" }[role] || "未設定";
+}
+
+function personRoleLabel(role) {
+  return { reference: "寸法比較", visitor: "来場者", staff: "スタッフ", crowd: "混雑負荷" }[role] || "寸法比較";
+}
+
+function syncSelectedVisibilityResult(item) {
+  const result = operationalAudit?.targets.find((entry) => entry.item.id === item.id);
+  if (!result) {
+    $("visibilityResult").textContent = "注視高さと表示面の正面を登録すると、視線遮蔽と到達経路を検査します。";
+    return;
+  }
+  const visibilityText = result.missingSettings.length
+    ? `判定不能: ${result.missingSettings.join("・")}`
+    : `視認 ${result.visibleViews}/${result.viewpoints.length}視点${result.blockers.length ? `｜遮蔽物: ${result.blockers.map((entry) => entry.label).join("、")}` : "｜遮蔽なし"}`;
+  const visitorText = result.visitorPath?.found ? `来場者経路 約${Math.round(result.visitorPath.lengthMm)}mm` : "来場者経路なし";
+  const staffText = result.staffPath ? (result.staffPath.found ? `スタッフ経路 約${Math.round(result.staffPath.lengthMm)}mm` : "スタッフ経路なし") : "スタッフ起点未登録";
+  $("visibilityResult").textContent = `${visibilityText}｜${visitorText}｜${staffText}`;
+}
+
+function syncSelectedSpaceResult(item) {
+  const wrap = $("spaceResult");
+  if (item?.type !== "zone") {
+    wrap.textContent = "";
+    return;
+  }
+  const result = spaceAudit?.zones.find((entry) => entry.item.id === item.id);
+  if (!result) {
+    wrap.textContent = "現在の状態では無効です。保存・編集は維持しますが、床面積検査と提出対象から除外します。";
+    return;
+  }
+  const required = item.requiredAreaMm2 > 0 ? `${formatSquareMetres(item.requiredAreaMm2)}㎡` : "未登録";
+  wrap.textContent = `計画${formatSquareMetres(result.areaMm2)}㎡｜障害物${formatSquareMetres(result.occupiedMm2)}㎡｜通路到達${formatSquareMetres(result.publicReachableMm2)}㎡｜スタッフ到達${result.staffReachableMm2 === null ? "起点未登録" : `${formatSquareMetres(result.staffReachableMm2)}㎡`}｜必要${required}`;
+}
+
+function isPoweredLoad(item) {
+  return Boolean(item && ["spotlight", "device", "powerstrip"].includes(item.type));
+}
+
+function availablePowerSources(item) {
+  const allowedTypes = item.type === "powerstrip" ? ["power"] : ["power", "powerstrip"];
+  return state.items.filter((candidate) => candidate.id !== item.id && allowedTypes.includes(candidate.type));
+}
+
+function getPowerSource(item) {
+  return state.items.find((candidate) => candidate.id === item.powerSourceId) || null;
+}
+
+function syncPowerConnectionEditor(item) {
+  const sources = availablePowerSources(item);
+  $("itemPowerSourceId").innerHTML = `<option value="">未接続</option>${sources.map((source) => `<option value="${escapeHtml(source.id)}">${escapeHtml(source.label)}（${typeLabel(source.type)}）</option>`).join("")}`;
+  $("itemPowerSourceId").value = sources.some((source) => source.id === item.powerSourceId) ? item.powerSourceId : "";
+  $("itemCableRouteMode").value = item.cableRouteMode || "x-then-y";
+  $("itemCableSlack").value = Math.round(item.cableSlackMm || 0);
+  const route = getCableRouteData(item);
+  $("powerRouteInfo").textContent = route
+    ? `配線長 ${Math.round(route.totalLengthMm)}mm（平面${Math.round(route.planLengthMm)} + 高低差${Math.round(route.verticalLengthMm)} + 余長${Math.round(route.slackMm)}）${route.crossings.length ? `｜什器横断: ${route.crossings.map((entry) => entry.label).join("、")}` : "｜什器横断なし"}`
+    : "給電元を選ぶと、直交配線長と什器横断をmm単位で検査します。";
+}
+
+function getCableRouteData(item) {
+  if (!isPoweredLoad(item)) return null;
+  const source = getPowerSource(item);
+  if (!source) return null;
+  const points = Domain.orthogonalRoute(source, item, item.cableRouteMode);
+  const planLengthMm = Domain.polylineLength(points);
+  const verticalLengthMm = Math.abs(getItemVerticalRange(source).center - getItemVerticalRange(item).center);
+  const slackMm = Math.max(0, Domain.finiteNumber(item.cableSlackMm, 0));
+  const ignoredTypes = ["wall", "power", "spotlight", "person", "zone"];
+  const crossings = state.items.filter((obstacle) =>
+    obstacle.id !== item.id && obstacle.id !== source.id && !ignoredTypes.includes(obstacle.type) && Domain.routeIntersectsRectangle(points, obstacle)
+  );
+  return { item, source, points, planLengthMm, verticalLengthMm, slackMm, totalLengthMm: planLengthMm + verticalLengthMm + slackMm, crossings };
+}
+
+function resolveCircuitForLoad(item) {
+  const source = getPowerSource(item);
+  if (!source) return null;
+  const outlet = source.type === "power" ? source : source.type === "powerstrip" ? getPowerSource(source) : null;
+  if (!outlet || outlet.type !== "power") return null;
+  return state.powerCircuits.find((circuit) => circuit.id === outlet.circuitId) || null;
 }
 
 function syncBoldaPreview(item) {
@@ -841,7 +1413,8 @@ function syncView() {
   $("preview3dView").classList.toggle("hidden", state.view !== "preview3d");
   if (state.view === "preview3d") {
     $("preview3dTitle").textContent = `${state.eventName || "展示ブース"} 3D配置確認`;
-    $("preview3dSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)}`;
+    $("preview3dSpec").textContent = `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`;
+    $("viewerEyeHeight").value = Math.round(state.viewerEyeHeight || 1600);
     draw3dScene();
     syncThreeSelectionUi();
     $("imagePrompt").value = buildImagePrompt();
@@ -864,21 +1437,60 @@ function drawCanvas() {
   drawGrid(boothPxW, boothPxH);
   drawBooth(boothPxW, boothPxH);
   drawJointSplit();
-  state.items.forEach(drawItem);
+  state.items.filter((item) => item.type === "zone").forEach(drawItem);
+  drawSpaceAnalysis();
+  drawPowerRoutes();
+  drawOperationalOverlays();
+  state.items.filter((item) => item.type !== "zone").forEach(drawItem);
+  if (!printRenderMode) drawSelectedMeasurements(selectedItem());
   drawDimensions(boothPxW, boothPxH);
 }
 
 function drawGrid(boothPxW, boothPxH) {
   ctx.save();
-  ctx.strokeStyle = "#eef2f3";
-  ctx.lineWidth = 1;
-  const step = 500 * scale;
-  for (let x = origin.x; x <= origin.x + boothPxW + 0.5; x += step) {
+  const grid = Domain.sanitizeGridSize(state.gridSize);
+  for (let mm = 0; mm <= state.booth.width; mm += grid) {
+    const major500 = mm % 500 === 0;
+    const major100 = mm % 100 === 0;
+    ctx.strokeStyle = major500 ? "#cbd7d9" : major100 ? "#dfe7e8" : "rgba(223,231,232,.42)";
+    ctx.lineWidth = major500 ? 1.2 : 1;
+    const x = origin.x + mm * scale;
     line(x, origin.y, x, origin.y + boothPxH);
   }
-  for (let y = origin.y; y <= origin.y + boothPxH + 0.5; y += step) {
+  for (let mm = 0; mm <= state.booth.depth; mm += grid) {
+    const major500 = mm % 500 === 0;
+    const major100 = mm % 100 === 0;
+    ctx.strokeStyle = major500 ? "#cbd7d9" : major100 ? "#dfe7e8" : "rgba(223,231,232,.42)";
+    ctx.lineWidth = major500 ? 1.2 : 1;
+    const y = origin.y + mm * scale;
     line(origin.x, y, origin.x + boothPxW, y);
   }
+  ctx.restore();
+}
+
+function drawSelectedMeasurements(item) {
+  if (!item) return;
+  const x = origin.x + item.x * scale;
+  const y = origin.y + item.y * scale;
+  const w = item.width * scale;
+  const h = item.depth * scale;
+  const clearances = Domain.wallClearances(item, state.booth);
+  ctx.save();
+  ctx.strokeStyle = "#006f7f";
+  ctx.fillStyle = "#005461";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.font = "bold 10px sans-serif";
+  ctx.textAlign = "center";
+  line(origin.x, y + h / 2, x, y + h / 2);
+  line(x + w, y + h / 2, origin.x + state.booth.width * scale, y + h / 2);
+  line(x + w / 2, origin.y, x + w / 2, y);
+  line(x + w / 2, y + h, x + w / 2, origin.y + state.booth.depth * scale);
+  ctx.setLineDash([]);
+  ctx.fillText(`左 ${Math.round(clearances.left)}`, (origin.x + x) / 2, y + h / 2 - 4);
+  ctx.fillText(`右 ${Math.round(clearances.right)}`, (x + w + origin.x + state.booth.width * scale) / 2, y + h / 2 - 4);
+  ctx.fillText(`上 ${Math.round(clearances.top)}`, x + w / 2, Math.max(origin.y + 11, (origin.y + y) / 2));
+  ctx.fillText(`下 ${Math.round(clearances.bottom)}`, x + w / 2, Math.min(origin.y + state.booth.depth * scale - 4, (y + h + origin.y + state.booth.depth * scale) / 2));
   ctx.restore();
 }
 
@@ -948,7 +1560,97 @@ function drawJointSplit() {
   ctx.restore();
 }
 
+function drawPowerRoutes() {
+  state.items.filter(isPoweredLoad).forEach((item) => {
+    const route = getCableRouteData(item);
+    if (!route) return;
+    ctx.save();
+    ctx.strokeStyle = route.crossings.length ? "#b43434" : item.id === state.selectedId ? "#006f7f" : "#d26834";
+    ctx.fillStyle = route.crossings.length ? "#8f2424" : "#8a421f";
+    ctx.lineWidth = printRenderMode ? 14 : item.id === state.selectedId ? 4 : 2.5;
+    ctx.setLineDash(printRenderMode ? [28, 18] : [9, 6]);
+    ctx.beginPath();
+    route.points.forEach((point, index) => {
+      const x = origin.x + point.x * scale;
+      const y = origin.y + point.y * scale;
+      if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const labelPoint = route.points[Math.floor(route.points.length / 2)];
+    ctx.font = `bold ${printRenderMode ? 42 : 10}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`配線 ${Math.round(route.totalLengthMm)}mm`, origin.x + labelPoint.x * scale, origin.y + labelPoint.y * scale - (printRenderMode ? 18 : 4));
+    ctx.restore();
+  });
+}
+
+function drawOperationalOverlays() {
+  const selected = selectedItem();
+  if (!selected || selected.visibilityRole === "none") return;
+  const result = operationalAudit?.targets.find((entry) => entry.item.id === selected.id);
+  if (!result) return;
+  const target = Domain.rectangleCenter(selected);
+  result.viewpointResults.forEach((entry) => {
+    ctx.save();
+    ctx.strokeStyle = entry.visible ? "rgba(31, 143, 92, .72)" : "rgba(180, 52, 52, .72)";
+    ctx.lineWidth = printRenderMode ? 10 : 1.5;
+    ctx.setLineDash(entry.visible ? [] : (printRenderMode ? [24, 16] : [6, 4]));
+    line(origin.x + entry.viewpoint.x * scale, origin.y + entry.viewpoint.y * scale, origin.x + target.x * scale, origin.y + target.y * scale);
+    ctx.restore();
+  });
+  drawMovementPath(result.visitorPath, "#176bb3", "来場者");
+  drawMovementPath(result.staffPath, "#7847a8", "スタッフ");
+}
+
+function drawMovementPath(path, color, label) {
+  if (!path?.found || !path.points.length) return;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = printRenderMode ? 13 : 3;
+  ctx.beginPath();
+  path.points.forEach((point, index) => {
+    const x = origin.x + point.x * scale;
+    const y = origin.y + point.y * scale;
+    if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  const midpoint = path.points[Math.floor(path.points.length / 2)];
+  ctx.font = `bold ${printRenderMode ? 40 : 10}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillText(`${label} 約${Math.round(path.lengthMm)}mm`, origin.x + midpoint.x * scale, origin.y + midpoint.y * scale - (printRenderMode ? 16 : 4));
+  ctx.restore();
+}
+
+function drawSpaceAnalysis() {
+  if (!spaceAudit?.deadCells.length) return;
+  ctx.save();
+  ctx.fillStyle = printRenderMode ? "rgba(180, 52, 52, .20)" : "rgba(180, 52, 52, .13)";
+  ctx.strokeStyle = "rgba(143, 36, 36, .38)";
+  ctx.lineWidth = printRenderMode ? 5 : 1;
+  spaceAudit.deadCells.forEach((cell) => {
+    const x = origin.x + cell.x * scale;
+    const y = origin.y + cell.y * scale;
+    const w = cell.width * scale;
+    const h = cell.depth * scale;
+    ctx.fillRect(x, y, w, h);
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x + w, y);
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
 function drawItem(item) {
+  const active = isItemActive(item);
+  if (printRenderMode && !active) return;
+  if (item.type === "zone") {
+    drawSpaceZone(item);
+    return;
+  }
   if (item.type === "power") {
     drawPowerOutlet(item);
     return;
@@ -969,15 +1671,70 @@ function drawItem(item) {
   const selected = item.id === state.selectedId;
 
   ctx.save();
+  ctx.globalAlpha = active ? 1 : 0.28;
   ctx.fillStyle = item.color;
   ctx.strokeStyle = selected ? "#111" : "rgba(0,0,0,0.45)";
   ctx.lineWidth = selected ? 3 : 1.5;
+  ctx.setLineDash(active ? [] : [6, 4]);
   ctx.fillRect(x, y, w, h);
   ctx.strokeRect(x, y, w, h);
+  ctx.setLineDash([]);
   ctx.fillStyle = "#132124";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   drawItemText(item, x, y, w, h);
+  drawVisibilityBadge(item, x, y, w, h);
+  drawActivationBadge(item, x, y, w, h);
+  ctx.restore();
+}
+
+function drawSpaceZone(item) {
+  const x = origin.x + item.x * scale;
+  const y = origin.y + item.y * scale;
+  const w = item.width * scale;
+  const h = item.depth * scale;
+  const active = isItemActive(item);
+  const selected = item.id === state.selectedId;
+  const color = { contact: "#188778", staff: "#6b55a3", inventory: "#9a6b37" }[item.spaceCategory] || "#188778";
+  ctx.save();
+  ctx.globalAlpha = active ? 1 : 0.28;
+  ctx.fillStyle = `${color}20`;
+  ctx.strokeStyle = selected ? "#111" : color;
+  ctx.lineWidth = selected ? 3 : 2;
+  ctx.setLineDash(active ? [8, 5] : [4, 5]);
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeRect(x, y, w, h);
+  ctx.setLineDash([]);
+  ctx.fillStyle = color;
+  ctx.font = `bold ${printRenderMode ? 42 : 11}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(fitCanvasText(`${spaceCategoryLabel(item.spaceCategory)} ${formatSquareMetres(item.width * item.depth)}㎡`, Math.max(10, w - 8)), x + w / 2, y + h / 2);
+  drawActivationBadge(item, x, y, w, h);
+  ctx.restore();
+}
+
+function drawActivationBadge(item, x, y, w, h) {
+  if (!["scenario", "person", "zone"].includes(item.type) || item.activationMode === "always") return;
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = isItemActive(item) ? "#5f3a0a" : "#5d6668";
+  ctx.font = `bold ${printRenderMode ? 34 : 9}px sans-serif`;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(isItemActive(item) ? operationModeLabel(state.operationMode) : "現在は無効", x + w - Math.max(3, w * 0.03), y + h - Math.max(3, h * 0.03));
+  ctx.restore();
+}
+
+function drawVisibilityBadge(item, x, y, w, h) {
+  if (!canBeVisibilityTarget(item) || item.visibilityRole === "none") return;
+  const badge = visibilityRoleLabel(item.visibilityRole);
+  ctx.save();
+  ctx.fillStyle = item.visibilityRole === "main-product" ? "#9b2c2c" : item.visibilityRole === "pop" ? "#805d00" : "#006f7f";
+  ctx.font = `bold ${printRenderMode ? 36 : 9}px sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(badge, x + Math.max(3, w * 0.03), y + Math.max(3, h * 0.03));
   ctx.restore();
 }
 
@@ -993,6 +1750,8 @@ function drawPersonMarker(item) {
   const radius = Math.max(8, Math.min(w, h) * 0.42);
 
   ctx.save();
+  const active = isItemActive(item);
+  ctx.globalAlpha = active ? 1 : 0.25;
   ctx.fillStyle = seated ? "rgba(155, 138, 214, 0.24)" : `${item.color}33`;
   ctx.strokeStyle = selected ? "#111" : item.color;
   ctx.lineWidth = selected ? 3 : 2;
@@ -1018,7 +1777,7 @@ function drawPersonMarker(item) {
   ctx.font = `bold ${printRenderMode ? 42 : 10}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";
-  ctx.fillText(seated ? "着座 179cm" : "立位 179cm", cx, y + h - Math.max(3, h * 0.05));
+  ctx.fillText(`${seated ? "着座" : "立位"} 179cm / ${personRoleLabel(item.personRole)}${active ? "" : " / 現在無効"}`, cx, y + h - Math.max(3, h * 0.05));
   ctx.restore();
 }
 
@@ -1191,12 +1950,14 @@ function canvasToMm(event) {
 
 function onPointerDown(event) {
   const point = canvasToMm(event);
-  const item = [...state.items].reverse().find((candidate) =>
+  const hit = (candidate) =>
     point.x >= candidate.x &&
     point.x <= candidate.x + candidate.width &&
     point.y >= candidate.y &&
-    point.y <= candidate.y + candidate.depth
-  );
+    point.y <= candidate.y + candidate.depth;
+  const reversed = [...state.items].reverse();
+  const item = reversed.find((candidate) => candidate.type !== "zone" && hit(candidate))
+    || reversed.find((candidate) => candidate.type === "zone" && hit(candidate));
   state.selectedId = item ? item.id : null;
   if (item) {
     drag = { id: item.id, dx: point.x - item.x, dy: point.y - item.y };
@@ -1210,8 +1971,8 @@ function onPointerMove(event) {
   const item = selectedItem();
   if (!item) return;
   const point = canvasToMm(event);
-  item.x = Math.round((point.x - drag.dx) / 50) * 50;
-  item.y = Math.round((point.y - drag.dy) / 50) * 50;
+  item.x = Domain.snapMm(point.x - drag.dx, state.gridSize, state.snapEnabled);
+  item.y = Domain.snapMm(point.y - drag.dy, state.gridSize, state.snapEnabled);
   clampItem(item);
   render();
 }
@@ -1229,10 +1990,25 @@ function renderTable() {
   }
   state.items.forEach((item) => {
     const tr = document.createElement("tr");
-    const watt = item.type === "spotlight" ? `${item.watt || 0}W` : "-";
-    tr.innerHTML = `<td>${typeLabel(item.type)}</td><td>${escapeHtml(item.label)}</td><td>${itemSizeLabel(item)}</td><td>X${Math.round(item.x)} / Y${Math.round(item.y)}mm</td><td>${watt}</td><td>1</td>`;
+    const power = itemPowerSummaryText(item);
+    const modeNote = ["scenario", "person", "zone"].includes(item.type) && item.activationMode !== "always" ? `<br><small>${escapeHtml(activationModeLabel(item.activationMode))}${isItemActive(item) ? "・有効" : "・現在無効"}</small>` : "";
+    tr.innerHTML = `<td>${typeLabel(item.type)}</td><td>${escapeHtml(item.label)}${modeNote}</td><td>${itemSizeLabel(item)}</td><td>X${Math.round(item.x)} / Y${Math.round(item.y)} / Z${Math.round(item.z || 0)}mm / ${Domain.normalizeRotationDegrees(item.rotationDeg)}°</td><td>${escapeHtml(power)}</td><td>1</td>`;
     tbody.append(tr);
   });
+}
+
+function itemPowerSummaryText(item) {
+  if (item.type === "power") {
+    const circuit = state.powerCircuits.find((entry) => entry.id === item.circuitId);
+    return circuit ? `${circuit.name} / ${circuit.capacityW ? `${circuit.capacityW}W` : "容量未登録"}` : "回路未割当";
+  }
+  if (!isPoweredLoad(item)) return "-";
+  const source = getPowerSource(item);
+  const route = getCableRouteData(item);
+  const load = item.type === "powerstrip"
+    ? `定格${item.ratedCapacityW ? `${item.ratedCapacityW}W` : "未登録"}`
+    : `${item.watt || 0}W`;
+  return `${load} / ${source ? source.label : "未接続"}${route ? ` / 配線${Math.round(route.totalLengthMm)}mm` : ""}`;
 }
 
 function renderAgents() {
@@ -1245,6 +2021,347 @@ function renderAgents() {
   `).join("");
 }
 
+function syntheticAisleViewpoints() {
+  const radius = state.routeClearanceMm / 2;
+  const side = state.booth.aisleSide;
+  const horizontal = side === "top" || side === "bottom";
+  const span = horizontal ? state.booth.width : state.booth.depth;
+  return [0.25, 0.5, 0.75].map((ratio, index) => {
+    const along = Math.max(radius, Math.min(span - radius, span * ratio));
+    return {
+      id: `aisle-sample-${index + 1}`,
+      label: `通路入口サンプル${index + 1}`,
+      x: side === "left" ? radius : side === "right" ? state.booth.width - radius : along,
+      y: side === "top" ? radius : side === "bottom" ? state.booth.depth - radius : along,
+      z: state.viewerEyeHeight,
+      synthetic: true
+    };
+  });
+}
+
+function personViewpoint(item) {
+  const center = Domain.rectangleCenter(item);
+  return { id: item.id, label: item.label, x: center.x, y: center.y, z: state.viewerEyeHeight, synthetic: false };
+}
+
+function movementObstacleItems(target) {
+  return state.items.filter((item) => {
+    if (!isItemActive(item) || item.id === target.id || ["power", "spotlight", "zone"].includes(item.type)) return false;
+    if (item.type === "person") return item.personRole === "crowd";
+    const vertical = getItemVerticalRange(item);
+    return vertical.bottom < 1800 && vertical.top > 0;
+  });
+}
+
+function targetApproachPoint(item) {
+  if (!item.targetFrontSide) return null;
+  const center = Domain.rectangleCenter(item);
+  const radius = state.routeClearanceMm / 2;
+  const point = { x: center.x, y: center.y };
+  if (item.targetFrontSide === "top") point.y = item.y - radius;
+  if (item.targetFrontSide === "bottom") point.y = item.y + item.depth + radius;
+  if (item.targetFrontSide === "left") point.x = item.x - radius;
+  if (item.targetFrontSide === "right") point.x = item.x + item.width + radius;
+  if (point.x < radius || point.x > state.booth.width - radius || point.y < radius || point.y > state.booth.depth - radius) return null;
+  return point;
+}
+
+function bestMovementPath(starts, end, obstacles) {
+  if (!starts.length || !end) return null;
+  const results = starts.map((start) => ({
+    start,
+    ...Domain.findGridPath({
+      booth: state.booth,
+      start,
+      end,
+      obstacles,
+      cellSize: state.routeGridMm,
+      clearanceMm: state.routeClearanceMm
+    })
+  }));
+  return results.filter((result) => result.found).sort((a, b) => a.lengthMm - b.lengthMm)[0]
+    || results.sort((a, b) => b.visitedCells - a.visitedCells)[0];
+}
+
+function getOperationalAudit() {
+  const currentItems = activeItems();
+  const targets = currentItems.filter((item) => canBeVisibilityTarget(item) && item.visibilityRole !== "none");
+  const visitors = currentItems.filter((item) => item.type === "person" && item.personRole === "visitor");
+  const staff = currentItems.filter((item) => item.type === "person" && item.personRole === "staff");
+  const crowd = currentItems.filter((item) => item.type === "person" && item.personRole === "crowd");
+  const viewpoints = visitors.length ? visitors.map(personViewpoint) : syntheticAisleViewpoints();
+  const unknownObstacleHeights = currentItems.filter((item) => !["power", "spotlight", "wall", "person", "zone"].includes(item.type) && !item.height);
+  const targetResults = targets.map((item) => {
+    const missingSettings = [];
+    if (!(item.targetViewHeightMm > 0)) missingSettings.push("注視高さ未登録");
+    if (!item.targetFrontSide) missingSettings.push("表示面の正面未登録");
+    const targetCenter = Domain.rectangleCenter(item);
+    const targetPoint = { ...targetCenter, z: item.targetViewHeightMm || getItemVerticalRange(item).center };
+    const obstacleItems = currentItems.filter((obstacle) => !["power", "spotlight", "zone"].includes(obstacle.type) && obstacle.id !== item.id && !(obstacle.type === "person" && obstacle.personRole === "reference"));
+    const viewpointResults = viewpoints.map((viewpoint) => {
+      const facing = item.targetFrontSide ? Domain.facingSideContainsPoint(item, item.targetFrontSide, viewpoint) : false;
+      const blockers = missingSettings.length ? [] : obstacleItems.filter((obstacle) => {
+        if (obstacle.id === viewpoint.id) return false;
+        const vertical = getItemVerticalRange(obstacle);
+        return Domain.lineOfSightBlocked(viewpoint, targetPoint, { ...obstacle, bottom: vertical.bottom, top: vertical.top });
+      });
+      return { viewpoint, facing, blockers, visible: !missingSettings.length && facing && blockers.length === 0 };
+    });
+    const blockers = [...new Map(viewpointResults.flatMap((entry) => entry.blockers).map((entry) => [entry.id, entry])).values()];
+    const approach = targetApproachPoint(item);
+    const movementObstacles = movementObstacleItems(item).map((obstacle) => ({ x: obstacle.x, y: obstacle.y, width: obstacle.width, depth: obstacle.depth }));
+    const visitorStarts = visitors.length ? visitors.map((entry) => Domain.rectangleCenter(entry)) : syntheticAisleViewpoints();
+    const staffStarts = staff.map((entry) => Domain.rectangleCenter(entry));
+    return {
+      item,
+      missingSettings,
+      viewpoints,
+      viewpointResults,
+      visibleViews: viewpointResults.filter((entry) => entry.visible).length,
+      blockers,
+      approach,
+      visitorPath: bestMovementPath(visitorStarts, approach, movementObstacles),
+      staffPath: staffStarts.length ? bestMovementPath(staffStarts, approach, movementObstacles) : null
+    };
+  });
+  return { targets: targetResults, viewpoints, visitors, staff, crowd, unknownObstacleHeights };
+}
+
+function visibilityAuditStatus(audit) {
+  if (!audit.targets.length) return { level: "warn", message: "視認対象が未登録です。什器・商品・POPを選び、評価区分、注視高さ、表示面の正面を登録してください。" };
+  const missing = audit.targets.filter((entry) => entry.missingSettings.length);
+  if (missing.length) return { level: "warn", message: `問題箇所: ${missing.map((entry) => `${entry.item.label}（${entry.missingSettings.join("・")}）`).join("、")}。理由: 正確な視線方向と遮蔽高さを計算できません。改善案: 実測した注視高さと表示面の正面を登録してください。` };
+  const invisibleMain = audit.targets.filter((entry) => entry.item.visibilityRole === "main-product" && entry.visibleViews === 0);
+  if (invisibleMain.length) return { level: "bad", message: `問題箇所: ${invisibleMain.map((entry) => entry.item.label).join("、")}。理由: メイン商品が登録視点${audit.viewpoints.length}点のいずれからも正面視認できません。改善案: 正面方向、遮蔽物、展示高さ、配置を見直してください。` };
+  const invisible = audit.targets.filter((entry) => entry.visibleViews === 0);
+  if (invisible.length) return { level: "warn", message: `問題箇所: ${invisible.map((entry) => entry.item.label).join("、")}。理由: 正面外または什器で遮蔽されています。改善案: 表示面を来場者側へ向け、遮蔽物を移動してください。` };
+  const lowCoverage = audit.targets.filter((entry) => entry.visibleViews < Math.min(2, entry.viewpoints.length));
+  if (lowCoverage.length) return { level: "warn", message: `問題箇所: ${lowCoverage.map((entry) => `${entry.item.label} ${entry.visibleViews}/${entry.viewpoints.length}視点`).join("、")}。理由: 視認できる入口位置が限定されています。改善案: 表示面角度または周辺什器を見直してください。` };
+  const provisional = audit.unknownObstacleHeights.length;
+  return { level: provisional ? "warn" : "ok", message: `${audit.targets.length}対象を${audit.viewpoints.length}視点から正面・高さ・遮蔽で確認しました。${provisional ? `高さ未登録${provisional}点は3D仮寸法で判定しているため要確認です。` : "全対象を2視点以上から確認できます。"}` };
+}
+
+function movementAuditStatus(audit) {
+  if (!audit.targets.length) return { level: "warn", message: "到達対象が未登録です。視認対象を登録すると、通路側から対象正面までの連続経路を探索します。" };
+  const noApproach = audit.targets.filter((entry) => !entry.approach);
+  if (noApproach.length) return { level: "bad", message: `問題箇所: ${noApproach.map((entry) => entry.item.label).join("、")}。理由: 登録正面側に必要幅${state.routeClearanceMm}mmの接近点を確保できません。改善案: 対象を壁・境界から離すか、正面方向を見直してください。` };
+  const visitorBlocked = audit.targets.filter((entry) => !entry.visitorPath?.found);
+  if (visitorBlocked.length) return { level: "bad", message: `問題箇所: ${visitorBlocked.map((entry) => entry.item.label).join("、")}。理由: 通路入口から必要幅${state.routeClearanceMm}mmの連続経路がありません。改善案: 什器間隔または対象正面の接客スペースを広げてください。` };
+  const staffBlocked = audit.staff.length ? audit.targets.filter((entry) => !entry.staffPath?.found) : [];
+  if (staffBlocked.length) return { level: "bad", message: `問題箇所: ${staffBlocked.map((entry) => entry.item.label).join("、")}。理由: スタッフ起点から必要幅${state.routeClearanceMm}mmで到達できません。改善案: スタッフ位置・什器間隔・接近面を見直してください。` };
+  if (!audit.staff.length) return { level: "warn", message: `来場者経路は${audit.targets.length}対象で確保しています（必要幅${state.routeClearanceMm}mm、${state.routeGridMm}mm刻み）。スタッフ役割の人物が未登録のため、スタッフ動線は未判定です。` };
+  return { level: "ok", message: `来場者・スタッフとも${audit.targets.length}対象へ必要幅${state.routeClearanceMm}mmで到達できます（${state.routeGridMm}mm刻みの設計探索）。` };
+}
+
+function getElectricalAudit() {
+  const outlets = state.items.filter((item) => item.type === "power");
+  const loads = state.items.filter(isPoweredLoad);
+  const consumingLoads = loads.filter((item) => ["spotlight", "device"].includes(item.type));
+  const strips = loads.filter((item) => item.type === "powerstrip");
+  const unconnected = loads.filter((item) => !item.powerSourceId);
+  const brokenSources = loads.filter((item) => item.powerSourceId && !getPowerSource(item));
+  const unregisteredWatt = consumingLoads.filter((item) => !(Number(item.watt) > 0));
+  const unregisteredStripRating = strips.filter((item) => !(Number(item.ratedCapacityW) > 0));
+  const unassignedOutlets = outlets.filter((item) => !state.powerCircuits.some((circuit) => circuit.id === item.circuitId));
+  const unknownCapacityCircuits = state.powerCircuits.filter((circuit) =>
+    outlets.some((outlet) => outlet.circuitId === circuit.id) && !(Number(circuit.capacityW) > 0)
+  );
+  const routes = loads.map(getCableRouteData).filter(Boolean);
+  const crossingRoutes = routes.filter((route) => route.crossings.length);
+
+  const stripOverloads = strips.map((strip) => {
+    const loadW = consumingLoads.filter((item) => item.powerSourceId === strip.id).reduce((sum, item) => sum + (Number(item.watt) || 0), 0);
+    return { strip, loadW };
+  }).filter(({ strip, loadW }) => strip.ratedCapacityW > 0 && loadW > strip.ratedCapacityW);
+
+  const circuitLoads = new Map(state.powerCircuits.map((circuit) => [circuit.id, 0]));
+  consumingLoads.forEach((item) => {
+    const circuit = resolveCircuitForLoad(item);
+    if (circuit) circuitLoads.set(circuit.id, (circuitLoads.get(circuit.id) || 0) + (Number(item.watt) || 0));
+  });
+  const circuitOverloads = state.powerCircuits.map((circuit) => ({ circuit, loadW: circuitLoads.get(circuit.id) || 0 }))
+    .filter(({ circuit, loadW }) => circuit.capacityW > 0 && loadW > circuit.capacityW);
+
+  const totalLoadW = consumingLoads.reduce((sum, item) => sum + (Number(item.watt) || 0), 0);
+  return {
+    outlets, loads, consumingLoads, strips, unconnected, brokenSources, unregisteredWatt, unregisteredStripRating,
+    unassignedOutlets, unknownCapacityCircuits, routes, crossingRoutes, stripOverloads, circuitOverloads, circuitLoads, totalLoadW
+  };
+}
+
+function electricalAuditMessage(audit) {
+  if (audit.circuitOverloads.length) {
+    const detail = audit.circuitOverloads.map(({ circuit, loadW }) => `${circuit.name} ${loadW}W/${circuit.capacityW}W`).join("、");
+    return { level: "bad", message: `問題箇所: ${detail}。理由: 登録回路容量を超過しています。改善案: 接続機器を別回路へ分散するか、施工会社確認済みの回路容量へ更新してください。` };
+  }
+  if (audit.stripOverloads.length) {
+    const detail = audit.stripOverloads.map(({ strip, loadW }) => `${strip.label} ${loadW}W/${strip.ratedCapacityW}W`).join("、");
+    return { level: "bad", message: `問題箇所: ${detail}。理由: 電源タップの登録定格容量を超過しています。改善案: 負荷を分散し、定格と会場施工条件を再確認してください。` };
+  }
+  if (audit.brokenSources.length) {
+    return { level: "bad", message: `問題箇所: ${audit.brokenSources.map((item) => item.label).join("、")}。理由: 保存された給電元IDが現在の配置に存在しません。改善案: 給電元を再選択してください。` };
+  }
+  if (audit.crossingRoutes.length) {
+    const detail = audit.crossingRoutes.slice(0, 3).map((route) => `${route.item.label}→${route.crossings.map((item) => item.label).join("/")}`).join("、");
+    return { level: "bad", message: `問題箇所: ${detail}。理由: 計画配線が床置き什器を横断しています。改善案: X→Y/Y→Xを切り替えるか、什器・給電元を移動し、養生方法を施工会社と確定してください。` };
+  }
+  const missing = [];
+  if (audit.unconnected.length) missing.push(`未接続${audit.unconnected.length}点`);
+  if (audit.unregisteredWatt.length) missing.push(`消費電力未登録${audit.unregisteredWatt.length}点`);
+  if (audit.unregisteredStripRating.length) missing.push(`タップ定格未登録${audit.unregisteredStripRating.length}点`);
+  if (audit.unassignedOutlets.length) missing.push(`回路未割当コンセント${audit.unassignedOutlets.length}点`);
+  if (audit.unknownCapacityCircuits.length) missing.push(`容量未登録回路${audit.unknownCapacityCircuits.length}件`);
+  if (missing.length) {
+    return { level: "warn", message: `問題箇所: ${missing.join("、")}。理由: 容量超過と必要ケーブル長を確定できません。改善案: 施工会社の回路容量、各機器W数、給電元、タップ定格を登録してください。現在の登録負荷合計は${audit.totalLoadW}Wです。` };
+  }
+  if (!audit.outlets.length && !audit.loads.length) {
+    return { level: "warn", message: "問題箇所: 電源設計未登録。理由: 電源が必要か判定できません。改善案: 不要なら備考へ明記し、必要なら回路・コンセント・接続機器を登録してください。" };
+  }
+  return { level: "ok", message: `登録負荷合計${audit.totalLoadW}W、接続${audit.routes.length}経路。回路・タップ容量超過と什器横断はありません。` };
+}
+
+function getScenarioAudit() {
+  const all = state.items.filter((item) => item.type === "scenario");
+  const active = all.filter((item) => isItemActive(item));
+  const unconfirmed = active.filter((item) => !item.dimensionsConfirmed);
+  const stock = active.filter((item) => item.operationalCategory === "stock");
+  const pcPlaceholders = active.filter((item) => item.operationalCategory === "pc");
+  const crowd = activeItems().filter((item) => item.type === "person" && item.personRole === "crowd");
+  const floorAreaMm2 = active.reduce((sum, item) => sum + item.width * item.depth, 0);
+  const stockVolumeMm3 = stock.reduce((sum, item) => sum + item.width * item.depth * (item.height || defaultItemHeight(item)), 0);
+  return { all, active, unconfirmed, stock, pcPlaceholders, crowd, floorAreaMm2, stockVolumeMm3 };
+}
+
+function scenarioAuditStatus(audit) {
+  if (state.operationMode === "design") {
+    return { level: "ok", message: `設計モードです。営業中・混雑時だけ有効な物品${audit.all.filter((item) => !isItemActive(item)).length}点は検査・3D・PDFから除外しています。` };
+  }
+  if (audit.unconfirmed.length) {
+    return { level: "warn", message: `問題箇所: ${audit.unconfirmed.map((item) => item.label).join("、")}。理由: 営業物品のW/D/Hが実測確認されていません。改善案: 実測寸法へ変更し「寸法を実測・確認済み」を有効にしてください。` };
+  }
+  if (!audit.stock.length) {
+    return { level: "warn", message: `問題箇所: ${operationModeLabel(state.operationMode)}の在庫・予備品スペース。理由: 状態別物品として登録されていません。改善案: 営業物品を追加し、区分を「在庫・予備品」、実測寸法を登録してください。` };
+  }
+  if (state.operationMode === "crowded" && !audit.crowd.length) {
+    return { level: "warn", message: "問題箇所: 混雑時の来場者占有。理由: 混雑負荷の人物が未登録です。改善案: 人物を複製し、人物役割を「混雑負荷」、表示状態を「混雑時のみ」にしてください。" };
+  }
+  if (audit.pcPlaceholders.length) {
+    return { level: "warn", message: `問題箇所: ${audit.pcPlaceholders.map((item) => item.label).join("、")}。理由: 占有領域は登録されていますが、消費電力と給電元は未管理です。改善案: 電源が必要なPC・端末は「接続機器」でも登録し、回路へ接続してください。` };
+  }
+  return { level: "ok", message: `${operationModeLabel(state.operationMode)}で営業物品${audit.active.length}点、占有面積${Math.round(audit.floorAreaMm2 / 10000) / 100}㎡、在庫領域${audit.stock.length}点を実測寸法で確認しました。` };
+}
+
+function spaceObstacleItems() {
+  return activeItems().filter((item) => {
+    if (["zone", "power", "spotlight"].includes(item.type)) return false;
+    if (item.type === "person") return item.personRole === "crowd";
+    const vertical = getItemVerticalRange(item);
+    return vertical.bottom < 1800 && vertical.top > 0;
+  });
+}
+
+function getSpaceAudit() {
+  const allZones = state.items.filter((item) => item.type === "zone");
+  const activeZones = allZones.filter((item) => isItemActive(item));
+  const obstacles = spaceObstacleItems().map((item) => ({ id: item.id, x: item.x, y: item.y, width: item.width, depth: item.depth }));
+  const zonePlans = activeZones.map((item) => ({ id: item.id, x: item.x, y: item.y, width: item.width, depth: item.depth }));
+  const staff = activeItems().filter((item) => item.type === "person" && item.personRole === "staff");
+  const staffPoints = staff.map((item) => Domain.rectangleCenter(item));
+  const common = { booth: state.booth, obstacles, zones: zonePlans };
+  const publicAnalysis = Domain.analyzeOrthogonalSpace({ ...common, entrySide: state.booth.aisleSide });
+  const operationalAnalysis = publicAnalysis;
+  const staffAnalysis = staffPoints.length ? Domain.analyzeOrthogonalSpace({ ...common, entryPoints: staffPoints }) : null;
+  const staffAccessibility = staff.map((item) => {
+    const center = Domain.rectangleCenter(item);
+    const cell = publicAnalysis.cells.find((entry) => center.x >= entry.x && center.x <= entry.x + entry.width && center.y >= entry.y && center.y <= entry.y + entry.depth);
+    return { item, accessibleFromAisle: Boolean(cell && !cell.occupied && cell.reachable) };
+  });
+  const zones = activeZones.map((item) => {
+    const publicResult = publicAnalysis.zones.find((entry) => entry.id === item.id);
+    const operationalResult = operationalAnalysis.zones.find((entry) => entry.id === item.id);
+    const staffResult = staffAnalysis?.zones.find((entry) => entry.id === item.id) || null;
+    return {
+      item,
+      areaMm2: operationalResult?.areaMm2 || item.width * item.depth,
+      occupiedMm2: operationalResult?.occupiedMm2 || 0,
+      freeMm2: operationalResult?.freeMm2 || 0,
+      publicReachableMm2: publicResult?.reachableMm2 || 0,
+      staffReachableMm2: staffResult ? staffResult.reachableMm2 : null,
+      operationalReachableMm2: operationalResult?.reachableMm2 || 0,
+      deadMm2: operationalResult?.deadMm2 || 0
+    };
+  });
+  return {
+    allZones,
+    activeZones,
+    zones,
+    obstacles,
+    staff,
+    staffAccessibility,
+    publicAnalysis,
+    operationalAnalysis,
+    staffAnalysis,
+    deadCells: operationalAnalysis.cells.filter((cell) => !cell.occupied && !cell.reachable)
+  };
+}
+
+function spaceAuditStatus(audit) {
+  if (!audit.activeZones.length) {
+    return { level: "warn", message: `問題箇所: ${operationModeLabel(state.operationMode)}の用途領域。理由: 接客・スタッフ・在庫の計画面積が未登録です。改善案: 「接客スペース」を追加し、実際の運用基準に基づく必要面積を入力してください。` };
+  }
+  const contactZones = audit.zones.filter((entry) => entry.item.spaceCategory === "contact");
+  if (!contactZones.length) {
+    return { level: "warn", message: "問題箇所: 接客スペース。理由: 用途領域に接客区分がありません。改善案: 来場者とスタッフが滞在する矩形領域と必要面積を登録してください。" };
+  }
+  const occupied = audit.zones.filter((entry) => entry.occupiedMm2 > 0);
+  if (occupied.length) {
+    return { level: "bad", message: `問題箇所: ${occupied.map((entry) => `${entry.item.label}（障害物${formatSquareMetres(entry.occupiedMm2)}㎡）`).join("、")}。理由: 計画用途領域に什器・壁・営業物品が重なっています。改善案: 領域または障害物を移動し、有効面積を確保してください。` };
+  }
+  const zoneOverlaps = [];
+  for (let index = 0; index < audit.activeZones.length; index += 1) {
+    for (let otherIndex = index + 1; otherIndex < audit.activeZones.length; otherIndex += 1) {
+      const a = audit.activeZones[index];
+      const b = audit.activeZones[otherIndex];
+      if (Domain.rectanglesOverlap(a, b)) zoneOverlaps.push([a, b]);
+    }
+  }
+  if (zoneOverlaps.length) {
+    return { level: "bad", message: `問題箇所: ${zoneOverlaps.map(([a, b]) => `${a.label}×${b.label}`).join("、")}。理由: 用途領域が重なり、同じ床面積を二重計上します。改善案: 境界を分離するか、一つの用途領域として必要面積を再登録してください。` };
+  }
+  const missingRequired = audit.zones.filter((entry) => !(entry.item.requiredAreaMm2 > 0));
+  if (missingRequired.length) {
+    return { level: "warn", message: `問題箇所: ${missingRequired.map((entry) => entry.item.label).join("、")}。理由: 必要面積が未登録のため不足判定できません。改善案: 想定人数・運用・社内基準・会場規定から必要面積㎡を確定して入力してください。` };
+  }
+  const staffZones = audit.zones.filter((entry) => entry.item.spaceCategory === "staff");
+  if (staffZones.length && !audit.staff.length) {
+    return { level: "warn", message: "問題箇所: スタッフ専用領域。理由: スタッフ起点人物が未登録で、専用領域までの業務到達性を判定できません。改善案: 人物役割「スタッフ起点」を実際の待機位置へ配置してください。" };
+  }
+  const inaccessibleStaff = audit.staffAccessibility.filter((entry) => !entry.accessibleFromAisle);
+  if (inaccessibleStaff.length) {
+    return { level: "bad", message: `問題箇所: ${inaccessibleStaff.map((entry) => entry.item.label).join("、")}。理由: スタッフ起点自体へ通路側から連続して到達できません。改善案: 間仕切りに実幅の開口を設けるか、スタッフ待機位置を到達可能床へ移動してください。人物を閉鎖領域へ置くだけでは到達可能と判定しません。` };
+  }
+  const insufficient = audit.zones.filter((entry) => {
+    const required = entry.item.requiredAreaMm2;
+    const reachable = entry.item.spaceCategory === "contact"
+      ? entry.publicReachableMm2
+      : entry.item.spaceCategory === "staff" && entry.staffReachableMm2 !== null
+        ? entry.staffReachableMm2
+        : entry.operationalReachableMm2;
+    return reachable < required;
+  });
+  if (insufficient.length) {
+    return { level: "bad", message: `問題箇所: ${insufficient.map((entry) => {
+      const available = entry.item.spaceCategory === "contact" ? entry.publicReachableMm2 : entry.item.spaceCategory === "staff" && entry.staffReachableMm2 !== null ? entry.staffReachableMm2 : entry.operationalReachableMm2;
+      return `${entry.item.label} ${formatSquareMetres(available)}㎡/${formatSquareMetres(entry.item.requiredAreaMm2)}㎡`;
+    }).join("、")}。理由: 到達可能な有効面積が登録必要面積を下回ります。改善案: 領域を広げ、遮断・重複する什器を移動してください。` };
+  }
+  if (audit.operationalAnalysis.deadAreaMm2 > 0) {
+    const ratio = Math.round(audit.operationalAnalysis.deadAreaMm2 / audit.operationalAnalysis.boothAreaMm2 * 1000) / 10;
+    return { level: "warn", message: `問題箇所: 通路側から到達できない床${formatSquareMetres(audit.operationalAnalysis.deadAreaMm2)}㎡（ブース${ratio}%）。理由: 什器で分断されたデッドスペース候補です。改善案: 2Dの赤い網掛けを確認し、意図した閉鎖領域なら用途を記録、不要なら通路を接続してください。` };
+  }
+  return { level: "ok", message: `床${formatSquareMetres(audit.operationalAnalysis.boothAreaMm2)}㎡のうち障害物${formatSquareMetres(audit.operationalAnalysis.occupiedAreaMm2)}㎡、到達可能床${formatSquareMetres(audit.operationalAnalysis.reachableAreaMm2)}㎡、デッドスペース候補0.00㎡。用途領域${audit.zones.length}点は登録必要面積を満たします。` };
+}
+
 function getChecks() {
   const required = [];
   if (!state.eventName) required.push("展示会名");
@@ -1252,10 +2369,19 @@ function getChecks() {
   if (!state.contactName) required.push("担当者");
   const outlets = state.items.filter((item) => item.type === "power");
   const spotlights = state.items.filter((item) => item.type === "spotlight");
-  const powers = outlets.length + spotlights.length;
-  const totalSpotlightWatt = spotlights.reduce((sum, item) => sum + (Number(item.watt) || 0), 0);
-  const overlaps = countOverlaps();
-  const people = state.items.filter((item) => item.type === "person");
+  const electrical = getElectricalAudit();
+  const electricalStatus = electricalAuditMessage(electrical);
+  const visibilityStatus = visibilityAuditStatus(operationalAudit || getOperationalAudit());
+  const movementStatus = movementAuditStatus(operationalAudit || getOperationalAudit());
+  const scenario = getScenarioAudit();
+  const scenarioStatus = scenarioAuditStatus(scenario);
+  const spaces = spaceAudit || getSpaceAudit();
+  const spaceStatus = spaceAuditStatus(spaces);
+  const overlapPairs = findOverlapPairs();
+  const overlaps = overlapPairs.length;
+  const outOfBounds = state.items.filter((item) => Domain.isOutOfBounds(item, state.booth));
+  const aisleOpening = getAisleOpeningMm();
+  const people = activeItems().filter((item) => item.type === "person");
   const seatedPeople = people.filter((item) => getChairForPerson(item)).length;
   const personCollisions = countPersonCollisions();
   const tightClearances = countTightPersonClearances();
@@ -1267,8 +2393,12 @@ function getChecks() {
     },
     {
       name: "配置エージェント",
-      level: overlaps ? "warn" : "ok",
-      message: overlaps ? `${overlaps}か所で備品が重なっています。ドラッグして間隔を空けてください。` : "備品はブース内に収まっています。"
+      level: outOfBounds.length ? "bad" : overlaps ? "warn" : "ok",
+      message: outOfBounds.length
+        ? `問題箇所: ${outOfBounds.map((item) => item.label).join("、")}。理由: ブース範囲外です。改善案: X/YまたはW/Dを見直し、壁距離を0mm以上にしてください。`
+        : overlaps
+          ? `問題箇所: ${overlapPairs.slice(0, 3).map(([a, b]) => `${a.label}×${b.label}`).join("、")}${overlaps > 3 ? `ほか${overlaps - 3}件` : ""}。理由: 立体占有範囲が重なっています。改善案: 移動または高さ位置を見直してください。`
+          : "ブース範囲外と立体衝突はありません。"
     },
     {
       name: "導線エージェント",
@@ -1280,11 +2410,36 @@ function getChecks() {
           : "人物を配置すると、身長比較・着座・周囲800mmの導線目安を確認できます。"
     },
     {
+      name: "通路幅エージェント",
+      level: aisleOpening < 900 ? "warn" : "ok",
+      message: aisleOpening < 900
+        ? `問題箇所: 通路側から奥行900mmの入口帯。理由: 最大連続開口が${Math.round(aisleOpening)}mmで、設計目安900mm未満です。改善案: 通路側の什器を移動し、会場規定で必要な開口を確保してください。`
+        : `通路側から奥行900mmの入口帯に、最大連続開口${Math.round(aisleOpening)}mmを確保しています（900mmは設計目安。会場規定を優先）。`
+    },
+    {
+      name: "視認性エージェント",
+      level: visibilityStatus.level,
+      message: visibilityStatus.message
+    },
+    {
+      name: "到達動線エージェント",
+      level: movementStatus.level,
+      message: movementStatus.message
+    },
+    {
+      name: "営業状態エージェント",
+      level: scenarioStatus.level,
+      message: scenarioStatus.message
+    },
+    {
+      name: "床面積・用途領域エージェント",
+      level: spaceStatus.level,
+      message: spaceStatus.message
+    },
+    {
       name: "電源エージェント",
-      level: powers ? "ok" : "warn",
-      message: powers
-        ? `コンセント${outlets.length}点、照明${spotlights.length}点を配置済みです。${spotlights.length ? `照明合計 ${totalSpotlightWatt}W。` : ""}`
-        : "電源位置が未配置です。必要な場合はコンセントを追加してください。"
+      level: electricalStatus.level,
+      message: electricalStatus.message
     },
     {
       name: "提出エージェント",
@@ -1292,6 +2447,14 @@ function getChecks() {
       message: required.length ? `未入力: ${required.join("、")}` : "提出情報の基本項目が入力されています。"
     }
   ];
+  const placedBolda = state.items.filter((item) => item.type === "bolda");
+  if (placedBolda.length) {
+    checks.splice(1, 0, {
+      name: "bolda精度",
+      level: "warn",
+      message: `外形W/D/Hは提供印刷フォーマット名で照合済みです。${placedBolda.length}点の段差・棚板・板厚等は組立画像基準の暫定3Dです。正確化にはメーカー3D/CAD、各段の高さ・奥行、板厚、棚板位置、組立図が必要です。`
+    });
+  }
   if (state.preset === "jex") {
     const spotlights = state.items.filter((item) => item.type === "spotlight").length;
     const outlets = state.items.filter((item) => item.type === "power").length;
@@ -1303,6 +2466,18 @@ function getChecks() {
       message: jexOk
         ? "JEX 3階レンタル装飾 2小間の基本構成です。W8000 x D2000、スポット8灯、100V2口コンセント、付属テーブルW1500 x D600を2台。"
         : "JEX 2小間の基本構成から変更されています。必要に応じて標準レイアウトを置き直してください。"
+    });
+  }
+  if (state.preset === "wof") {
+    const tables = state.items.filter((item) => item.type === "table" && item.width === 1500 && item.depth === 600).length;
+    const chairs = state.items.filter((item) => item.type === "chair").length;
+    const wofOk = state.booth.width === 5940 && state.booth.depth === 2500 && state.booth.wallHeight === 2400 && tables >= 4 && chairs >= 4;
+    checks.unshift({
+      name: "WOF 2コマルール",
+      level: wofOk ? "ok" : "warn",
+      message: wofOk
+        ? "正式外形W5940 x D2500 x H2400と、展示台W1500 x D600を4台・イス4脚を確認しました。配置位置は提出前に会場図・申込内容と照合してください。"
+        : "WOFの正式外形または標準備品数と一致しません。標準レイアウトを置き直すか、変更根拠を備考へ記録してください。"
     });
   }
   if (isImfEgfPreset()) {
@@ -1320,19 +2495,145 @@ function getChecks() {
 }
 
 function countOverlaps() {
-  let count = 0;
-  for (let i = 0; i < state.items.length; i += 1) {
-    for (let j = i + 1; j < state.items.length; j += 1) {
-      if (isOverlap(state.items[i], state.items[j]) && !isAllowedOverlap(state.items[i], state.items[j])) count += 1;
+  return findOverlapPairs().length;
+}
+
+function renderSubmissionSummary() {
+  const currentItems = activeItems();
+  const fixtures = currentItems.filter((item) => !["power", "powerstrip", "device", "spotlight", "zone"].includes(item.type));
+  const groups = new Map();
+  fixtures.forEach((item) => {
+    const key = [item.masterId || "UNREGISTERED", item.label, item.width, item.depth, item.height || 0].join("|");
+    if (!groups.has(key)) groups.set(key, { item, count: 0 });
+    groups.get(key).count += 1;
+  });
+  $("fixtureSummaryBody").innerHTML = groups.size
+    ? [...groups.values()].map(({ item, count }) => `<tr><td>${escapeHtml(item.masterId || "未登録")}<br>${escapeHtml(item.label)}</td><td>${escapeHtml(itemSizeLabel(item))}</td><td>${count}</td></tr>`).join("")
+    : '<tr><td colspan="3">什器・備品なし</td></tr>';
+
+  const powerGroups = new Map();
+  currentItems.filter((item) => ["power", "powerstrip", "device", "spotlight"].includes(item.type)).forEach((item) => {
+    const spec = itemPowerSummaryText(item);
+    const key = `${item.type}|${item.label}|${spec}`;
+    if (!powerGroups.has(key)) powerGroups.set(key, { item, spec, count: 0 });
+    powerGroups.get(key).count += 1;
+  });
+  $("powerSummaryBody").innerHTML = powerGroups.size
+    ? [...powerGroups.values()].map(({ item, spec, count }) => `<tr><td>${escapeHtml(item.label)}</td><td>${escapeHtml(spec)}</td><td>${count}</td></tr>`).join("")
+    : '<tr><td colspan="3">電源・照明なし</td></tr>';
+  const audit = getElectricalAudit();
+  const routeLength = audit.routes.reduce((sum, route) => sum + route.totalLengthMm, 0);
+  const circuitSummary = state.powerCircuits.map((circuit) => `${circuit.name}: ${audit.circuitLoads.get(circuit.id) || 0}W/${circuit.capacityW ? `${circuit.capacityW}W` : "容量未登録"}`).join("、");
+  $("powerSummaryNote").textContent = `登録負荷合計 ${audit.totalLoadW}W。計画配線 ${audit.routes.length}経路・合計${Math.round(routeLength)}mm。${circuitSummary || "回路未登録"}。配線長は平面直交距離＋取付高低差＋登録余長です。`;
+
+  const wallItems = currentItems.filter((item) => ["wall", "power", "spotlight"].includes(item.type));
+  const floorItems = currentItems.filter((item) => !["wall", "power", "spotlight", "zone"].includes(item.type));
+  const steps = [
+    `ブース外形 W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm、壁側${sideLabel(state.booth.wallSide)}・通路側${sideLabel(state.booth.aisleSide)}を墨出し確認。`,
+    ...wallItems.map((item) => `${item.label}: X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(getItemVerticalRange(item).center)}mm付近へ取付。`),
+    ...floorItems.map((item) => `${item.label}: X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(item.z || 0)}mm、${Domain.normalizeRotationDegrees(item.rotationDeg)}°で配置。`)
+  ];
+  $("setupSequenceList").innerHTML = steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
+  const missingSetup = currentItems.filter((item) => item.type !== "zone").filter((item) => {
+    const master = getFixtureMaster(item);
+    return !master || master.setupInfo.status !== "registered";
+  }).length;
+  $("setupDataWarning").textContent = missingSetup
+    ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。現場設営指示として確定する前に、メーカー組立図と会場施工規定を添付してください。`
+    : "全配置物にマスター設営情報が登録されています。";
+  renderVisibilitySummary();
+  renderScenarioSummary();
+  renderSpaceSummary();
+}
+
+function renderVisibilitySummary() {
+  const audit = operationalAudit || getOperationalAudit();
+  $("visibilitySummaryBody").innerHTML = audit.targets.length
+    ? audit.targets.map((entry) => {
+      const visibility = entry.missingSettings.length ? entry.missingSettings.join("・") : `${entry.visibleViews}/${entry.viewpoints.length}視点`;
+      const visitor = entry.visitorPath?.found ? `来場者 約${Math.round(entry.visitorPath.lengthMm)}mm` : "来場者 到達不可";
+      const staff = entry.staffPath ? (entry.staffPath.found ? `スタッフ 約${Math.round(entry.staffPath.lengthMm)}mm` : "スタッフ 到達不可") : "スタッフ未登録";
+      return `<tr><td>${escapeHtml(entry.item.label)}</td><td>${escapeHtml(visibilityRoleLabel(entry.item.visibilityRole))}</td><td>${escapeHtml(visibility)}</td><td>${escapeHtml(`${visitor} / ${staff}`)}</td></tr>`;
+    }).join("")
+    : '<tr><td colspan="4">視認対象未登録</td></tr>';
+  const sourceNote = audit.visitors.length ? `来場者人物${audit.visitors.length}人の視点` : "通路入口の自動サンプル3視点";
+  $("visibilitySummaryNote").textContent = `${operationModeLabel(state.operationMode)}｜${sourceNote}、視点高さ${state.viewerEyeHeight}mm。動線必要幅${state.routeClearanceMm}mm、${state.routeGridMm}mm刻みの設計探索です。避難・施工の正式判定は会場規定を優先してください。`;
+}
+
+function renderScenarioSummary() {
+  const audit = getScenarioAudit();
+  $("scenarioSummaryBody").innerHTML = audit.all.length
+    ? audit.all.map((item) => `<tr><td>${escapeHtml(item.label)}</td><td>${escapeHtml(operationalCategoryLabel(item.operationalCategory))}</td><td>${escapeHtml(activationModeLabel(item.activationMode))}${isItemActive(item) ? "・有効" : "・無効"}</td><td>${item.dimensionsConfirmed ? "実測確認済み" : "未確認（仮寸法）"}</td></tr>`).join("")
+    : '<tr><td colspan="4">状態別物品未登録</td></tr>';
+  $("scenarioSummaryNote").textContent = `${operationModeLabel(state.operationMode)}で${audit.active.length}点を検査・3D・PDFへ反映。占有面積${Math.round(audit.floorAreaMm2 / 10000) / 100}㎡、在庫領域${audit.stock.length}点。無効物品は保存されますが提出対象外です。`;
+}
+
+function renderSpaceSummary() {
+  const audit = spaceAudit || getSpaceAudit();
+  $("spaceSummaryBody").innerHTML = audit.zones.length
+    ? audit.zones.map((entry) => {
+      const reachable = entry.item.spaceCategory === "contact"
+        ? `${formatSquareMetres(entry.publicReachableMm2)}㎡（通路）`
+        : entry.item.spaceCategory === "staff"
+          ? entry.staffReachableMm2 === null ? "スタッフ起点未登録" : `${formatSquareMetres(entry.staffReachableMm2)}㎡（スタッフ）`
+          : `${formatSquareMetres(entry.operationalReachableMm2)}㎡（業務）`;
+      const effective = `${formatSquareMetres(entry.freeMm2)}㎡ / ${reachable}`;
+      const required = entry.item.requiredAreaMm2 > 0 ? `${formatSquareMetres(entry.item.requiredAreaMm2)}㎡` : "未登録";
+      return `<tr><td>${escapeHtml(entry.item.label)}</td><td>${escapeHtml(spaceCategoryLabel(entry.item.spaceCategory))}</td><td>${formatSquareMetres(entry.areaMm2)}㎡</td><td>${escapeHtml(effective)}</td><td>${escapeHtml(required)}</td></tr>`;
+    }).join("")
+    : '<tr><td colspan="5">現在の状態に有効な用途領域なし</td></tr>';
+  const analysis = audit.operationalAnalysis;
+  $("spaceSummaryNote").textContent = `${operationModeLabel(state.operationMode)}｜ブース${formatSquareMetres(analysis.boothAreaMm2)}㎡、障害物${formatSquareMetres(analysis.occupiedAreaMm2)}㎡、通路側から到達可能${formatSquareMetres(analysis.reachableAreaMm2)}㎡、デッドスペース候補${formatSquareMetres(analysis.deadAreaMm2)}㎡。90度矩形の全境界で分割したmm²集計です。スタッフ起点自体の通路到達性も検査します。斜め形状・扉・段差は別途実測確認してください。`;
+}
+
+function findOverlapPairs() {
+  const pairs = [];
+  const items = activeItems();
+  for (let i = 0; i < items.length; i += 1) {
+    for (let j = i + 1; j < items.length; j += 1) {
+      if (isOverlap(items[i], items[j]) && !isAllowedOverlap(items[i], items[j])) pairs.push([items[i], items[j]]);
     }
   }
-  return count;
+  return pairs;
+}
+
+function getAisleOpeningMm() {
+  const side = state.booth.aisleSide;
+  const horizontal = side === "top" || side === "bottom";
+  const length = horizontal ? state.booth.width : state.booth.depth;
+  const entryDepth = 900;
+  const intervals = activeItems()
+    .filter((item) => !["wall", "spotlight", "power", "zone"].includes(item.type))
+    .filter((item) => item.type !== "person" || item.personRole === "crowd")
+    .filter((item) => {
+      if (side === "top") return item.y < entryDepth;
+      if (side === "bottom") return state.booth.depth - (item.y + item.depth) < entryDepth;
+      if (side === "left") return item.x < entryDepth;
+      return state.booth.width - (item.x + item.width) < entryDepth;
+    })
+    .map((item) => horizontal
+      ? [Math.max(0, item.x), Math.min(length, item.x + item.width)]
+      : [Math.max(0, item.y), Math.min(length, item.y + item.depth)])
+    .filter(([start, end]) => end > start)
+    .sort((a, b) => a[0] - b[0]);
+  if (!intervals.length) return length;
+  let cursor = 0;
+  let largestGap = 0;
+  intervals.forEach(([start, end]) => {
+    largestGap = Math.max(largestGap, start - cursor);
+    cursor = Math.max(cursor, end);
+  });
+  return Math.max(largestGap, length - cursor);
 }
 
 function isAllowedOverlap(a, b) {
+  if (a.type === "zone" || b.type === "zone") return true;
   const person = a.type === "person" ? a : b.type === "person" ? b : null;
   const chair = a.type === "chair" ? a : b.type === "chair" ? b : null;
-  return Boolean(person && chair && getChairForPerson(person)?.id === chair.id);
+  if (person && chair && getChairForPerson(person)?.id === chair.id) return true;
+  const aRange = getItemVerticalRange(a);
+  const bRange = getItemVerticalRange(b);
+  return aRange.top <= bRange.bottom || bRange.top <= aRange.bottom;
 }
 
 function getChairForPerson(person) {
@@ -1358,9 +2659,9 @@ function overlapArea(a, b) {
 
 function countPersonCollisions() {
   let count = 0;
-  state.items.filter((item) => item.type === "person").forEach((person) => {
-    state.items.forEach((other) => {
-      if (person.id === other.id || other.type === "person" || ["power", "spotlight", "wall"].includes(other.type)) return;
+  activeItems().filter((item) => item.type === "person").forEach((person) => {
+    activeItems().forEach((other) => {
+      if (person.id === other.id || other.type === "person" || ["power", "spotlight", "wall", "zone"].includes(other.type)) return;
       if (isOverlap(person, other) && !isAllowedOverlap(person, other)) count += 1;
     });
   });
@@ -1368,25 +2669,22 @@ function countPersonCollisions() {
 }
 
 function countTightPersonClearances() {
-  return state.items.filter((item) => item.type === "person" && !getChairForPerson(item)).filter((person) => {
+  return activeItems().filter((item) => item.type === "person" && !getChairForPerson(item)).filter((person) => {
     const clearance = {
       x: person.x + person.width / 2 - 400,
       y: person.y + person.depth / 2 - 400,
       width: 800,
       depth: 800
     };
-    return state.items.some((other) => {
-      if (person.id === other.id || ["person", "power", "spotlight", "wall", "chair"].includes(other.type)) return false;
+    return activeItems().some((other) => {
+      if (person.id === other.id || ["person", "power", "spotlight", "wall", "chair", "zone"].includes(other.type)) return false;
       return isOverlap(clearance, other);
     });
   }).length;
 }
 
 function isOverlap(a, b) {
-  return a.x < b.x + b.width &&
-    a.x + a.width > b.x &&
-    a.y < b.y + b.depth &&
-    a.y + a.depth > b.y;
+  return Domain.rectanglesOverlap(a, b);
 }
 
 function sideLabel(side) {
@@ -1398,12 +2696,13 @@ function oppositeSide(side) {
 }
 
 function typeLabel(type) {
-  return { table: "机", fixture: "什器", bolda: "自社什器 bolda", power: "コンセント", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "導線確認用人物" }[type] || type;
+  return { table: "机", fixture: "什器", bolda: "自社什器 bolda", power: "コンセント", powerstrip: "電源タップ", device: "接続機器", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "導線確認用人物", scenario: "営業状態物品", zone: "用途領域" }[type] || type;
 }
 
 function itemSizeLabel(item) {
   const base = `W${Math.round(item.width)} x D${Math.round(item.depth)}`;
-  return item.height ? `${base} x H${Math.round(item.height)}mm` : `${base}mm`;
+  if (item.type === "zone") return `${base}mm / ${formatSquareMetres(item.width * item.depth)}㎡`;
+  return item.height ? `${base} x H${Math.round(item.height)}mm` : `${base} x H未登録`;
 }
 
 function escapeHtml(value) {
@@ -1417,96 +2716,86 @@ function escapeHtml(value) {
 }
 
 function autosave() {
-  localStorage.setItem("booth-layout-tool", JSON.stringify(state));
+  try {
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(Domain.createProjectDocument(state)));
+  } catch (error) {
+    console.warn("Autosave failed", error);
+  }
 }
 
 function loadAutosave() {
-  const saved = localStorage.getItem("booth-layout-tool");
+  const saved = [AUTOSAVE_KEY, ...PREVIOUS_AUTOSAVE_KEYS].map((key) => localStorage.getItem(key)).find(Boolean);
   if (!saved) return false;
   try {
-    Object.assign(state, JSON.parse(saved));
-    state.view = "layout";
-    normalizeItems();
-    if (state.preset === "jex") {
-      const wasOldJex = state.booth.width !== presets.jex.width || state.booth.depth !== presets.jex.depth;
-      const savedWallSide = state.booth.wallSide || presets.jex.wallSide;
-      const savedAisleSide = state.booth.aisleSide || presets.jex.aisleSide;
-      state.eventName = presets.jex.eventName;
-      state.booth = {
-        width: presets.jex.width,
-        depth: presets.jex.depth,
-        wallHeight: presets.jex.wallHeight,
-        wallSide: savedWallSide,
-        aisleSide: savedAisleSide
-      };
-      state.notes = normalizeRuleNote(state.notes, jexRuleNote);
-      if (wasOldJex || state.items.length === 0) {
-        applyJexTwoBoothLayout(false);
-      } else {
-        clampItems();
-      }
-    }
-    if (state.preset === "wof") {
-      const wasOldWof = state.booth.width !== presets.wof.width || state.booth.depth !== presets.wof.depth;
-      const savedWallSide = state.booth.wallSide || presets.wof.wallSide;
-      const savedAisleSide = state.booth.aisleSide || presets.wof.aisleSide;
-      state.eventName = presets.wof.eventName;
-      state.booth = {
-        width: presets.wof.width,
-        depth: presets.wof.depth,
-        wallHeight: presets.wof.wallHeight,
-        wallSide: savedWallSide,
-        aisleSide: savedAisleSide
-      };
-      state.notes = normalizeRuleNote(state.notes, wofRuleNote);
-      if (wasOldWof || state.items.length === 0) {
-        applyWofTwoBoothLayout(false);
-      } else {
-        clampItems();
-      }
-    }
-    if (state.preset === "imf" || state.preset === "egf") {
-      const preset = presets[state.preset];
-      const wasOldShared = state.booth.width !== preset.width || state.booth.depth !== preset.depth;
-      const savedWallSide = state.booth.wallSide || preset.wallSide;
-      const savedAisleSide = state.booth.aisleSide || preset.aisleSide;
-      state.eventName = preset.eventName;
-      state.booth = {
-        width: preset.width,
-        depth: preset.depth,
-        wallHeight: preset.wallHeight,
-        wallSide: savedWallSide,
-        aisleSide: savedAisleSide
-      };
-      state.notes = normalizeRuleNote(state.notes, state.preset === "imf" ? imfRuleNote : egfRuleNote);
-      state.jointSide = state.jointSide || "right";
-      if (wasOldShared || state.items.length === 0) {
-        applyImfEgfLayout(false);
-      } else {
-        clampItems();
-      }
-    }
-    state.booth.wallSide = state.booth.wallSide || "top";
-    state.booth.aisleSide = state.booth.aisleSide || "bottom";
-    keepWallAndAisleDifferent("wallSide");
-    $("presetSelect").value = state.preset || "custom";
-    syncTextInputs();
-    syncBoothInputs();
+    const parsed = Domain.parseProjectDocument(saved);
+    applyLoadedState(parsed.state);
     return true;
-  } catch {
-    localStorage.removeItem("booth-layout-tool");
+  } catch (error) {
+    console.warn("Autosave could not be loaded", error);
     return false;
   }
 }
 
+function applyLoadedState(incoming) {
+  if (!incoming || typeof incoming !== "object" || !incoming.booth || !Array.isArray(incoming.items)) {
+    throw new Error("保存データの必須項目がありません");
+  }
+  const fallbackBooth = state.booth;
+  const nextBooth = incoming.booth;
+  const sides = ["top", "bottom", "left", "right"];
+  state.preset = presets[incoming.preset] ? incoming.preset : "custom";
+  state.eventName = String(incoming.eventName || "");
+  state.boothNo = String(incoming.boothNo || "");
+  state.companyName = String(incoming.companyName || "");
+  state.contactName = String(incoming.contactName || "");
+  state.notes = String(incoming.notes || "");
+  state.jointSide = incoming.jointSide === "left" ? "left" : "right";
+  state.gridSize = Domain.sanitizeGridSize(incoming.gridSize);
+  state.snapEnabled = incoming.snapEnabled !== false;
+  state.viewerEyeHeight = Math.max(1000, Math.min(2200, Domain.finiteNumber(incoming.viewerEyeHeight, 1600)));
+  state.routeClearanceMm = Math.max(300, Math.min(2000, Domain.finiteNumber(incoming.routeClearanceMm, 800)));
+  state.routeGridMm = [50, 100, 200].includes(Number(incoming.routeGridMm)) ? Number(incoming.routeGridMm) : 100;
+  state.operationMode = Domain.normalizeOperationMode(incoming.operationMode);
+  state.powerCircuits = Array.isArray(incoming.powerCircuits)
+    ? incoming.powerCircuits.map((entry) => ({ ...entry }))
+    : [{ id: "circuit-1", name: "回路1", voltageV: 100, capacityW: 0 }];
+  normalizePowerCircuits();
+  state.booth = {
+    width: Math.max(500, Domain.finiteNumber(nextBooth.width, fallbackBooth.width)),
+    depth: Math.max(500, Domain.finiteNumber(nextBooth.depth, fallbackBooth.depth)),
+    wallHeight: Math.max(0, Domain.finiteNumber(nextBooth.wallHeight, fallbackBooth.wallHeight)),
+    wallSide: sides.includes(nextBooth.wallSide) ? nextBooth.wallSide : "top",
+    aisleSide: sides.includes(nextBooth.aisleSide) ? nextBooth.aisleSide : "bottom"
+  };
+  state.items = incoming.items.map((source, index) => ({
+    ...source,
+    id: String(source.id || `loaded-${index + 1}-${Date.now()}`),
+    type: String(source.type || "fixture"),
+    label: String(source.label || `配置物 ${index + 1}`),
+    width: Math.max(1, Domain.finiteNumber(source.width, 50)),
+    depth: Math.max(1, Domain.finiteNumber(source.depth, 50)),
+    height: Math.max(0, Domain.finiteNumber(source.height, 0)),
+    x: Domain.finiteNumber(source.x, 0),
+    y: Domain.finiteNumber(source.y, 0),
+    z: Math.max(0, Domain.finiteNumber(source.z, 0)),
+    rotationDeg: Domain.normalizeRotationDegrees(source.rotationDeg ?? (Number(source.rotationQuarterTurns) || 0) * 90)
+  }));
+  state.selectedId = state.items.some((item) => item.id === incoming.selectedId) ? incoming.selectedId : null;
+  state.view = "layout";
+  normalizeItems();
+  keepWallAndAisleDifferent("wallSide");
+  $("presetSelect").value = state.preset;
+  syncTextInputs();
+  syncBoothInputs();
+}
+
 function saveProject() {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${state.eventName || "booth-layout"}-${state.boothNo || "draft"}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const project = Domain.createProjectDocument(state);
+  downloadBlob(
+    JSON.stringify(project, null, 2),
+    `${state.eventName || "booth-layout"}-${state.boothNo || "draft"}.json`,
+    "application/json;charset=utf-8"
+  );
 }
 
 function loadProject(event) {
@@ -1515,12 +2804,12 @@ function loadProject(event) {
   const reader = new FileReader();
   reader.onload = () => {
     try {
-      Object.assign(state, JSON.parse(reader.result));
-      syncTextInputs();
-      syncBoothInputs();
+      const parsed = Domain.parseProjectDocument(reader.result);
+      applyLoadedState(parsed.state);
       render();
-    } catch {
-      alert("読込できませんでした。保存したJSONファイルを選択してください。");
+    } catch (error) {
+      console.warn("Project load failed", error);
+      alert("読込できませんでした。対応する保存JSONか確認してください。");
     }
   };
   reader.readAsText(file);
@@ -1566,7 +2855,9 @@ function draw3dScene() {
   addThreeHallFloor(scene, maxSize);
   addThreeBoothFloor(scene);
   addThreeBoothWalls(scene);
-  state.items.forEach((item) => addThreeItem(scene, item));
+  activeItems().forEach((item) => addThreeItem(scene, item));
+  addThreePowerRoutes(scene);
+  addThreeOperationalOverlays(scene);
   addThreeSelectionHighlight(scene);
   syncThreeOverlapWarning();
 
@@ -1605,17 +2896,18 @@ function trackThreeAssetPromise(promise) {
 function updateThreeAssetStatus() {
   const status = $("preview3dAssetStatus");
   if (!status) return;
-  const visiblePeople = state.items.filter((item) => item.type === "person").length;
-  const printFaces = state.items.reduce((sum, item) => sum + [item.frontTexture, item.riserTexture, ...(item.tierTextures || [])].filter(Boolean).length, 0);
+  const currentItems = activeItems();
+  const visiblePeople = currentItems.filter((item) => item.type === "person").length;
+  const printFaces = currentItems.reduce((sum, item) => sum + [item.frontTexture, item.riserTexture, ...(item.tierTextures || [])].filter(Boolean).length, 0);
   const pending = Math.max(0, threeExpectedAssetCount - threeLoadedAssetCount);
   status.classList.toggle("is-loading", pending > 0);
   status.classList.toggle("has-error", threeFailedAssetCount > 0);
   if (pending > 0) {
     status.textContent = `選択項目の人物・印刷素材を読込中 ${threeLoadedAssetCount}/${threeExpectedAssetCount}`;
   } else if (threeFailedAssetCount > 0) {
-    status.textContent = `配置物 ${state.items.length}点のみ（人物 ${visiblePeople}人・印刷面 ${printFaces}面／一部素材は代替表示）`;
+    status.textContent = `${operationModeLabel(state.operationMode)} 配置物 ${currentItems.length}点のみ（人物 ${visiblePeople}人・印刷面 ${printFaces}面／一部素材は代替表示）`;
   } else {
-    status.textContent = `配置物 ${state.items.length}点のみ・自動追加なし（人物 ${visiblePeople}人・印刷面 ${printFaces}面）`;
+    status.textContent = `${operationModeLabel(state.operationMode)} 配置物 ${currentItems.length}点のみ・自動追加なし（人物 ${visiblePeople}人・印刷面 ${printFaces}面）`;
   }
 }
 
@@ -1635,7 +2927,7 @@ function ensureThreePreview() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = T.PCFShadowMap;
   const camera = new T.PerspectiveCamera(34, 1.58, 10, 100000);
-  threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1, lateral: 0.34, assetsReady: Promise.resolve() };
+  threePreview = { renderer, camera, scene: null, target: new T.Vector3(), yaw: 0, pitch: 0, zoom: 1, lateral: 0.34, cameraMode: "orbit", assetsReady: Promise.resolve() };
 }
 
 function disposeThreeScene(scene) {
@@ -1750,17 +3042,92 @@ function addThreeWall(scene, side, height, isMain) {
 }
 
 function addThreeItem(scene, item) {
+  if (item.type === "zone") return addThreeSpaceZone(scene, item);
   if (item.type === "wall") return addThreeWallSign(scene, item);
   if (item.type === "spotlight") return addThreeSpotlight(scene, item);
   if (item.type === "power") return addThreeOutlet(scene, item);
   if (item.type === "person") return addThreePerson(scene, item);
   const displayItem = createThreeDisplayItem(item);
+  if (item.type === "scenario") return addThreeScenarioPlaceholder(scene, displayItem);
+  if (item.type === "powerstrip") return addThreePowerStrip(scene, displayItem);
+  if (item.type === "device") return addThreeGenericDevice(scene, displayItem);
   if (item.type === "chair") return addThreeChair(scene, displayItem);
   if (item.type === "bolda") return addThreeBolda(scene, displayItem);
   if (item.type === "fixture" && String(item.label || "").includes("姿見")) return addThreeMirror(scene, displayItem);
   if (item.type === "fixture" && String(item.label || "").includes("棚")) return addThreeShelfFixture(scene, displayItem);
   if (isFoldingTableItem(item)) return addThreeFoldingTable(scene, displayItem);
   addThreeCounter(scene, displayItem);
+}
+
+function addThreeSpaceZone(scene, item) {
+  const T = window.THREE;
+  const color = { contact: 0x188778, staff: 0x6b55a3, inventory: 0x9a6b37 }[item.spaceCategory] || 0x188778;
+  const mesh = new T.Mesh(
+    new T.BoxGeometry(item.width, 8, item.depth),
+    new T.MeshStandardMaterial({ color, transparent: true, opacity: 0.28, roughness: 0.9, metalness: 0, depthWrite: false })
+  );
+  mesh.position.set(threeWorldX(item.x + item.width / 2), 8, threeWorldZ(item.y + item.depth / 2));
+  mesh.userData.itemId = item.id;
+  mesh.receiveShadow = true;
+  mesh.renderOrder = 2;
+  scene.add(mesh);
+}
+
+function addThreePowerRoutes(scene) {
+  const T = window.THREE;
+  state.items.filter(isPoweredLoad).forEach((item) => {
+    const route = getCableRouteData(item);
+    if (!route) return;
+    const floorY = 24;
+    const sourceY = getItemVerticalRange(route.source).center;
+    const targetY = getItemVerticalRange(item).center;
+    const points = [
+      new T.Vector3(threeWorldX(route.points[0].x), sourceY, threeWorldZ(route.points[0].y)),
+      new T.Vector3(threeWorldX(route.points[0].x), floorY, threeWorldZ(route.points[0].y)),
+      ...route.points.slice(1).map((point) => new T.Vector3(threeWorldX(point.x), floorY, threeWorldZ(point.y))),
+      new T.Vector3(threeWorldX(route.points[route.points.length - 1].x), targetY, threeWorldZ(route.points[route.points.length - 1].y))
+    ];
+    const geometry = new T.BufferGeometry().setFromPoints(points);
+    const material = new T.LineBasicMaterial({ color: route.crossings.length ? 0xb43434 : 0xd26834, depthTest: false, transparent: true, opacity: 0.95 });
+    const lineObject = new T.Line(geometry, material);
+    lineObject.userData.itemId = item.id;
+    lineObject.renderOrder = 10;
+    scene.add(lineObject);
+  });
+}
+
+function addThreeOperationalOverlays(scene) {
+  const T = window.THREE;
+  (operationalAudit?.targets || []).forEach((entry) => {
+    if (!(entry.item.targetViewHeightMm > 0)) return;
+    const center = Domain.rectangleCenter(entry.item);
+    const color = entry.item.visibilityRole === "main-product" ? 0xb43434 : entry.item.visibilityRole === "pop" ? 0xa87700 : 0x007c76;
+    const marker = new T.Mesh(new T.SphereGeometry(42, 18, 12), new T.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.35 }));
+    marker.position.set(threeWorldX(center.x), entry.item.targetViewHeightMm, threeWorldZ(center.y));
+    marker.userData.itemId = entry.item.id;
+    scene.add(marker);
+    if (entry.item.id !== state.selectedId) return;
+    entry.viewpointResults.forEach((view) => {
+      const geometry = new T.BufferGeometry().setFromPoints([
+        new T.Vector3(threeWorldX(view.viewpoint.x), view.viewpoint.z, threeWorldZ(view.viewpoint.y)),
+        new T.Vector3(threeWorldX(center.x), entry.item.targetViewHeightMm, threeWorldZ(center.y))
+      ]);
+      const lineObject = new T.Line(geometry, new T.LineBasicMaterial({ color: view.visible ? 0x1f8f5c : 0xb43434, transparent: true, opacity: 0.72, depthTest: false }));
+      lineObject.renderOrder = 11;
+      scene.add(lineObject);
+    });
+    addThreeMovementPath(scene, entry.visitorPath, 0x176bb3);
+    addThreeMovementPath(scene, entry.staffPath, 0x7847a8);
+  });
+}
+
+function addThreeMovementPath(scene, path, color) {
+  if (!path?.found || !path.points.length) return;
+  const T = window.THREE;
+  const geometry = new T.BufferGeometry().setFromPoints(path.points.map((point) => new T.Vector3(threeWorldX(point.x), 30, threeWorldZ(point.y))));
+  const lineObject = new T.Line(geometry, new T.LineBasicMaterial({ color, depthTest: false }));
+  lineObject.renderOrder = 11;
+  scene.add(lineObject);
 }
 
 function addThreeSelectionHighlight(scene) {
@@ -1800,8 +3167,50 @@ function addLocalBox(group, width, height, depth, x, y, z, material, castShadow 
 }
 
 function itemRotationQuarterTurns(item) {
-  const turns = Math.round(Number(item.rotationQuarterTurns) || 0);
+  const turns = Math.round(Domain.normalizeRotationDegrees(item.rotationDeg ?? (Number(item.rotationQuarterTurns) || 0) * 90) / 90);
   return ((turns % 4) + 4) % 4;
+}
+
+function syncSelectedMeasurements(item) {
+  const clearances = Domain.wallClearances(item, state.booth);
+  const nearest = state.items
+    .filter((other) => other.id !== item.id && isItemActive(other) && !["wall", "spotlight", "power", "zone"].includes(other.type))
+    .map((other) => ({ other, distance: Domain.rectangleDistance(item, other) }))
+    .sort((a, b) => a.distance - b.distance)[0];
+  $("selectedMeasurements").textContent = [
+    `壁距離 上${Math.round(clearances.top)} / 右${Math.round(clearances.right)} / 下${Math.round(clearances.bottom)} / 左${Math.round(clearances.left)}mm`,
+    nearest ? `最短什器間距離 ${Math.round(nearest.distance)}mm（${nearest.other.label}）` : "他の床置き什器なし"
+  ].join("｜");
+}
+
+function syncFixtureMasterInfo(item, master) {
+  const wrap = $("fixtureMasterInfo");
+  if (item.type === "zone") {
+    wrap.innerHTML = `<strong>用途領域｜${escapeHtml(spaceCategoryLabel(item.spaceCategory))}</strong>床上の計画矩形で、什器ではありません。衝突障害物にはせず、登録W/D、通路側・スタッフ起点からの到達性、重複障害物をmm²で集計します。必要面積は推測せず運用基準を登録してください。`;
+    return;
+  }
+  if (item.type === "scenario") {
+    wrap.innerHTML = `<strong>状態別占有領域｜${escapeHtml(item.dimensionsConfirmed ? "実測確認済み" : "仮寸法・要実測")}</strong>${escapeHtml(operationalCategoryLabel(item.operationalCategory))}。${escapeHtml(activationModeLabel(item.activationMode))}に衝突・視認・動線へ反映します。実在製品形状は推測せず、3Dは登録W/D/Hの半透明領域です。`;
+    return;
+  }
+  if (!master) {
+    wrap.innerHTML = `<strong>什器マスター未登録</strong>この配置物はプリセット内の個別定義です。材質・商品位置・POP位置・設営情報は未登録です。`;
+    return;
+  }
+  const matchesMaster = dimensionsMatchMaster(item, master);
+  const dimensionState = master.dimensionLocked
+    ? (matchesMaster ? "マスター寸法一致" : "マスター寸法と不一致")
+    : (matchesMaster ? "マスター初期寸法一致（編集可）" : "個別寸法登録（マスター初期値から変更）");
+  const modelNote = master.type === "bolda"
+    ? "外形W/D/Hは提供ファイル名で確認済み。段差・棚板等の詳細3D形状は組立画像基準で、製造CAD未確認です。"
+    : "汎用3D形状。正確な製品型番・図面は未登録です。";
+  wrap.innerHTML = `
+    <strong>${escapeHtml(master.masterId)}｜${escapeHtml(dimensionState)}</strong>
+    材質: ${escapeHtml(master.material)}<br>
+    寸法根拠: ${escapeHtml(master.dimensionSource)}<br>
+    POP面: ${master.popPlacementPositions.length}面 / 商品設置位置: ${master.productPlacementPositions.length ? `${master.productPlacementPositions.length}か所` : "未登録"}<br>
+    <span class="${master.type === "bolda" ? "accuracy-warn" : ""}">${escapeHtml(modelNote)}</span>
+  `;
 }
 
 function aisleFacingQuarterTurns(side) {
@@ -1830,7 +3239,7 @@ function createFacingGroup(item) {
   const planWidth = item.planWidth ?? item.width;
   const planDepth = item.planDepth ?? item.depth;
   const quarterTurns = item.threeQuarterTurns ?? (aisleFacingQuarterTurns(state.booth.aisleSide) + itemRotationQuarterTurns(item));
-  group.position.set(threeWorldX(item.x + planWidth / 2), 0, threeWorldZ(item.y + planDepth / 2));
+  group.position.set(threeWorldX(item.x + planWidth / 2), item.z || 0, threeWorldZ(item.y + planDepth / 2));
   group.rotation.y = quarterTurns * Math.PI / 2;
   return group;
 }
@@ -1848,6 +3257,45 @@ function addThreeCounter(scene, item) {
   addLocalBox(group, 16, bodyH - 96, 12, -item.width / 2 + 28, 64 + (bodyH - 96) / 2, item.depth / 2 - 15, reveal, false);
   addLocalBox(group, 16, bodyH - 96, 12, item.width / 2 - 28, 64 + (bodyH - 96) / 2, item.depth / 2 - 15, reveal, false);
   addLocalBox(group, item.width - 72, 10, 12, 0, height * 0.46, item.depth / 2 - 15, reveal, false);
+  scene.add(group);
+}
+
+function addThreePowerStrip(scene, item) {
+  const group = createFacingGroup(item);
+  const height = item.height || defaultItemHeight(item);
+  const body = threeStandardMaterial(0xf3f1ec, { roughness: 0.56 });
+  const socket = threeStandardMaterial(0x3a3f40, { roughness: 0.48 });
+  addLocalBox(group, item.width, height, item.depth, 0, height / 2, 0, body);
+  const socketCount = Math.max(2, Math.min(6, Math.floor(item.width / 75)));
+  for (let index = 0; index < socketCount; index += 1) {
+    const x = -item.width / 2 + item.width * (index + 1) / (socketCount + 1);
+    addLocalBox(group, 28, 5, Math.min(54, item.depth * 0.48), x, height + 3, 0, socket, false);
+  }
+  scene.add(group);
+}
+
+function addThreeGenericDevice(scene, item) {
+  const group = createFacingGroup(item);
+  const height = item.height || defaultItemHeight(item);
+  const body = threeStandardMaterial(0x8a9fb5, { roughness: 0.72 });
+  const face = threeStandardMaterial(0xeaf0f4, { roughness: 0.58 });
+  addLocalBox(group, item.width, height, item.depth, 0, height / 2, 0, body);
+  addLocalBox(group, item.width * 0.72, height * 0.46, 8, 0, height * 0.56, item.depth / 2 + 5, face, false);
+  scene.add(group);
+}
+
+function addThreeScenarioPlaceholder(scene, item) {
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const height = item.height || defaultItemHeight(item);
+  const material = new T.MeshStandardMaterial({
+    color: item.dimensionsConfirmed ? 0x9a6b37 : 0xd5963a,
+    roughness: 0.82,
+    metalness: 0,
+    transparent: true,
+    opacity: item.dimensionsConfirmed ? 0.78 : 0.46
+  });
+  addLocalBox(group, item.width, height, item.depth, 0, height / 2, 0, material);
   scene.add(group);
 }
 
@@ -1890,9 +3338,11 @@ function addThreeShelfFixture(scene, item) {
 
 function syncThreeOverlapWarning() {
   const overlaps = countOverlaps();
+  const electrical = getElectricalAudit();
+  const electricalProblems = electrical.crossingRoutes.length + electrical.circuitOverloads.length + electrical.stripOverloads.length;
   const warning = $("preview3dWarning");
-  warning.classList.toggle("hidden", overlaps === 0);
-  warning.textContent = overlaps ? `配置が${overlaps}か所重なっています` : "";
+  warning.classList.toggle("hidden", overlaps === 0 && electricalProblems === 0);
+  warning.textContent = [overlaps ? `配置重なり${overlaps}件` : "", electricalProblems ? `配線・容量問題${electricalProblems}件` : ""].filter(Boolean).join(" / ");
 }
 
 function addThreeFoldingTable(scene, item) {
@@ -2278,18 +3728,20 @@ function nearestBoothSide(item) {
 function getItemVerticalRange(item) {
   const h = item.height || defaultItemHeight(item);
   if (item.type === "wall") {
+    if (item.z > 0) return { bottom: item.z, top: item.z + h, center: item.z + h / 2 };
     const top = Math.max(h + 150, state.booth.wallHeight - 260);
     return { bottom: Math.max(120, top - h), top, center: Math.max(120, top - h) + h / 2 };
   }
   if (item.type === "spotlight") {
-    const center = Math.max(700, state.booth.wallHeight - 210);
+    const center = item.z > 0 ? item.z : Math.max(700, state.booth.wallHeight - 210);
     return { bottom: center - h / 2, top: center + h / 2, center };
   }
   if (item.type === "power") {
-    const center = 250;
-    return { bottom: 160, top: 340, center };
+    const center = item.z > 0 ? item.z : 250;
+    return { bottom: center - 90, top: center + 90, center };
   }
-  return { bottom: 0, top: h, center: h / 2 };
+  const bottom = item.z || 0;
+  return { bottom, top: bottom + h, center: bottom + h / 2 };
 }
 
 function threeWorldX(mm) {
@@ -2308,6 +3760,7 @@ function configureThreeCamera(reset) {
     threePreview.pitch = 0;
     threePreview.zoom = 1;
     threePreview.lateral = 0.34;
+    threePreview.cameraMode = "orbit";
   }
   const w = state.booth.width;
   const d = state.booth.depth;
@@ -2321,6 +3774,24 @@ function configureThreeCamera(reset) {
     right: new T.Vector3(1, 0, 0)
   }[side] || new T.Vector3(0, 0, 1);
   const tangent = new T.Vector3(outward.z, 0, -outward.x);
+  if (threePreview.cameraMode === "visitor") {
+    const eyeHeight = Math.max(1000, Math.min(2200, state.viewerEyeHeight || 1600));
+    const inwardDepth = side === "top" || side === "bottom" ? d : w;
+    const cameraDistance = inwardDepth / 2 + 450 * threePreview.zoom;
+    const targetDistance = Math.min(inwardDepth * 0.3, 1400);
+    const position = outward.clone().multiplyScalar(cameraDistance);
+    position.y = eyeHeight;
+    const target = outward.clone().multiplyScalar(-targetDistance);
+    target.y = Math.max(900, eyeHeight - 120);
+    threePreview.camera.fov = 50;
+    threePreview.camera.updateProjectionMatrix();
+    threePreview.target.copy(target);
+    threePreview.camera.position.copy(position);
+    threePreview.camera.lookAt(target);
+    return;
+  }
+  threePreview.camera.fov = 34;
+  threePreview.camera.updateProjectionMatrix();
   const target = new T.Vector3(0, Math.min(h * 0.38, 900), 0);
   const distance = (maxSize * 1.16 + Math.min(w, d) * 0.48) * threePreview.zoom;
   const base = target.clone()
@@ -2359,6 +3830,7 @@ function bindThreePreviewControls() {
     const moved = threeDrag.moved || Math.hypot(event.clientX - threeDrag.startX, event.clientY - threeDrag.startY) > 5;
     threeDrag = { ...threeDrag, x: event.clientX, y: event.clientY, moved };
     if (!moved) return;
+    threePreview.cameraMode = "orbit";
     threePreview.yaw += dx * 0.006;
     threePreview.pitch = Math.max(-0.32, Math.min(0.5, threePreview.pitch + dy * 0.0017));
     syncThreeCameraButtons("");
@@ -2396,12 +3868,13 @@ function setThreeCameraPreset(preset) {
   if (!threePreview) draw3dScene();
   if (!threePreview) return;
   const settings = {
-    default: { yaw: 0, pitch: 0, zoom: 1, lateral: 0.34 },
-    front: { yaw: 0, pitch: -0.08, zoom: 0.96, lateral: 0 },
-    left: { yaw: 0, pitch: 0, zoom: 1, lateral: -0.38 },
-    right: { yaw: 0, pitch: 0, zoom: 1, lateral: 0.38 },
-    top: { yaw: 0, pitch: 0.5, zoom: 1.08, lateral: 0 }
-  }[preset] || { yaw: 0, pitch: 0, zoom: 1, lateral: 0.34 };
+    default: { yaw: 0, pitch: 0, zoom: 1, lateral: 0.34, cameraMode: "orbit" },
+    front: { yaw: 0, pitch: -0.08, zoom: 0.96, lateral: 0, cameraMode: "orbit" },
+    left: { yaw: 0, pitch: 0, zoom: 1, lateral: -0.38, cameraMode: "orbit" },
+    right: { yaw: 0, pitch: 0, zoom: 1, lateral: 0.38, cameraMode: "orbit" },
+    top: { yaw: 0, pitch: 0.5, zoom: 1.08, lateral: 0, cameraMode: "orbit" },
+    visitor: { yaw: 0, pitch: 0, zoom: 1, lateral: 0, cameraMode: "visitor" }
+  }[preset] || { yaw: 0, pitch: 0, zoom: 1, lateral: 0.34, cameraMode: "orbit" };
   Object.assign(threePreview, settings);
   syncThreeCameraButtons(preset || "default");
   configureThreeCamera(false);
@@ -2452,8 +3925,15 @@ function syncThreeSelectionUi() {
   const item = selectedItem();
   const text = $("preview3dSelectionText");
   if (text) {
+    const operational = item?.type === "person"
+      ? ` / ${personRoleLabel(item.personRole)} / ${activationModeLabel(item.activationMode)}`
+      : item?.type === "scenario"
+        ? ` / ${operationalCategoryLabel(item.operationalCategory)} / ${activationModeLabel(item.activationMode)} / ${item.dimensionsConfirmed ? "実測済み" : "仮寸法"}`
+        : item?.type === "zone"
+          ? ` / ${spaceCategoryLabel(item.spaceCategory)} / 必要${item.requiredAreaMm2 > 0 ? `${formatSquareMetres(item.requiredAreaMm2)}㎡` : "未登録"} / ${activationModeLabel(item.activationMode)}`
+          : item && item.visibilityRole !== "none" ? ` / ${visibilityRoleLabel(item.visibilityRole)} Z${item.targetViewHeightMm || "未登録"}` : "";
     text.textContent = item
-      ? `選択中: ${item.label} / ${itemSizeLabel(item)} / X${Math.round(item.x)} Y${Math.round(item.y)}`
+      ? `選択中: ${item.label} / ${itemSizeLabel(item)} / X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(item.z || 0)} / ${Domain.normalizeRotationDegrees(item.rotationDeg)}°${operational}${isItemActive(item) ? "" : " / 現在モードでは非表示"}`
       : "3D内の什器をクリックすると選択できます";
   }
   ["editSelected3dBtn", "rotateSelected3dBtn", "deleteSelected3dBtn"].forEach((id) => {
@@ -3077,6 +4557,10 @@ function defaultItemHeight(item) {
   if (item.type === "wall") return inferWallPanelHeight(item);
   if (item.type === "spotlight") return 180;
   if (item.type === "power") return 180;
+  if (item.type === "powerstrip") return 50;
+  if (item.type === "device") return 100;
+  if (item.type === "scenario") return 300;
+  if (item.type === "zone") return 8;
   return 800;
 }
 
@@ -3084,7 +4568,7 @@ function buildImagePrompt() {
   const boldaRefs = getUsedBoldaReferences();
   const personRefs = getUsedPersonReferences();
   const boothPhotoReferences = realBoothReferenceImages.map((ref) => `${ref.label}: ${ref.path}`).join("; ");
-  const items = state.items.map(buildPromptItemBlock).join("\n\n");
+  const items = activeItems().filter((item) => item.type !== "zone").map(buildPromptItemBlock).join("\n\n");
   const contacts = buildContactInstructions();
   const alignment = buildAlignmentInstructions();
   const camera = buildPromptCameraInstruction();
@@ -3102,6 +4586,7 @@ function buildImagePrompt() {
     "Use case: photorealistic-natural",
     "Asset type: interior-designer-quality exhibition booth proposal rendering",
     `Primary request: Create one photorealistic, buildable 3D rendering of the exact exhibition booth layout for ${state.eventName || "a trade show"}.`,
+    `Operational state: ${operationModeLabel(state.operationMode)}. Include only objects active in this state; never add hidden-state objects.`,
     "",
     "GEOMETRY PRIORITY",
     "Treat the attached 2D plan and every coordinate below as construction constraints, not inspiration. Establish the booth shell and all object volumes first, then add materials, graphics and products. Never improve the composition by moving, rotating, spreading, duplicating or resizing an object.",
@@ -3166,6 +4651,7 @@ function buildPromptItemBlock(item, index) {
   const x2 = Math.round(item.x + item.width);
   const y2 = Math.round(item.y + item.depth);
   const h = Math.round(item.height || defaultItemHeight(item));
+  const heightKnown = item.height > 0;
   const vertical = getItemVerticalRange(item);
   const side = nearestBoothSide(item);
   const bolda = getBoldaDetail(item);
@@ -3175,8 +4661,10 @@ function buildPromptItemBlock(item, index) {
     lines.push(`   - Plan annotation rectangle: X${x1}..${x2}, Y${y1}..${y2}. This rectangle locates the device; it is not the physical box size.`);
   } else {
     lines.push(`   - Exact floor footprint: X${x1}..${x2}, Y${y1}..${y2}; W${Math.round(item.width)} x D${Math.round(item.depth)}.`);
-    lines.push(`   - Vertical extent: Z0..Z${h}; physical size W${Math.round(item.width)} x D${Math.round(item.depth)} x H${h}.`);
-    lines.push(`   - Orientation: W dimension is parallel to X; D dimension is parallel to Y; front/customer face points ${sideEnglish(state.booth.aisleSide)} toward the aisle.`);
+    lines.push(heightKnown
+      ? `   - Vertical extent: Z${Math.round(item.z || 0)}..Z${Math.round((item.z || 0) + h)}; registered physical size W${Math.round(item.width)} x D${Math.round(item.depth)} x H${h}.`
+      : `   - Height is not registered. The local 3D preview uses provisional H${h} only; confirm the actual height before build or image generation.`);
+    lines.push(`   - Orientation: plan W is parallel to X and plan D to Y after ${Domain.normalizeRotationDegrees(item.rotationDeg)}° rotation; front/customer face points ${sideEnglish(state.booth.aisleSide)} toward the aisle.`);
   }
 
   if (item.type === "wall") {
@@ -3187,6 +4675,16 @@ function buildPromptItemBlock(item, index) {
   } else if (item.type === "power") {
     lines.push(`   - Physical fixture: two-socket outlet plate approximately W150 x D35 x H180, mounted on the ${sideEnglish(side)} wall at Z${Math.round(vertical.bottom)}..Z${Math.round(vertical.top)} near plan marker centre X${Math.round(item.x + item.width / 2)} Y${Math.round(item.y + item.depth / 2)}.`);
     lines.push("   - Show the outlet plate only. Do not render wattage text, a wattage badge, or scale the outlet to the annotation rectangle.");
+  } else if (item.type === "powerstrip") {
+    const source = getPowerSource(item);
+    const route = getCableRouteData(item);
+    lines.push(`   - Electrical power strip: rated capacity ${item.ratedCapacityW ? `${item.ratedCapacityW}W` : "not registered"}; source ${source ? source.label : "not connected"}; planned cable length ${route ? `${Math.round(route.totalLengthMm)}mm` : "not registered"}.`);
+    lines.push("   - The local model is generic. Do not infer socket count, plug shape or manufacturer model; replace it with the confirmed product specification before build.");
+  } else if (item.type === "device") {
+    const source = getPowerSource(item);
+    const route = getCableRouteData(item);
+    lines.push(`   - Electrical load: ${item.watt ? `${item.watt}W` : "wattage not registered"}; source ${source ? source.label : "not connected"}; planned cable length ${route ? `${Math.round(route.totalLengthMm)}mm` : "not registered"}.`);
+    lines.push("   - The local model is a generic placeholder. Do not infer product geometry; use the registered dimensions and replace it with a confirmed model when available.");
   } else if (item.type === "person") {
     const chair = getChairForPerson(item);
     if (chair) {
@@ -3196,8 +4694,15 @@ function buildPromptItemBlock(item, index) {
       lines.push(`   - Pose: standing upright on floor Z0, real human height H1790mm. The W600 x D600 plan footprint is the occupied standing/turning zone, not a solid pedestal.`);
       lines.push(`   - Exact character reference: ${item.standingImage}. Preserve the same face, glasses/helmet, clothing/costume and body appearance.`);
     }
+    lines.push(`   - Operational role: ${personRoleLabel(item.personRole)}; active ${activationModeLabel(item.activationMode)}. Use this person as ${item.personRole === "visitor" ? "a visitor viewpoint" : item.personRole === "staff" ? "a staff movement origin" : item.personRole === "crowd" ? "a crowd obstruction for visibility and movement" : "scale reference only"}.`);
+  } else if (item.type === "scenario") {
+    lines.push(`   - Operational occupied zone: ${operationalCategoryLabel(item.operationalCategory)}; active ${activationModeLabel(item.activationMode)}; dimensions ${item.dimensionsConfirmed ? "measured and confirmed" : "PROVISIONAL and not confirmed"}.`);
+    lines.push("   - Do not infer a manufacturer, exact product shape, quantity or contents. Use only this registered occupied volume until reference data is supplied.");
   } else {
     lines.push(`   - Appearance: ${buildItemVisualInstruction(item, bolda).replace(/^,\s*/, "") || "real exhibition furniture matching the stated dimensions"}.`);
+  }
+  if (canBeVisibilityTarget(item) && item.visibilityRole !== "none") {
+    lines.push(`   - Visibility target: ${visibilityRoleLabel(item.visibilityRole)}; exact target height Z${item.targetViewHeightMm || "NOT-REGISTERED"}mm; display front side ${item.targetFrontSide ? sideEnglish(item.targetFrontSide) : "NOT-REGISTERED"}. Do not infer missing target settings.`);
   }
   if (bolda) {
     lines.push(`   - Matching assembled product reference: ${item.image?.split("/").pop() || bolda.code}; exact form: ${bolda.visual}.`);
@@ -3226,12 +4731,13 @@ function buildPromptCameraInstruction() {
 }
 
 function buildPromptCountSummary() {
-  const labels = { table: "tables/counters", fixture: "fixtures", bolda: "bolda fixtures", wall: "signboards", power: "outlets", spotlight: "spotlights", chair: "chairs", person: "people" };
-  const counts = state.items.reduce((map, item) => {
+  const labels = { table: "tables/counters", fixture: "fixtures", bolda: "bolda fixtures", wall: "signboards", power: "outlets", powerstrip: "power strips", device: "electrical devices", spotlight: "spotlights", chair: "chairs", person: "people", scenario: "operational occupied zones" };
+  const currentItems = activeItems().filter((item) => item.type !== "zone");
+  const counts = currentItems.reduce((map, item) => {
     map[item.type] = (map[item.type] || 0) + 1;
     return map;
   }, {});
-  return [`total ${state.items.length}`, ...Object.entries(counts).map(([type, count]) => `${labels[type] || type} ${count}`)].join(", ");
+  return [`total ${currentItems.length}`, ...Object.entries(counts).map(([type, count]) => `${labels[type] || type} ${count}`)].join(", ");
 }
 
 function sideEnglish(side) {
@@ -3239,10 +4745,12 @@ function sideEnglish(side) {
 }
 
 function buildBoothSpecification() {
+  const currentSpaceAudit = spaceAudit || getSpaceAudit();
   return {
-    schema: "booth-render-spec-v2",
+    schema: "booth-render-spec-v6",
     units: "mm",
     event: state.eventName,
+    operationMode: state.operationMode,
     booth: {
       width: state.booth.width,
       depth: state.booth.depth,
@@ -3252,18 +4760,102 @@ function buildBoothSpecification() {
     },
     coordinateSystem: { origin: "upper-left/back-left", x: "left-to-right", y: "back-to-aisle", z: "floor-up" },
     cameraInstruction: buildPromptCameraInstruction(),
+    electrical: {
+      circuits: state.powerCircuits.map((circuit) => ({ ...circuit, capacityW: circuit.capacityW || null })),
+      routes: state.items.filter(isPoweredLoad).map((item) => {
+        const route = getCableRouteData(item);
+        return {
+          loadId: item.id,
+          sourceId: item.powerSourceId || null,
+          mode: item.cableRouteMode,
+          slackMm: item.cableSlackMm || 0,
+          points: route ? route.points.map((point) => ({ x: Math.round(point.x), y: Math.round(point.y) })) : [],
+          planLengthMm: route ? Math.round(route.planLengthMm) : null,
+          verticalLengthMm: route ? Math.round(route.verticalLengthMm) : null,
+          totalLengthMm: route ? Math.round(route.totalLengthMm) : null,
+          crossingObjectIds: route ? route.crossings.map((entry) => entry.id) : []
+        };
+      })
+    },
+    operationalAnalysis: {
+      operationMode: state.operationMode,
+      viewerEyeHeightMm: state.viewerEyeHeight,
+      requiredRouteWidthMm: state.routeClearanceMm,
+      routeGridMm: state.routeGridMm,
+      viewpoints: (operationalAudit?.viewpoints || []).map((point) => ({ id: point.id, label: point.label, x: Math.round(point.x), y: Math.round(point.y), z: Math.round(point.z), synthetic: point.synthetic })),
+      targets: (operationalAudit?.targets || []).map((entry) => ({
+        objectId: entry.item.id,
+        role: entry.item.visibilityRole,
+        viewHeightMm: entry.item.targetViewHeightMm || null,
+        frontSide: entry.item.targetFrontSide || null,
+        visibleViewCount: entry.visibleViews,
+        totalViewCount: entry.viewpoints.length,
+        blockerObjectIds: entry.blockers.map((item) => item.id),
+        visitorPathLengthMm: entry.visitorPath?.found ? Math.round(entry.visitorPath.lengthMm) : null,
+        staffPathLengthMm: entry.staffPath?.found ? Math.round(entry.staffPath.lengthMm) : null
+      }))
+    },
+    scenarioAnalysis: {
+      activeObjectIds: activeItems().map((item) => item.id),
+      scenarioObjectIds: getScenarioAudit().all.map((item) => item.id),
+      activeScenarioObjectIds: getScenarioAudit().active.map((item) => item.id),
+      unconfirmedDimensionObjectIds: getScenarioAudit().unconfirmed.map((item) => item.id),
+      stockObjectIds: getScenarioAudit().stock.map((item) => item.id),
+      activeCrowdPersonIds: getScenarioAudit().crowd.map((item) => item.id)
+    },
+    spaceAnalysis: {
+      method: "exact-orthogonal-boundary-partition-mm2",
+      boothAreaMm2: currentSpaceAudit.operationalAnalysis.boothAreaMm2,
+      occupiedAreaMm2: currentSpaceAudit.operationalAnalysis.occupiedAreaMm2,
+      reachableAreaMm2: currentSpaceAudit.operationalAnalysis.reachableAreaMm2,
+      deadSpaceCandidateAreaMm2: currentSpaceAudit.operationalAnalysis.deadAreaMm2,
+      zones: currentSpaceAudit.zones.map((entry) => ({
+        objectId: entry.item.id,
+        category: entry.item.spaceCategory,
+        plannedAreaMm2: entry.areaMm2,
+        occupiedAreaMm2: entry.occupiedMm2,
+        publicReachableAreaMm2: entry.publicReachableMm2,
+        staffReachableAreaMm2: entry.staffReachableMm2,
+        operationalReachableAreaMm2: entry.operationalReachableMm2,
+        requiredAreaMm2: entry.item.requiredAreaMm2 || null
+      }))
+    },
     objects: state.items.map((item, index) => {
       const vertical = getItemVerticalRange(item);
       return {
         index: index + 1,
+        id: item.id,
+        fixtureMasterId: item.masterId || null,
         label: item.label,
         type: item.type,
         planRectangle: { x1: Math.round(item.x), y1: Math.round(item.y), x2: Math.round(item.x + item.width), y2: Math.round(item.y + item.depth) },
-        dimensions: { width: Math.round(item.width), depth: Math.round(item.depth), height: Math.round(item.height || defaultItemHeight(item)) },
+        dimensions: { width: Math.round(item.width), depth: Math.round(item.depth), height: item.height ? Math.round(item.height) : null },
+        modelHeightAssumption: item.height ? null : Math.round(defaultItemHeight(item)),
         verticalRange: { z1: Math.round(vertical.bottom), z2: Math.round(vertical.top) },
+        transform: {
+          x: Math.round(item.x),
+          y: Math.round(item.y),
+          z: Math.round(item.z || 0),
+          rotationDeg: Domain.normalizeRotationDegrees(item.rotationDeg)
+        },
         nearestWall: ["wall", "spotlight", "power"].includes(item.type) ? nearestBoothSide(item) : null,
         frontDirection: ["table", "fixture", "bolda", "chair", "person"].includes(item.type) ? state.booth.aisleSide : null,
         watt: item.watt || null,
+        circuitId: item.circuitId || null,
+        powerSourceId: item.powerSourceId || null,
+        ratedCapacityW: item.ratedCapacityW || null,
+        cableRouteMode: isPoweredLoad(item) ? item.cableRouteMode : null,
+        cableSlackMm: isPoweredLoad(item) ? item.cableSlackMm || 0 : null,
+        personRole: item.type === "person" ? item.personRole : null,
+        activationMode: item.activationMode || "always",
+        activeInCurrentMode: isItemActive(item),
+        operationalCategory: item.type === "scenario" ? item.operationalCategory : null,
+        dimensionsConfirmed: item.type === "scenario" ? item.dimensionsConfirmed === true : null,
+        spaceCategory: item.type === "zone" ? item.spaceCategory : null,
+        requiredAreaMm2: item.type === "zone" ? item.requiredAreaMm2 || null : null,
+        visibilityRole: canBeVisibilityTarget(item) ? item.visibilityRole : null,
+        targetViewHeightMm: canBeVisibilityTarget(item) ? item.targetViewHeightMm || null : null,
+        targetFrontSide: canBeVisibilityTarget(item) ? item.targetFrontSide || null : null,
         boldaCode: getBoldaCode(item) || null,
         printTheme: item.printTheme || null,
         printFaces: [item.frontTexture, ...(item.tierTextures || []), item.riserTexture].filter(Boolean),
@@ -3280,7 +4872,7 @@ function buildItemVisualInstruction(item, bolda) {
   if (item.type === "person") return `, visual form: the exact referenced 1790mm-tall character, ${getChairForPerson(item) ? "naturally seated on the overlapping chair" : "standing upright on the floor"}`;
   if (bolda) return `, visual form: assembled bolda fixture, ${bolda.visual}`;
   if (item.type === "table" && String(item.label || "").includes("展示台")) {
-    return ", visual form: display counter/plinth with the exact footprint proportions and H700mm height; a W1500xD900 stand must look deeper than W1500xD600, and W1800 stands must look wider than W1500 stands";
+    return `, visual form: display counter/plinth with the exact footprint proportions and ${item.height ? `H${Math.round(item.height)}mm` : "height not registered (confirm before build)"}; a W1500xD900 stand must look deeper than W1500xD600, and W1800 stands must look wider than W1500 stands`;
   }
   if (item.type === "table") {
     return ", visual form: real rectangular table/counter with the exact width and depth proportions, not a generic cube";
@@ -3288,11 +4880,17 @@ function buildItemVisualInstruction(item, bolda) {
   if (item.type === "fixture") {
     return ", visual form: real display fixture with the exact width, depth and height proportions, not the same generic box as other fixtures";
   }
+  if (item.type === "scenario") {
+    return `, visual form: state-specific occupied volume for ${operationalCategoryLabel(item.operationalCategory)} using only the registered W/D/H; ${item.dimensionsConfirmed ? "dimensions confirmed" : "dimensions provisional, do not invent a product shape"}`;
+  }
+  if (item.type === "zone") {
+    return `, visual form: non-physical floor planning overlay for ${spaceCategoryLabel(item.spaceCategory)}; never render it as furniture, wall or raised structure`;
+  }
   return "";
 }
 function getUsedBoldaReferences() {
   const refs = new Map();
-  state.items
+  activeItems()
     .filter((item) => item.type === "bolda" && item.image)
     .forEach((item) => {
       const detail = getBoldaDetail(item);
@@ -3310,7 +4908,7 @@ function getUsedBoldaReferences() {
 
 function getUsedPersonReferences() {
   const refs = new Map();
-  state.items.filter((item) => item.type === "person").forEach((item) => {
+  activeItems().filter((item) => item.type === "person").forEach((item) => {
     [
       [item.standingImage, `exact standing appearance for ${item.label}, physical height 1790mm`],
       [item.seatedImage, `exact seated appearance for ${item.label}, use only when placed on a chair`]
@@ -3554,7 +5152,7 @@ function downloadBlob(content, filename, type) {
 function buildContactInstructions() {
   const closePairs = [];
   const tolerance = 80;
-  const layoutItems = state.items.filter(isFurnitureForImageAdjacency);
+  const layoutItems = activeItems().filter(isFurnitureForImageAdjacency);
   for (let i = 0; i < layoutItems.length; i += 1) {
     for (let j = i + 1; j < layoutItems.length; j += 1) {
       const a = layoutItems[i];
@@ -3582,7 +5180,7 @@ function isFurnitureForImageAdjacency(item) {
 }
 
 function buildAlignmentInstructions() {
-  const furniture = state.items.filter(isFurnitureForImageAdjacency);
+  const furniture = activeItems().filter(isFurnitureForImageAdjacency);
   const lines = [];
   const groups = [
     groupByCloseValue(furniture, (item) => item.y, "back"),

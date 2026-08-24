@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>展示ブース装飾提出ツール</title>
-  <link rel="stylesheet" href="styles.css?v=20260717-1">
+  <link rel="stylesheet" href="styles.css?v=20260824-5">
 </head>
 <body>
   <header class="app-header no-print">
@@ -13,6 +13,8 @@
       <h1>展示ブース装飾提出ツール</h1>
     </div>
     <div class="header-actions">
+      <button id="undoBtn" class="secondary" disabled>元に戻す</button>
+      <button id="redoBtn" class="secondary" disabled>やり直す</button>
       <button id="saveProjectBtn" class="secondary">保存</button>
       <button id="loadProjectBtn" class="secondary">読込</button>
       <button id="printBtn" class="primary">PDF出力</button>
@@ -27,6 +29,12 @@
           プリセット
           <select id="presetSelect"></select>
         </label>
+        <label>確認する状態<select id="operationMode">
+          <option value="design">設計モード</option>
+          <option value="operating">営業中モード</option>
+          <option value="crowded">混雑時モード</option>
+        </select></label>
+        <div id="operationModeStatus" class="operation-mode-status"></div>
         <div class="two-col">
           <label>ブース幅 mm<input id="boothWidth" type="number" min="500" step="100"></label>
           <label>ブース奥行 mm<input id="boothDepth" type="number" min="500" step="100"></label>
@@ -46,6 +54,25 @@
             <option value="left">左</option>
             <option value="right">右</option>
           </select></label>
+        <div class="two-col">
+          <label>グリッド mm<select id="gridSizeSelect">
+            <option value="10">10</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+          </select></label>
+          <label class="check-label">スナップ
+            <input id="snapEnabled" type="checkbox" checked>
+          </label>
+        </div>
+        <div class="two-col">
+          <label>動線必要幅 mm<input id="routeClearanceMm" type="number" min="300" max="2000" step="50" value="800"></label>
+          <label>経路探索刻み mm<select id="routeGridMm">
+            <option value="50">50</option>
+            <option value="100" selected>100</option>
+            <option value="200">200</option>
+          </select></label>
+        </div>
+        <p class="field-help">動線必要幅は設計目安です。会場規定・避難条件を優先してください。</p>
         <label id="jointSideField" class="hidden">鈴木眼鏡様 0.5コマの位置
           <select id="jointSide">
             <option value="right">右側</option>
@@ -70,6 +97,13 @@
       </section>
 
       <section>
+        <h2>電源回路</h2>
+        <p class="muted circuit-help">容量は会場・施工会社の確定値を入力してください。空欄は「未登録」として検査します。</p>
+        <div id="powerCircuitEditor" class="power-circuit-editor"></div>
+        <button id="addPowerCircuitBtn" class="secondary wide-btn" type="button">回路を追加</button>
+      </section>
+
+      <section>
         <h2>選択中</h2>
         <div id="emptySelection" class="muted">図面上の備品をクリックしてください。</div>
         <div id="selectionEditor" class="selection-editor hidden">
@@ -83,7 +117,83 @@
             <label>X mm<input id="itemX" type="number" step="50"></label>
             <label>Y mm<input id="itemY" type="number" step="50"></label>
           </div>
-          <label id="wattField" class="hidden">ワット数 W<input id="itemWatt" type="number" min="0" step="50"></label>
+          <div class="two-col">
+            <label>Z mm<input id="itemZ" type="number" min="0" step="10"></label>
+            <label>回転角度<input id="itemRotation" type="text" readonly></label>
+          </div>
+          <div id="selectedMeasurements" class="selected-measurements"></div>
+          <div id="fixtureMasterInfo" class="fixture-master-info"></div>
+          <button id="resetMasterDimensionsBtn" class="secondary hidden" type="button">マスター寸法へ戻す</button>
+          <label id="wattField" class="hidden"><span id="wattFieldLabel">消費電力 W</span><input id="itemWatt" type="number" min="0" step="10"></label>
+          <label id="circuitField" class="hidden">接続回路<select id="itemCircuitId"></select></label>
+          <label id="ratedCapacityField" class="hidden">電源タップ定格容量 W<input id="itemRatedCapacity" type="number" min="0" step="100" placeholder="未登録"></label>
+          <div id="powerConnectionFields" class="power-connection-fields hidden">
+            <label>給電元<select id="itemPowerSourceId"></select></label>
+            <div class="two-col">
+              <label>平面配線<select id="itemCableRouteMode">
+                <option value="x-then-y">X方向→Y方向</option>
+                <option value="y-then-x">Y方向→X方向</option>
+              </select></label>
+              <label>余長 mm<input id="itemCableSlack" type="number" min="0" step="100" value="0"></label>
+            </div>
+            <div id="powerRouteInfo" class="power-route-info"></div>
+          </div>
+          <label id="personRoleField" class="hidden">人物役割<select id="itemPersonRole">
+            <option value="reference">寸法比較のみ</option>
+            <option value="visitor">来場者視点</option>
+            <option value="staff">スタッフ起点</option>
+            <option value="crowd">混雑負荷</option>
+          </select></label>
+          <label id="activationModeField" class="hidden">表示する状態<select id="itemActivationMode">
+            <option value="always">全モード</option>
+            <option value="operating">営業中・混雑時</option>
+            <option value="crowded">混雑時のみ</option>
+          </select></label>
+          <div id="scenarioFields" class="scenario-fields hidden">
+            <label>営業物品区分<select id="itemOperationalCategory">
+              <option value="stock">在庫・予備品</option>
+              <option value="packing">ダンボール・梱包材</option>
+              <option value="bag">バッグ・紙袋</option>
+              <option value="waste">ゴミ箱・廃棄物</option>
+              <option value="promotion">販促物・ガチャ用品</option>
+              <option value="pc">PC・端末（電源は接続機器で登録）</option>
+              <option value="cable">ケーブル養生領域</option>
+              <option value="other">その他</option>
+            </select></label>
+            <label class="check-label">寸法を実測・確認済み
+              <input id="itemDimensionsConfirmed" type="checkbox">
+            </label>
+            <p class="field-help">初期W300×D300×H300mmは仮領域です。実測値へ変更し、確認済みにしてください。</p>
+          </div>
+          <div id="spaceFields" class="space-fields hidden">
+            <label>用途区分<select id="itemSpaceCategory">
+              <option value="contact">接客スペース</option>
+              <option value="staff">スタッフ専用領域</option>
+              <option value="inventory">在庫予約領域</option>
+            </select></label>
+            <label>必要面積 ㎡<input id="itemRequiredAreaM2" type="number" min="0" step="0.01" placeholder="社内・会場基準を登録"></label>
+            <div id="spaceResult" class="space-result"></div>
+            <p class="field-help">W×Dは計画領域です。必要面積は推測せず、運用人数・社内基準・会場規定に基づく値を入力してください。</p>
+          </div>
+          <label id="visibilityRoleField" class="hidden">視認性評価<select id="itemVisibilityRole">
+            <option value="none">評価しない</option>
+            <option value="main-product">メイン商品</option>
+            <option value="product">商品</option>
+            <option value="pop">POP</option>
+          </select></label>
+          <div id="visibilitySettings" class="visibility-settings hidden">
+            <div class="two-col">
+              <label>注視高さ Z mm<input id="itemTargetViewHeight" type="number" min="0" step="50" placeholder="要登録"></label>
+              <label>表示面の正面<select id="itemTargetFrontSide">
+                <option value="">要登録</option>
+                <option value="top">上側</option>
+                <option value="right">右側</option>
+                <option value="bottom">下側</option>
+                <option value="left">左側</option>
+              </select></label>
+            </div>
+            <div id="visibilityResult" class="visibility-result"></div>
+          </div>
           <div class="button-row">
             <button id="bringForwardBtn" class="secondary" type="button">前面へ</button>
             <button id="sendBackwardBtn" class="secondary" type="button">背面へ</button>
@@ -93,6 +203,7 @@
             <button id="sendToBackBtn" class="secondary" type="button">最背面</button>
           </div>
           <div class="button-row">
+            <button id="duplicateBtn" class="secondary" type="button">複製</button>
             <button id="rotateBtn" class="secondary">90度回転</button>
             <button id="deleteBtn" class="danger">削除</button>
           </div>
@@ -143,8 +254,11 @@
             <span><i class="swatch bolda"></i>自社什器 bolda</span>
             <span><i class="swatch table"></i>机</span>
             <span><i class="swatch power"></i>コンセント</span>
+            <span><i class="swatch powerstrip"></i>電源タップ</span>
+            <span><i class="swatch device"></i>接続機器</span>
             <span><i class="swatch spotlight"></i>スポットライト</span>
             <span><i class="swatch wall"></i>壁面・サイン</span>
+            <span><i class="swatch zone"></i>用途領域</span>
           </div>
         </div>
 
@@ -166,7 +280,9 @@
               <button class="secondary" data-three-camera="left" type="button">左斜め</button>
               <button class="secondary" data-three-camera="right" type="button">右斜め</button>
               <button class="secondary" data-three-camera="top" type="button">俯瞰</button>
+              <button class="secondary" data-three-camera="visitor" type="button">来場者目線</button>
             </span>
+            <label class="preview3d-eye-height">視点高さ mm<input id="viewerEyeHeight" type="number" min="1000" max="2200" step="50" value="1600"></label>
             <button id="downloadLayoutPngBtn" class="secondary" type="button">配置図PNG</button>
             <button id="download3dPngBtn" class="secondary" type="button">3DプレビューPNG</button>
             <button id="downloadPromptTxtBtn" class="secondary" type="button">プロンプトTXT</button>
@@ -210,13 +326,56 @@
             <span id="printNotes">-</span>
           </div>
         </div>
+
+        <section class="submission-summary">
+          <h2>提出・設営サマリー</h2>
+          <div class="submission-summary-grid">
+            <div>
+              <h3>什器・備品一覧</h3>
+              <table>
+                <thead><tr><th>マスターID / 名称</th><th>W/D/H</th><th>数量</th></tr></thead>
+                <tbody id="fixtureSummaryBody"></tbody>
+              </table>
+            </div>
+            <div>
+              <h3>電源・照明一覧</h3>
+              <table>
+                <thead><tr><th>名称</th><th>仕様</th><th>数量</th></tr></thead>
+                <tbody id="powerSummaryBody"></tbody>
+              </table>
+              <p id="powerSummaryNote" class="summary-note"></p>
+            </div>
+          </div>
+          <h3>設営配置順</h3>
+          <ol id="setupSequenceList" class="setup-sequence"></ol>
+          <p id="setupDataWarning" class="summary-warning"></p>
+          <h3>視認性・到達性一覧</h3>
+          <table>
+            <thead><tr><th>対象</th><th>区分</th><th>視認性</th><th>動線</th></tr></thead>
+            <tbody id="visibilitySummaryBody"></tbody>
+          </table>
+          <p id="visibilitySummaryNote" class="summary-note"></p>
+          <h3>営業状態・状態別物品</h3>
+          <table>
+            <thead><tr><th>名称</th><th>区分</th><th>表示状態</th><th>寸法確認</th></tr></thead>
+            <tbody id="scenarioSummaryBody"></tbody>
+          </table>
+          <p id="scenarioSummaryNote" class="summary-note"></p>
+          <h3>床面積・用途領域</h3>
+          <table>
+            <thead><tr><th>名称</th><th>用途</th><th>計画面積</th><th>有効・到達可能面積</th><th>必要面積</th></tr></thead>
+            <tbody id="spaceSummaryBody"></tbody>
+          </table>
+          <p id="spaceSummaryNote" class="summary-note"></p>
+        </section>
       </article>
     </section>
   </main>
 
   <input id="projectFile" class="hidden" type="file" accept="application/json">
   <script src="assets/vendor/three.bundle.min.js?v=20260716-2"></script>
-  <script src="app.js?v=20260824-1"></script>
+  <script src="booth-domain.js?v=20260824-5"></script>
+  <script src="app.js?v=20260824-11"></script>
 </body>
 </html>
 
