@@ -1,23 +1,26 @@
-﻿const presets = {
+const presets = {
   wof: { label: "WOF 東京 2コマ", eventName: "WOF 東京 2コマ", width: 5940, depth: 2500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   imf: { label: "IMF 大阪秋 2コマ", eventName: "IMF 大阪秋 2コマ", width: 9000, depth: 4500, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   egf: { label: "EGF 大阪春 2コマ", eventName: "EGF 大阪春 2コマ", width: 6000, depth: 3600, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
-  jex: { label: "JEX 東京 2小間", eventName: "JEX 東京 2小間", width: 8000, depth: 2000, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
+  jex: { label: "JEX 東京 2小間・Aプラン", eventName: "JEX 東京 2小間・Aプラン", width: 8000, depth: 2000, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   wide: { label: "横長 2小間", eventName: "横長 2小間", width: 6000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   deep: { label: "奥行き広め", eventName: "奥行き広め", width: 3000, depth: 4500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   custom: { label: "自由入力", eventName: "自由入力", width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" }
 };
 
 const OUTLET_WATT = 100;
-const jexRuleNote = "JEX 3階レンタル装飾 2小間: W8000 x D2000、壁面パネルH2100。含まれるもの: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
+const jexRuleNote = "JEX 3階レンタル装飾 2小間・Aプラン: W8000 x D2000、壁面パネルH2100。標準装備: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント。常設備品・レンタル備品はパレットから追加し、名称・寸法を実際の申込内容に合わせて編集してください。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
 const imfRuleNote = "IMF 2コマ: W9000 x D4500 x H2100。サンニシムラ1.5コマ（W6750）、鈴木眼鏡様0.5コマ（W2250）の共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
 const egfRuleNote = "EGF 2コマ: Aタイプ1コマ W3000 x D3600 x H2100を2コマ運用として W6000 x D3600 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kW 100Vまでは事務局負担、1.5kW超の電気使用料およびコンセント等の小間内配線工事は出展社負担。";
 const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。";
 
 const itemTypes = [
+  { type: "fixture", label: "常設備品（名称を編集）", width: 900, depth: 450, height: 900, color: "#77a7d9" },
+  { type: "fixture", label: "レンタル備品（名称を編集）", width: 900, depth: 450, height: 900, color: "#77a7d9" },
   { type: "table", label: "長机", width: 1800, depth: 600, color: "#f2b84b" },
   { type: "table", label: "受付机", width: 1200, depth: 600, color: "#f2b84b" },
   { type: "table", label: "展示台 W1500xD600", width: 1500, depth: 600, height: 700, color: "#f2b84b" },
+  { type: "table", label: "展示台 W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#f2b84b" },
   { type: "table", label: "展示台 W1500xD900", width: 1500, depth: 900, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD600", width: 1800, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD900", width: 1800, depth: 900, height: 700, color: "#f2b84b" },
