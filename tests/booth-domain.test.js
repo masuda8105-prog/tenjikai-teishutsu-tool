@@ -78,6 +78,28 @@ test("メーカー指定のA0002＋A0007組合せだけ、実測外形の張り�
   assert.equal(approved.z + machine.height, 1360);
 });
 
+test("ドロップ位置に机と専用台が重なる場合はメーカー指定支持台を優先する", () => {
+  const item = { x: 1500, y: 572.5, width: 240, depth: 370, height: 440 };
+  const table = { x: 1000, y: 500, z: 0, width: 1500, depth: 750, height: 820 };
+  const stand = { x: 1500, y: 600, z: 830, width: 250, depth: 315, height: 100 };
+  const result = domain.selectBestSupportForDrop(item, [
+    { support: table, kind: "table-surface", placement: domain.calculateSupportPlacement(item, table) },
+    { support: stand, kind: "official-fixed", placement: domain.calculateSupportPlacement(item, stand, { zOffsetMm: 90, allowOverhang: true }) }
+  ]);
+  assert.equal(result.support, stand);
+  assert.equal(result.kind, "official-fixed");
+  assert.equal(result.placement.z, 920);
+});
+
+test("一部が重なっていても中心が天板外なら机上へ自動配置しない", () => {
+  const item = { x: 950, y: 100, width: 200, depth: 200, height: 100 };
+  const table = { x: 0, y: 0, z: 0, width: 1000, depth: 500, height: 820 };
+  const result = domain.selectBestSupportForDrop(item, [
+    { support: table, kind: "table-surface", placement: domain.calculateSupportPlacement(item, table) }
+  ]);
+  assert.equal(result, null);
+});
+
 test("在庫箱は平面90度回転を比較し、補充回数込みの最大同時箱数と容量を算出する", () => {
   const result = domain.calculateInventoryCapacity({
     zoneWidthMm: 1200,

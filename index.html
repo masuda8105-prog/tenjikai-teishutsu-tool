@@ -132,7 +132,7 @@
               <button id="detachFromSupportBtn" class="secondary hidden" type="button">床へ降ろす</button>
             </div>
             <div id="surfacePlacementInfo" class="surface-placement-info"></div>
-            <p class="field-help">載せた物は机・専用台の移動に追従し、Zは天板高から自動計算します。メーカー指定組合せ以外の張り出しは許可しません。</p>
+            <p class="field-help">2Dで中心を机・専用台へ重ねて離すか、X/Yを確定すると自動で机上配置します。載せた物は天板に追従し、Zは天板高から自動計算します。張り出しは許可しません。</p>
           </div>
           <label id="wattField" class="hidden"><span id="wattFieldLabel">消費電力 W</span><input id="itemWatt" type="number" min="0" step="10"></label>
           <label id="circuitField" class="hidden">接続回路<select id="itemCircuitId"></select></label>
@@ -407,8 +407,8 @@
 
   <input id="projectFile" class="hidden" type="file" accept="application/json">
   <script src="assets/vendor/three.bundle.min.js?v=20260716-2"></script>
-  <script src="booth-domain.js?v=20260824-5"></script>
-  <script src="app.js?v=20260824-11"></script>
+  <script src="booth-domain.js?v=20260825-6"></script>
+  <script src="app.js?v=20260825-12"></script>
 </body>
 </html>
 

@@ -111,6 +111,32 @@
     };
   }
 
+  function selectBestSupportForDrop(item, candidates) {
+    const center = rectangleCenter(item);
+    const ranked = (Array.isArray(candidates) ? candidates : [])
+      .map((candidate, index) => ({ ...candidate, index }))
+      .filter((candidate) => {
+        const support = candidate?.support;
+        return support && candidate?.placement?.fits === true &&
+          center.x >= finiteNumber(support.x) &&
+          center.x <= finiteNumber(support.x) + Math.max(0, finiteNumber(support.width)) &&
+          center.y >= finiteNumber(support.y) &&
+          center.y <= finiteNumber(support.y) + Math.max(0, finiteNumber(support.depth));
+      })
+      .sort((a, b) => {
+        const exactDifference = Number(b.kind === "official-fixed") - Number(a.kind === "official-fixed");
+        if (exactDifference) return exactDifference;
+        const heightDifference = finiteNumber(b.placement.z) - finiteNumber(a.placement.z);
+        if (heightDifference) return heightDifference;
+        const areaA = Math.max(0, finiteNumber(a.support.width)) * Math.max(0, finiteNumber(a.support.depth));
+        const areaB = Math.max(0, finiteNumber(b.support.width)) * Math.max(0, finiteNumber(b.support.depth));
+        return areaA - areaB || a.index - b.index;
+      });
+    if (!ranked.length) return null;
+    const { index, ...best } = ranked[0];
+    return best;
+  }
+
   function orthogonalRoute(source, target, mode = "x-then-y") {
     const start = rectangleCenter(source);
     const end = rectangleCenter(target);
@@ -522,6 +548,7 @@
     isOutOfBounds,
     rectangleCenter,
     calculateSupportPlacement,
+    selectBestSupportForDrop,
     orthogonalRoute,
     polylineLength,
     segmentIntersectsRectangle,

@@ -34,6 +34,13 @@ const rawFixtureMasters = [
   { type: "product", productCategory: "gacha-machine", productCode: "A0002", masterId: "AMUZU-A0002", label: "ガチャコップ 白 メダル仕様 A0002", width: 240, depth: 370, height: 440, weightKg: 5, color: "#eef1ef", material: "ABS外装、鉄、アクリル、アルミ、塩ビ、ダイキャスト、ポリアセタール樹脂（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ A0002公式商品ページ / 本体サイズW240×D370×H440mm", sourceUrl: "https://www.a-muzu.com/category/GACHA_MACHINE_001/A0002.html", surfacePlaceable: true, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["卓上設置タイプ", "電源不要", "約5kg", "A0007設置時は公式公称高さ約530mmを使用"] } },
   { type: "product", productCategory: "gacha-stand", productCode: "A0007", masterId: "AMUZU-A0007", label: "ガチャコップ専用 簡易卓上台 白 A0007", width: 250, depth: 315, height: 100, color: "#f6f4ec", material: "紙製（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ A0007公式商品ページ / 組立後W250×D315×H100mm", sourceUrl: "https://www.a-muzu.com/item/A0007.html", surfacePlaceable: true, supportSurface: true, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, productPlacementPositions: [{ itemMasterId: "AMUZU-A0002", zOffsetMm: 90, allowOverhang: true, source: "A0007公式記載のマシン設置時高さ約530mm - A0002本体H440mm" }], setupInfo: { status: "official-source", instructions: ["カプセル受けを含む奥行315mm", "A0002との組合せ時は公称全高約530mm"] } },
   { type: "product", productCategory: "capsule-recovery-box", productCode: "E1237", masterId: "AMUZU-E1237", label: "簡易カプセル回収ボックス E1237", width: 275, depth: 275, height: 460, color: "#d4a65d", material: "段ボール（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ E1237公式商品ページ / 組立後W275×D275×H460mm", sourceUrl: "https://www.a-muzu.com/item/E1237.html", surfacePlaceable: false, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["回収口直径約85mm", "対応カプセル75mmまで", "床置き運用"] } },
+  { type: "product", productCategory: "mist-bottle", productCode: "1064", masterId: "SANNI-1064", label: "メガネミスト No.1064（全体外形 要実測）", width: 90, depth: 60, height: 225, color: "#17356f", material: "容器・トリガー材質は未登録", dimensionLocked: false, dimensionAccuracy: "partial-verified", dimensionSource: "IB-300SN印刷範囲図で容器本体φ54.7×H165.2mmを確認。トリガー込みW90×D60×H225mmは展示計画用の暫定外形で、現物実測が必要", catalogReference: "2026/【新製品】/【No.1064】メガネミスト / No.1064チラシ・IB-300SN印刷範囲", image: "assets/products/mist-1064.png", surfacePlaceable: true, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-bottle-body/provisional-trigger-envelope" }, setupInfo: { status: "reference-source", instructions: ["容量300mL", "机上展示", "トリガー込み全外形を現物実測後に確定"] } },
+  { type: "product", productCategory: "frame-heater-169", productCode: "169", masterId: "SANNI-169", label: "フレームヒーター No.169 クリーム", width: 125, depth: 125, height: 200, color: "#e4d5ad", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.202 / 底の直径125×H200mm", catalogReference: "総合カタログ2025-2027 p.202", image: "assets/products/heater-169.png", surfacePlaceable: true, watt: 380, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V 50/60Hz", "消費電力380W", "水滴を熱源へ落とさない"] } },
+  { type: "product", productCategory: "frame-heater-767", productCode: "767", masterId: "SANNI-767", label: "サーモレックス No.767", width: 185, depth: 160, height: 160, color: "#e9eceb", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.203 / W185×D160×H160mm", catalogReference: "総合カタログ2025-2027 p.203", image: "assets/products/heater-767.png", surfacePlaceable: true, watt: 270, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力270W", "温度80〜140℃", "水滴を熱源へ落とさない"] } },
+  { type: "product", productCategory: "buff-motor-694", productCode: "694", masterId: "SANNI-694", label: "デジモーター No.694", width: 300, depth: 180, height: 200, color: "#e9dfbd", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.218 / W300×D180×H200mm", catalogReference: "総合カタログ2025-2027 p.218", image: "assets/products/buffer-694.png", surfacePlaceable: true, watt: 200, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力200W", "0〜4,000rpm", "連続定格"] } },
+  { type: "product", productCategory: "buff-motor-95", productCode: "95", masterId: "SANNI-95", label: "吸塵バフモーター No.95", width: 370, depth: 312, height: 237, color: "#d7c99f", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.218 / W370×D312×H237mm", catalogReference: "総合カタログ2025-2027 p.218", image: "assets/products/buffer-95.png", surfacePlaceable: true, watt: 230, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "主モーター200W＋吸塵モーター15W×2＝計画負荷230W", "連続25分"] } },
+  { type: "product", productCategory: "buff-motor-1010", productCode: "1010", masterId: "SANNI-1010", label: "省スペース吸塵バフモーター No.1010", width: 232, depth: 239, height: 417, color: "#ded3ad", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.219 / W232×D239×H417mm", catalogReference: "総合カタログ2025-2027 p.219", image: "assets/products/buffer-1010.png", surfacePlaceable: true, watt: 127, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力50Hz 127W・60Hz 125W（計画は最大127W）", "連続定格"] } },
+  { type: "product", productCategory: "buff-motor-989", productCode: "989", masterId: "SANNI-989", label: "眼鏡バフモーター No.989", width: 340, depth: 135, height: 215, color: "#e4dfcf", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.219 / W340×D135×H215mm", catalogReference: "総合カタログ2025-2027 p.219", image: "assets/products/buffer-989.png", surfacePlaceable: true, watt: 120, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力120W", "連続30分"] } },
   { type: "table", label: "展示台 W1500xD900", width: 1500, depth: 900, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD600", width: 1800, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD900", width: 1800, depth: 900, height: 700, color: "#f2b84b" },
@@ -61,6 +68,12 @@ const rawFixtureMasters = [
   { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" },
   { type: "zone", label: "接客スペース（必要面積を登録）", width: 1500, depth: 1200, height: 0, color: "#3b9e8f", spaceCategory: "contact", activationMode: "always", requiredAreaMm2: 0, inventoryTotalUnits: 0, inventoryUnitsPerCarton: 0, inventoryReplenishmentCount: 0, inventoryCartonWidthMm: 0, inventoryCartonDepthMm: 0, inventoryCartonHeightMm: 0, inventoryMaxStackHeightMm: 0, inventoryDimensionsConfirmed: false },
   { type: "scenario", label: "営業物品（名称・実測寸法を編集）", width: 300, depth: 300, height: 300, color: "#b98a52", operationalCategory: "stock", activationMode: "operating", dimensionsConfirmed: false },
+  { type: "scenario", scenarioKind: "laptop", label: "ノートPC（開いた状態・要実測）", width: 340, depth: 240, height: 220, color: "#677d92", surfacePlaceable: true, operationalCategory: "pc", activationMode: "operating", dimensionsConfirmed: false, watt: 0 },
+  { type: "scenario", scenarioKind: "document-tray-3", label: "3段書類トレー（要実測）", width: 270, depth: 350, height: 260, color: "#8f9b9f", surfacePlaceable: true, operationalCategory: "promotion", activationMode: "operating", dimensionsConfirmed: false },
+  { type: "scenario", scenarioKind: "trash-bin", label: "ゴミ箱（要実測）", width: 250, depth: 250, height: 350, color: "#697579", operationalCategory: "waste", activationMode: "operating", dimensionsConfirmed: false },
+  { type: "scenario", scenarioKind: "stock-carton", label: "在庫ダンボール（要実測）", width: 500, depth: 350, height: 300, color: "#b98a52", operationalCategory: "stock", activationMode: "operating", dimensionsConfirmed: false },
+  { type: "scenario", scenarioKind: "paper-bag-stock", label: "紙袋ストック（要実測）", width: 400, depth: 250, height: 450, color: "#b7a27f", operationalCategory: "bag", activationMode: "operating", dimensionsConfirmed: false },
+  { type: "scenario", scenarioKind: "staff-bag", label: "スタッフバッグ置き（要実測）", width: 450, depth: 220, height: 350, color: "#7d6c87", operationalCategory: "bag", activationMode: "operating", dimensionsConfirmed: false },
   { type: "person", label: "人物A 179cm", width: 600, depth: 600, height: 1790, color: "#ef6fa8", image: "assets/people/person-a-standing-crop.png", standingImage: "assets/people/person-a-standing-crop.png", seatedImage: "assets/people/person-a-seated-crop.png" },
   { type: "person", label: "人物B 179cm", width: 600, depth: 600, height: 1790, color: "#3b69d8", image: "assets/people/person-b-standing-crop.png", standingImage: "assets/people/person-b-standing-crop.png", seatedImage: "assets/people/person-b-seated-crop.png" }
 ];
@@ -272,6 +285,7 @@ function paletteVisual(item) {
 
 function buildPaletteSvg(item) {
   if (item.type === "product") return buildProductPaletteSvg(item);
+  if (item.type === "scenario" && item.scenarioKind) return buildScenarioPaletteSvg(item);
   if (item.type === "spotlight" || item.type === "power") return buildUtilityPaletteSvg(item);
   if (item.type === "wall") return buildSignPaletteSvg(item);
   if (item.type === "chair") return buildChairPaletteSvg(item);
@@ -454,6 +468,11 @@ function bindInputs() {
   ["itemLabel", "itemWidth", "itemDepth", "itemHeight", "itemX", "itemY", "itemZ", "itemWatt", "itemRatedCapacity", "itemPowerSourceId", "itemCableRouteMode", "itemCableSlack", "itemCircuitId", "itemPersonRole", "itemActivationMode", "itemOperationalCategory", "itemSpaceCategory", "itemRequiredAreaM2", "itemInventoryTotalUnits", "itemInventoryUnitsPerCarton", "itemInventoryReplenishmentCount", "itemInventoryCartonWidth", "itemInventoryCartonDepth", "itemInventoryCartonHeight", "itemInventoryMaxStackHeight", "itemVisibilityRole", "itemTargetViewHeight", "itemTargetFrontSide"].forEach((id) => {
     $(id).addEventListener("input", updateSelectedFromForm);
   });
+  ["itemX", "itemY"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      if (autoPlaceItemOnDropSupport(selectedItem())) render();
+    });
+  });
   $("itemDimensionsConfirmed").addEventListener("change", updateSelectedFromForm);
   $("itemInventoryDimensionsConfirmed").addEventListener("change", updateSelectedFromForm);
   $("addPowerCircuitBtn").addEventListener("click", addPowerCircuit);
@@ -599,6 +618,23 @@ function syncBoothInputs() {
   syncJointControls();
 }
 
+function buildScenarioPaletteSvg(item) {
+  const color = item.color || "#d5963a";
+  const shapes = {
+    laptop: `<polygon points="28,67 92,67 82,82 38,82" fill="#67747a" stroke="#28373c" stroke-width="2"/><rect x="36" y="29" width="48" height="37" rx="3" fill="#263238" stroke="#172225" stroke-width="3"/><rect x="40" y="33" width="40" height="29" fill="#91c9d4"/>`,
+    "document-tray-3": `<rect x="31" y="24" width="58" height="60" rx="3" fill="#eff2f1" stroke="#526166" stroke-width="3"/><path d="M34 40H86M34 57H86M34 74H86" stroke="${color}" stroke-width="4"/>`,
+    "trash-bin": `<path d="M36 30H84L78 84H42Z" fill="${color}" stroke="#6d542d" stroke-width="3"/><ellipse cx="60" cy="30" rx="24" ry="7" fill="#293234"/>`,
+    "stock-carton": `<rect x="29" y="32" width="62" height="50" fill="#c99755" stroke="#6d542d" stroke-width="3"/><path d="M60 32V82M29 47H91" stroke="#8a673d" stroke-width="2"/>`,
+    "paper-bag-stock": `<path d="M32 41H88V84H32Z" fill="#e8d5aa" stroke="#8a673d" stroke-width="3"/><path d="M44 43C44 20 76 20 76 43" fill="none" stroke="#8a673d" stroke-width="4"/>`,
+    "staff-bag": `<rect x="28" y="41" width="64" height="42" rx="7" fill="${color}" stroke="#5b4327" stroke-width="3"/><path d="M43 42C43 20 77 20 77 42" fill="none" stroke="#5b4327" stroke-width="5"/>`
+  };
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="112" viewBox="0 0 120 112" role="img" aria-label="${escapeHtml(item.label)}">
+    <rect x="10" y="10" width="100" height="86" rx="5" fill="#f8faf9"/>
+    ${shapes[item.scenarioKind] || `<rect x="28" y="30" width="64" height="50" fill="${color}" opacity=".55"/>`}
+    <text x="60" y="107" text-anchor="middle" font-size="10" font-weight="700" fill="#172225">${escapeHtml(scenarioKindLabel(item.scenarioKind))}</text>
+  </svg>`;
+}
+
 function buildProductPaletteSvg(item) {
   const code = escapeHtml(item.productCode || "商品");
   let shape = "";
@@ -645,6 +681,17 @@ function operationalCategoryLabel(category) {
     stock: "在庫・予備品", packing: "ダンボール・梱包材", bag: "バッグ・紙袋", waste: "ゴミ箱・廃棄物",
     promotion: "販促物・ガチャ用品", pc: "PC・端末", cable: "ケーブル養生領域", other: "その他"
   }[category] || "その他";
+}
+
+function scenarioKindLabel(kind) {
+  return {
+    laptop: "ノートパソコン",
+    "document-tray-3": "3段書類トレー",
+    "trash-bin": "ゴミ箱",
+    "stock-carton": "在庫ダンボール",
+    "paper-bag-stock": "紙袋ストック",
+    "staff-bag": "スタッフバッグ"
+  }[kind] || "状態別物品";
 }
 
 function spaceCategoryLabel(category) {
@@ -767,6 +814,9 @@ function addItem(template) {
     productCategory: template.productCategory || "",
     productCode: template.productCode || "",
     sourceUrl: template.sourceUrl || "",
+    catalogReference: template.catalogReference || "",
+    dimensionAccuracy: template.dimensionAccuracy || "",
+    scenarioKind: template.scenarioKind || "",
     weightKg: Math.max(0, Domain.finiteNumber(template.weightKg, 0)),
     surfacePlaceable: template.surfacePlaceable === true,
     supportSurface: template.supportSurface === true,
@@ -927,6 +977,9 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
     productCategory: "",
     productCode: "",
     sourceUrl: "",
+    catalogReference: "",
+    dimensionAccuracy: "",
+    scenarioKind: "",
     weightKg: 0,
     surfacePlaceable: false,
     supportSurface: false,
@@ -1046,6 +1099,32 @@ function getSupportPlacementDefinition(item, support) {
 function availableSupportSurfaces(item) {
   if (!item?.surfacePlaceable) return [];
   return state.items.filter((support) => getSupportPlacementDefinition(item, support)?.placement.fits);
+}
+
+function findBestDropSupport(item) {
+  if (!item?.surfacePlaceable || item.supportItemId) return null;
+  return Domain.selectBestSupportForDrop(item, availableSupportSurfaces(item).map((support) => {
+    const definition = getSupportPlacementDefinition(item, support);
+    return { support, kind: definition.kind, placement: definition.placement };
+  }));
+}
+
+function autoPlaceItemOnDropSupport(item) {
+  const candidate = findBestDropSupport(item);
+  if (!candidate) return false;
+  const { support, kind, placement } = candidate;
+  item.supportItemId = support.id;
+  if (kind === "official-fixed") {
+    item.supportOffsetX = placement.offsetX;
+    item.supportOffsetY = placement.offsetY;
+    item.supportZOffsetMm = placement.zOffsetMm;
+  } else {
+    item.supportOffsetX = Math.max(0, Math.min(support.width - item.width, item.x - support.x));
+    item.supportOffsetY = Math.max(0, Math.min(support.depth - item.depth, item.y - support.y));
+    item.supportZOffsetMm = support.height || defaultItemHeight(support);
+  }
+  syncSupportedItems();
+  return true;
 }
 
 function detachItemFromSupport(item, clampToBooth = true, syncNow = true) {
@@ -1171,7 +1250,7 @@ function resetSelectedToMasterDimensions() {
 
 function paletteDetail(item) {
   if (item.type === "zone") return `用途領域 ${formatSquareMetres(item.width * item.depth)}㎡・必要面積を要登録`;
-  if (item.type === "scenario") return "仮W300×D300×H300mm・実測必須";
+  if (item.type === "scenario") return `仮W${item.width}×D${item.depth}×H${item.height || "未登録"}mm・実測必須`;
   if (item.type === "spotlight") return `${item.watt}W`;
   if (item.type === "power") return "回路容量は未登録";
   if (item.type === "powerstrip") return "定格容量は未登録";
@@ -1193,7 +1272,7 @@ function updateSelectedFromForm() {
     item.height = heightInput ? Math.max(20, Number(heightInput) || 20) : 0;
   }
   if (!item.supportItemId) item.z = Math.max(0, Number($("itemZ").value) || 0);
-  if (["spotlight", "device"].includes(item.type)) {
+  if (supportsWattInput(item)) {
     item.watt = Math.max(0, Number($("itemWatt").value) || 0);
   }
   if (item.type === "power") item.circuitId = $("itemCircuitId").value;
@@ -1353,6 +1432,9 @@ function normalizeItems() {
     item.productCategory = String(item.productCategory || master?.productCategory || "");
     item.productCode = String(item.productCode || master?.productCode || "");
     item.sourceUrl = String(item.sourceUrl || master?.sourceUrl || "");
+    item.catalogReference = String(item.catalogReference || master?.catalogReference || "");
+    item.dimensionAccuracy = String(item.dimensionAccuracy || master?.dimensionAccuracy || "");
+    item.scenarioKind = String(item.scenarioKind || master?.scenarioKind || "");
     item.weightKg = Math.max(0, Domain.finiteNumber(item.weightKg, master?.weightKg || 0));
     item.surfacePlaceable = master ? master.surfacePlaceable === true : item.surfacePlaceable === true;
     item.supportSurface = master ? master.supportSurface === true : item.supportSurface === true;
@@ -1571,8 +1653,10 @@ function syncSelectionEditor() {
   syncSelectedMeasurements(item);
   syncFixtureMasterInfo(item, master);
   syncSurfacePlacementEditor(item);
-  $("wattField").classList.toggle("hidden", !["spotlight", "device"].includes(item.type));
-  $("wattFieldLabel").textContent = item.type === "spotlight" ? "照明消費電力 W" : "機器消費電力 W";
+  $("wattField").classList.toggle("hidden", !supportsWattInput(item));
+  $("wattFieldLabel").textContent = item.type === "spotlight"
+    ? "照明消費電力 W"
+    : item.scenarioKind === "laptop" ? "ACアダプタ消費電力 W" : "機器消費電力 W";
   $("itemWatt").value = item.watt || 0;
   $("circuitField").classList.toggle("hidden", item.type !== "power");
   $("itemCircuitId").innerHTML = `<option value="">未割当</option>${state.powerCircuits.map((circuit) => `<option value="${escapeHtml(circuit.id)}">${escapeHtml(circuit.name)} / ${circuit.capacityW ? `${circuit.capacityW}W` : "容量未登録"}</option>`).join("")}`;
@@ -1714,7 +1798,26 @@ function syncSelectedInventoryResult(item) {
 }
 
 function isPoweredLoad(item) {
-  return Boolean(item && ["spotlight", "device", "powerstrip"].includes(item.type));
+  return Boolean(item && (
+    ["spotlight", "device", "powerstrip"].includes(item.type) ||
+    item.scenarioKind === "laptop" ||
+    isProductElectricalLoad(item)
+  ));
+}
+
+function isProductElectricalLoad(item) {
+  return Boolean(item?.type === "product" && (
+    String(item.productCategory || "").startsWith("frame-heater-") ||
+    String(item.productCategory || "").startsWith("buff-motor-")
+  ));
+}
+
+function supportsWattInput(item) {
+  return Boolean(item && (
+    ["spotlight", "device"].includes(item.type) ||
+    item.scenarioKind === "laptop" ||
+    isProductElectricalLoad(item)
+  ));
 }
 
 function availablePowerSources(item) {
@@ -2363,7 +2466,10 @@ function onPointerDown(event) {
     point.x <= candidate.x + candidate.width &&
     point.y >= candidate.y &&
     point.y <= candidate.y + candidate.depth;
-  const reversed = [...state.items].sort((a, b) => getItemVerticalRange(b).bottom - getItemVerticalRange(a).bottom);
+  const reversed = state.items
+    .map((candidate, index) => ({ candidate, index }))
+    .sort((a, b) => getItemVerticalRange(b.candidate).bottom - getItemVerticalRange(a.candidate).bottom || b.index - a.index)
+    .map((entry) => entry.candidate);
   const item = reversed.find((candidate) => candidate.type !== "zone" && hit(candidate))
     || reversed.find((candidate) => candidate.type === "zone" && hit(candidate));
   state.selectedId = item ? item.id : null;
@@ -2379,16 +2485,17 @@ function onPointerMove(event) {
   const item = selectedItem();
   if (!item) return;
   const point = canvasToMm(event);
-  moveItemTo(
-    item,
-    Domain.snapMm(point.x - drag.dx, state.gridSize, state.snapEnabled),
-    Domain.snapMm(point.y - drag.dy, state.gridSize, state.snapEnabled)
-  );
+  const nextX = Domain.snapMm(point.x - drag.dx, state.gridSize, state.snapEnabled);
+  const nextY = Domain.snapMm(point.y - drag.dy, state.gridSize, state.snapEnabled);
+  if (item.supportItemId && (nextX !== item.x || nextY !== item.y)) detachItemFromSupport(item, false, false);
+  moveItemTo(item, nextX, nextY);
   render();
 }
 
-function endDrag() {
+function endDrag(event) {
+  const droppedItem = drag ? state.items.find((item) => item.id === drag.id) : null;
   drag = null;
+  if (event?.type === "pointerup" && autoPlaceItemOnDropSupport(droppedItem)) render();
 }
 
 function renderTable() {
@@ -2582,7 +2689,7 @@ function movementAuditStatus(audit) {
 function getElectricalAudit() {
   const outlets = state.items.filter((item) => item.type === "power");
   const loads = state.items.filter(isPoweredLoad);
-  const consumingLoads = loads.filter((item) => ["spotlight", "device"].includes(item.type));
+  const consumingLoads = loads.filter((item) => item.type !== "powerstrip");
   const strips = loads.filter((item) => item.type === "powerstrip");
   const unconnected = loads.filter((item) => !item.powerSourceId);
   const brokenSources = loads.filter((item) => item.powerSourceId && !getPowerSource(item));
@@ -2651,7 +2758,7 @@ function getScenarioAudit() {
   const active = all.filter((item) => isItemActive(item));
   const unconfirmed = active.filter((item) => !item.dimensionsConfirmed);
   const stock = active.filter((item) => item.operationalCategory === "stock");
-  const pcPlaceholders = active.filter((item) => item.operationalCategory === "pc");
+  const pcPlaceholders = active.filter((item) => item.operationalCategory === "pc" && !isPoweredLoad(item));
   const crowd = activeItems().filter((item) => item.type === "person" && item.personRole === "crowd");
   const floorAreaMm2 = active.reduce((sum, item) => sum + item.width * item.depth, 0);
   const stockVolumeMm3 = stock.reduce((sum, item) => sum + item.width * item.depth * (item.height || defaultItemHeight(item)), 0);
@@ -3647,7 +3754,7 @@ function addThreeItem(scene, item) {
   if (item.type === "power") return addThreeOutlet(scene, item);
   if (item.type === "person") return addThreePerson(scene, item);
   const displayItem = createThreeDisplayItem(item);
-  if (item.type === "scenario") return addThreeScenarioPlaceholder(scene, displayItem);
+  if (item.type === "scenario") return addThreeOperationalItem(scene, displayItem);
   if (item.type === "powerstrip") return addThreePowerStrip(scene, displayItem);
   if (item.type === "device") return addThreeGenericDevice(scene, displayItem);
   if (item.type === "product") return addThreeOfficialProduct(scene, displayItem);
@@ -3794,7 +3901,10 @@ function syncFixtureMasterInfo(item, master) {
     return;
   }
   if (item.type === "scenario") {
-    wrap.innerHTML = `<strong>状態別占有領域｜${escapeHtml(item.dimensionsConfirmed ? "実測確認済み" : "仮寸法・要実測")}</strong>${escapeHtml(operationalCategoryLabel(item.operationalCategory))}。${escapeHtml(activationModeLabel(item.activationMode))}に衝突・視認・動線へ反映します。実在製品形状は推測せず、3Dは登録W/D/Hの半透明領域です。`;
+    const shapeNote = item.scenarioKind
+      ? `${scenarioKindLabel(item.scenarioKind)}として識別できるパラメトリック3Dを、登録W/D/H内に表示します。メーカー固有形状ではありません。`
+      : "3Dは登録W/D/Hの半透明占有領域です。";
+    wrap.innerHTML = `<strong>状態別物品｜${escapeHtml(item.dimensionsConfirmed ? "実測確認済み" : "仮寸法・要実測")}</strong>${escapeHtml(operationalCategoryLabel(item.operationalCategory))}。${escapeHtml(activationModeLabel(item.activationMode))}に衝突・視認・動線へ反映します。${escapeHtml(shapeNote)}`;
     return;
   }
   if (!master) {
@@ -3808,16 +3918,19 @@ function syncFixtureMasterInfo(item, master) {
   const modelNote = master.type === "bolda"
     ? "外形W/D/Hは提供ファイル名で確認済み。段差・棚板等の詳細3D形状は組立画像基準で、製造CAD未確認です。"
     : master.type === "product"
-      ? "登録W/D/Hは公式商品ページで確認済み。3Dは正確な外形寸法内の参照簡略形状で、製造CADではありません。"
-    : "汎用3D形状。正確な製品型番・図面は未登録です。";
+      ? (master.dimensionAccuracy === "partial-verified"
+        ? "容器本体寸法は資料確認済み。トリガー込み外形は暫定値で、現物実測後に確定してください。3Dは暫定外形内の参照形状です。"
+        : "登録W/D/Hは商品資料で確認済み。3Dは正確な外形寸法内の参照簡略形状で、製造CADではありません。")
+      : "汎用3D形状。正確な製品型番・図面は未登録です。";
   const sourceLink = master.sourceUrl?.startsWith("https://") ? `<br>公式情報: <a href="${escapeHtml(master.sourceUrl)}" target="_blank" rel="noreferrer">商品ページを開く</a>` : "";
+  const catalogText = master.catalogReference ? `<br>商品資料: ${escapeHtml(master.catalogReference)}` : "";
   const setupText = master.setupInfo?.instructions?.length ? `<br>設営情報: ${escapeHtml(master.setupInfo.instructions.join(" / "))}` : "";
   wrap.innerHTML = `
     <strong>${escapeHtml(master.masterId)}｜${escapeHtml(dimensionState)}</strong>
     材質: ${escapeHtml(master.material)}<br>
     寸法根拠: ${escapeHtml(master.dimensionSource)}<br>
     POP面: ${master.popPlacementPositions.length}面 / 商品設置位置: ${master.productPlacementPositions.length ? `${master.productPlacementPositions.length}か所` : "未登録"}<br>
-    <span class="${master.type === "bolda" ? "accuracy-warn" : ""}">${escapeHtml(modelNote)}</span>${sourceLink}${setupText}
+    <span class="${master.type === "bolda" || master.dimensionAccuracy === "partial-verified" ? "accuracy-warn" : ""}">${escapeHtml(modelNote)}</span>${sourceLink}${catalogText}${setupText}
   `;
 }
 
@@ -3896,6 +4009,9 @@ function addThreeOfficialProduct(scene, item) {
   if (item.productCategory === "gacha-machine") return addThreeGachaMachine(scene, item);
   if (item.productCategory === "gacha-stand") return addThreeGachaStand(scene, item);
   if (item.productCategory === "capsule-recovery-box") return addThreeCapsuleRecoveryBox(scene, item);
+  if (item.productCategory === "mist-bottle") return addThreeMistBottle(scene, item);
+  if (item.productCategory.startsWith("frame-heater-")) return addThreeFrameHeater(scene, item);
+  if (item.productCategory.startsWith("buff-motor-")) return addThreeBuffMotor(scene, item);
   addThreeCounter(scene, item);
 }
 
@@ -3939,6 +4055,114 @@ function addThreeCapsuleRecoveryBox(scene, item) {
   ring.userData.itemId = item.id;
   group.add(ring);
   addLocalBox(group, item.width * 0.64, 12, 8, 0, item.height * 0.35, item.depth / 2 + 1, print, false);
+  scene.add(group);
+}
+
+function addThreeMistBottle(scene, item) {
+  const group = createFacingGroup(item);
+  const bottle = threeStandardMaterial(0x17356f, { roughness: 0.44 });
+  const label = threeStandardMaterial(0xf2f5f6, { roughness: 0.72 });
+  const trigger = threeStandardMaterial(0x20282b, { roughness: 0.58 });
+  const bodyDiameter = Math.min(54.7, item.width, item.depth);
+  const bodyHeight = Math.min(165.2, item.height * 0.78);
+  addLocalCylinder(group, bodyDiameter / 2, bodyHeight, 0, bodyHeight / 2, 0, bottle, 24);
+  addLocalBox(group, bodyDiameter * 0.76, bodyHeight * 0.48, bodyDiameter / 2 + 2, 0, bodyHeight * 0.49, bodyDiameter / 4, label, false);
+  const neckHeight = Math.min(27, Math.max(12, item.height - bodyHeight - 30));
+  addLocalCylinder(group, bodyDiameter * 0.26, neckHeight, 0, bodyHeight + neckHeight / 2, 0, trigger, 18);
+  const headHeight = Math.max(12, item.height - bodyHeight - neckHeight);
+  addLocalBox(group, Math.min(item.width * 0.72, 65), headHeight * 0.45, Math.min(item.depth * 0.82, 49), -item.width * 0.08, bodyHeight + neckHeight + headHeight * 0.35, 0, trigger);
+  addLocalBox(group, Math.min(item.width * 0.46, 40), headHeight * 0.22, Math.min(item.depth * 0.68, 38), item.width * 0.2, bodyHeight + neckHeight + headHeight * 0.61, 0, trigger);
+  scene.add(group);
+}
+
+function addThreeFrameHeater(scene, item) {
+  const group = createFacingGroup(item);
+  const cream = threeStandardMaterial(0xe6d7b3, { roughness: 0.66 });
+  const dark = threeStandardMaterial(0x30383a, { roughness: 0.48 });
+  const metal = threeStandardMaterial(0xaeb5b5, { roughness: 0.28, metalness: 0.66 });
+  if (item.productCategory === "frame-heater-169") {
+    const radius = Math.min(item.width, item.depth) / 2;
+    addLocalCylinder(group, radius * 0.96, item.height * 0.84, 0, item.height * 0.42, 0, cream, 28);
+    addLocalCylinder(group, radius * 0.82, item.height * 0.08, 0, item.height * 0.88, 0, metal, 28);
+    addLocalCylinder(group, radius * 0.66, item.height * 0.08, 0, item.height * 0.96, 0, dark, 28);
+    addLocalBox(group, item.width * 0.25, item.height * 0.13, item.depth * 0.09, 0, item.height * 0.25, item.depth * 0.47, dark, false);
+  } else {
+    addLocalBox(group, item.width, item.height * 0.58, item.depth, 0, item.height * 0.29, 0, cream);
+    addLocalBox(group, item.width * 0.82, item.height * 0.2, item.depth * 0.86, 0, item.height * 0.67, -item.depth * 0.04, metal);
+    addLocalCylinder(group, Math.min(item.width, item.depth) * 0.3, item.height * 0.18, 0, item.height * 0.87, -item.depth * 0.04, dark, 28);
+    addLocalBox(group, item.width * 0.24, item.height * 0.1, item.depth * 0.08, item.width * 0.27, item.height * 0.25, item.depth * 0.46, dark, false);
+  }
+  scene.add(group);
+}
+
+function addThreeBuffMotor(scene, item) {
+  const group = createFacingGroup(item);
+  const body = threeStandardMaterial(0xdacda6, { roughness: 0.68 });
+  const metal = threeStandardMaterial(0x777f80, { roughness: 0.3, metalness: 0.68 });
+  const wheel = threeStandardMaterial(0xddd7c9, { roughness: 0.9 });
+  const dark = threeStandardMaterial(0x252d2f, { roughness: 0.5 });
+  if (item.productCategory === "buff-motor-1010") {
+    addLocalBox(group, item.width, item.height, item.depth, 0, item.height / 2, 0, body);
+    addLocalBox(group, item.width * 0.72, item.height * 0.34, 8, 0, item.height * 0.66, item.depth / 2 - 3, dark, false);
+    addLocalHorizontalCylinder(group, item.height * 0.1, item.width * 0.54, 0, item.height * 0.67, item.depth * 0.28, wheel, 24);
+  } else if (item.productCategory === "buff-motor-95") {
+    addLocalBox(group, item.width, item.height * 0.9, item.depth, 0, item.height * 0.45, 0, body);
+    addLocalBox(group, item.width * 0.75, item.height * 0.56, 8, 0, item.height * 0.54, item.depth / 2 - 3, dark, false);
+    addLocalHorizontalCylinder(group, item.height * 0.18, item.width * 0.58, 0, item.height * 0.55, item.depth * 0.24, wheel, 24);
+    addLocalBox(group, item.width * 0.2, item.height * 0.1, item.depth * 0.1, 0, item.height * 0.22, item.depth * 0.46, metal, false);
+  } else {
+    addLocalBox(group, item.width * 0.46, item.height * 0.46, item.depth * 0.55, 0, item.height * 0.39, 0, body);
+    addLocalBox(group, item.width * 0.72, item.height * 0.08, item.depth * 0.72, 0, item.height * 0.04, 0, metal);
+    addLocalHorizontalCylinder(group, item.height * 0.2, item.width * 0.76, 0, item.height * 0.54, 0, metal, 24);
+    const wheelX = item.width * 0.39;
+    const wheelRadius = Math.min(item.height * 0.34, item.depth * 0.46);
+    [-wheelX, wheelX].forEach((x) => addLocalHorizontalCylinder(group, wheelRadius, item.width * 0.1, x, item.height * 0.54, 0, wheel, 28));
+  }
+  scene.add(group);
+}
+
+function addThreeOperationalItem(scene, item) {
+  if (!item.scenarioKind) return addThreeScenarioPlaceholder(scene, item);
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const body = threeStandardMaterial(item.color || 0x7c8588, { roughness: 0.72 });
+  const dark = threeStandardMaterial(0x293235, { roughness: 0.5 });
+  const light = threeStandardMaterial(0xe9eeed, { roughness: 0.8 });
+  const h = item.height || defaultItemHeight(item);
+  if (item.scenarioKind === "laptop") {
+    addLocalBox(group, item.width, Math.max(10, h * 0.07), item.depth * 0.74, 0, h * 0.035, item.depth * 0.12, body);
+    addLocalBox(group, item.width * 0.92, h * 0.86, Math.max(8, item.depth * 0.045), 0, h * 0.5, -item.depth * 0.35, dark);
+    addLocalBox(group, item.width * 0.84, h * 0.7, Math.max(5, item.depth * 0.025), 0, h * 0.51, -item.depth * 0.32, threeStandardMaterial(0x79aeb9, { roughness: 0.3 }), false);
+    addLocalBox(group, item.width * 0.72, 4, item.depth * 0.34, 0, h * 0.08, item.depth * 0.12, dark, false);
+  } else if (item.scenarioKind === "document-tray-3") {
+    addLocalBox(group, item.width, h, 12, 0, h / 2, -item.depth / 2 + 6, body);
+    addLocalBox(group, 12, h, item.depth, -item.width / 2 + 6, h / 2, 0, body);
+    addLocalBox(group, 12, h, item.depth, item.width / 2 - 6, h / 2, 0, body);
+    for (let i = 0; i < 4; i += 1) addLocalBox(group, item.width, 12, item.depth, 0, i * (h - 12) / 3 + 6, 0, light);
+  } else if (item.scenarioKind === "trash-bin") {
+    const wall = Math.max(8, Math.min(16, item.width * 0.06));
+    addLocalBox(group, item.width, wall, item.depth, 0, wall / 2, 0, body);
+    addLocalBox(group, wall, h, item.depth, -item.width / 2 + wall / 2, h / 2, 0, body);
+    addLocalBox(group, wall, h, item.depth, item.width / 2 - wall / 2, h / 2, 0, body);
+    addLocalBox(group, item.width - wall * 2, h, wall, 0, h / 2, -item.depth / 2 + wall / 2, body);
+    addLocalBox(group, item.width - wall * 2, h, wall, 0, h / 2, item.depth / 2 - wall / 2, body);
+    addLocalBox(group, item.width - wall * 2, 4, item.depth - wall * 2, 0, h - 2, 0, dark, false);
+  } else if (item.scenarioKind === "stock-carton") {
+    addLocalBox(group, item.width, h, item.depth, 0, h / 2, 0, threeStandardMaterial(0xc79758, { roughness: 0.92 }));
+    addLocalBox(group, Math.max(8, item.width * 0.035), 3, item.depth, 0, h - 1.5, 0, threeStandardMaterial(0x8f6c42, { roughness: 0.86 }), false);
+  } else if (item.scenarioKind === "paper-bag-stock") {
+    [-0.2, 0, 0.2].forEach((factor) => addLocalBox(group, item.width * 0.44, h * 0.74, Math.max(8, item.depth * 0.2), factor * item.width, h * 0.37, factor * item.depth, light));
+    const handle = new T.Mesh(new T.TorusGeometry(item.width * 0.12, Math.max(4, item.width * 0.015), 10, 28, Math.PI), body);
+    handle.position.set(0, h * 0.76, 0);
+    handle.userData.itemId = item.id;
+    group.add(handle);
+  } else if (item.scenarioKind === "staff-bag") {
+    addLocalBox(group, item.width, h * 0.76, item.depth, 0, h * 0.38, 0, body);
+    const handle = new T.Mesh(new T.TorusGeometry(item.width * 0.21, Math.max(7, item.width * 0.025), 12, 28, Math.PI), dark);
+    handle.position.set(0, h * 0.68, 0);
+    handle.userData.itemId = item.id;
+    group.add(handle);
+  }
   scene.add(group);
 }
 
@@ -4024,6 +4248,12 @@ function addLocalCylinder(group, radius, height, x, y, z, material, radialSegmen
   mesh.position.set(x, y, z);
   mesh.castShadow = true;
   group.add(mesh);
+  return mesh;
+}
+
+function addLocalHorizontalCylinder(group, radius, length, x, y, z, material, radialSegments = 18) {
+  const mesh = addLocalCylinder(group, radius, length, x, y, z, material, radialSegments);
+  mesh.rotation.z = Math.PI / 2;
   return mesh;
 }
 
@@ -5365,7 +5595,9 @@ function buildPromptItemBlock(item, index) {
     lines.push(`   - Operational role: ${personRoleLabel(item.personRole)}; active ${activationModeLabel(item.activationMode)}. Use this person as ${item.personRole === "visitor" ? "a visitor viewpoint" : item.personRole === "staff" ? "a staff movement origin" : item.personRole === "crowd" ? "a crowd obstruction for visibility and movement" : "scale reference only"}.`);
   } else if (item.type === "scenario") {
     lines.push(`   - Operational occupied zone: ${operationalCategoryLabel(item.operationalCategory)}; active ${activationModeLabel(item.activationMode)}; dimensions ${item.dimensionsConfirmed ? "measured and confirmed" : "PROVISIONAL and not confirmed"}.`);
-    lines.push("   - Do not infer a manufacturer, exact product shape, quantity or contents. Use only this registered occupied volume until reference data is supplied.");
+    lines.push(item.scenarioKind
+      ? `   - Recognizable generic form: ${scenarioKindLabel(item.scenarioKind)}, constrained to the registered W/D/H. This is not a manufacturer-specific model; do not add branding or alter the envelope.`
+      : "   - Do not infer a manufacturer, exact product shape, quantity or contents. Use only this registered occupied volume until reference data is supplied.");
   } else {
     lines.push(`   - Appearance: ${buildItemVisualInstruction(item, bolda).replace(/^,\s*/, "") || "real exhibition furniture matching the stated dimensions"}.`);
   }
@@ -5528,6 +5760,9 @@ function buildBoothSpecification() {
         fixtureMasterId: item.masterId || null,
         productCode: item.productCode || null,
         sourceUrl: item.sourceUrl || null,
+        catalogReference: item.catalogReference || null,
+        dimensionAccuracy: item.dimensionAccuracy || null,
+        scenarioKind: item.scenarioKind || null,
         weightKg: item.weightKg || null,
         label: item.label,
         type: item.type,
@@ -5595,7 +5830,14 @@ function buildItemVisualInstruction(item, bolda) {
     const forms = {
       "gacha-machine": "official A0002 tabletop Gacha Cop machine inside the exact W240 x D370 x H440mm envelope; white body; do not change overall dimensions or invent a different machine model",
       "gacha-stand": "official A0007 white paper tabletop stand inside the exact W250 x D315 x H100mm envelope; depth includes the capsule receiver",
-      "capsule-recovery-box": "official E1237 cardboard capsule recovery box inside the exact W275 x D275 x H460mm envelope; circular collection opening approximately 85mm"
+      "capsule-recovery-box": "official E1237 cardboard capsule recovery box inside the exact W275 x D275 x H460mm envelope; circular collection opening approximately 85mm",
+      "mist-bottle": "No.1064 glasses mist bottle; verified bottle body diameter 54.7 x H165.2mm; trigger-included planning envelope is provisional and must not be presented as verified",
+      "frame-heater-169": "No.169 frame heater inside the catalog-verified diameter 125 x H200mm envelope",
+      "frame-heater-767": "No.767 Thermorex frame heater inside the catalog-verified W185 x D160 x H160mm envelope",
+      "buff-motor-694": "No.694 Digimotor inside the catalog-verified W300 x D180 x H200mm envelope",
+      "buff-motor-95": "No.95 dust-collecting buff motor inside the catalog-verified W370 x D312 x H237mm envelope",
+      "buff-motor-1010": "No.1010 compact dust-collecting buff motor inside the catalog-verified W232 x D239 x H417mm envelope",
+      "buff-motor-989": "No.989 eyeglass buff motor inside the catalog-verified W340 x D135 x H215mm envelope"
     };
     return `, visual form: ${forms[item.productCategory] || "registered real product using only the official dimensions"}; source ${item.sourceUrl || "not registered"}`;
   }
@@ -5609,7 +5851,7 @@ function buildItemVisualInstruction(item, bolda) {
     return ", visual form: real display fixture with the exact width, depth and height proportions, not the same generic box as other fixtures";
   }
   if (item.type === "scenario") {
-    return `, visual form: state-specific occupied volume for ${operationalCategoryLabel(item.operationalCategory)} using only the registered W/D/H; ${item.dimensionsConfirmed ? "dimensions confirmed" : "dimensions provisional, do not invent a product shape"}`;
+    return `, visual form: ${item.scenarioKind ? `${scenarioKindLabel(item.scenarioKind)} as a recognizable generic form constrained to` : `state-specific occupied volume for ${operationalCategoryLabel(item.operationalCategory)} using only`} the registered W/D/H; ${item.dimensionsConfirmed ? "dimensions confirmed" : "dimensions provisional"}; do not invent a manufacturer-specific product`;
   }
   if (item.type === "zone") {
     return `, visual form: non-physical floor planning overlay for ${spaceCategoryLabel(item.spaceCategory)}; never render it as furniture, wall or raised structure`;
