@@ -60,10 +60,10 @@ const rawFixtureMasters = [
   { type: "bolda", label: "bolda TB05 工具", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "工具", frontTexture: "assets/bolda/textures/tb05-tools.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn1.png"] },
   { type: "bolda", label: "bolda TB05 ヒーター", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb05-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn2.png"] },
   { type: "bolda", label: "bolda TB05 ドライバー", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "ドライバー", frontTexture: "assets/bolda/textures/tb05-screwdrivers.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn3.png"] },
-  { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB13.png"], setupInfo: { status: "reference-source", instructions: ["全体W900×D500×H800", "下部印刷面H650", "上部棚H150", "開口2室・各約W413×H100", "板厚約25mm"] } },
+  { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png?v=20260825-2", referenceImages: ["assets/bolda/print-references/sample_TB13.png"], setupInfo: { status: "reference-source", instructions: ["全体W900×D500×H800", "下部印刷面H650", "上部棚H150", "開口2室・各約W413×H100", "板厚約25mm", "前面商品画像は提供PSDの埋め込み元画像から下切れなしで再出力"] } },
   { type: "bolda", label: "bolda VB01_600CB", width: 600, depth: 600, height: 600, color: "#5fb7b2", image: "assets/bolda/VB01_600CB.png" },
   { type: "wall", label: "サイン", width: 1200, depth: 80, height: 300, color: "#7bcb9d" },
-  { type: "wall", masterId: "SANNI-WALL-SIGN-1400", label: "サンニシムラ 壁面吊り下げ看板 W1400xH500xD20", width: 1400, depth: 20, height: 500, color: "#f6f6f2", material: "共通アイテム現物看板", dimensionLocked: true, dimensionSource: "共通アイテム/【看板】/壁面吊り下げ看板_1400x500x20.ai・png", frontTexture: "assets/images/signs/sannishimura-wall-sign-1400x500x20.png", model3d: { kind: "parametric-source-artwork", accuracy: "verified-envelope/exact-front-artwork" }, setupInfo: { status: "reference-source", instructions: ["背面壁へ水平取付", "実寸W1400×H500×D20mm", "固定金具・壁面耐荷重は施工会社確認"] } },
+  { type: "wall", masterId: "SANNI-WALL-SIGN-1400", label: "サンニシムラ 壁面吊り下げ看板 W1400xH500xD20", width: 1400, depth: 20, height: 500, color: "#f6f6f2", material: "共通アイテム現物看板", dimensionLocked: true, dimensionSource: "共通アイテム/【看板】/デザインイメージ.png・NEO TOKYO実会場写真・壁面吊り下げ看板_1400x500x20.ai", frontTexture: "assets/images/signs/sannishimura-wall-sign-1400x500x20.png?v=20260825-1", model3d: { kind: "parametric-source-artwork", accuracy: "verified-envelope/exact-front-artwork" }, setupInfo: { status: "reference-source", instructions: ["背面壁へ水平取付", "実寸W1400×H500×D20mm", "固定金具・壁面耐荷重は施工会社確認"] } },
   { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: 0 },
   { type: "powerstrip", label: "電源タップ（名称・定格を編集）", width: 300, depth: 150, color: "#e38354", watt: 0 },
   { type: "device", label: "接続機器（名称・寸法・消費電力を編集）", width: 300, depth: 300, color: "#8a9fb5", watt: 0 },
@@ -1486,6 +1486,7 @@ function normalizeItems() {
     item.weightKg = Math.max(0, Domain.finiteNumber(item.weightKg, master?.weightKg || 0));
     if (master && (migratedMaster || !item.material)) item.material = master.material || "";
     if (master && (migratedMaster || !item.dimensionSource)) item.dimensionSource = master.dimensionSource || "";
+    if (master?.frontTexture && (master.dimensionLocked || !item.frontTexture)) item.frontTexture = master.frontTexture;
     item.surfacePlaceable = master ? master.surfacePlaceable === true : item.surfacePlaceable === true;
     item.supportSurface = master ? master.supportSurface === true : item.supportSurface === true;
     item.supportItemId = String(item.supportItemId || "");
@@ -3190,10 +3191,14 @@ function getChecks() {
   ];
   const placedBolda = state.items.filter((item) => item.type === "bolda");
   if (placedBolda.length) {
+    const exactTb13Count = placedBolda.filter((item) => getBoldaCode(item) === "TB13").length;
+    const provisionalCount = placedBolda.length - exactTb13Count;
     checks.splice(1, 0, {
       name: "bolda精度",
-      level: "warn",
-      message: `外形W/D/Hは提供印刷フォーマット名で照合済みです。${placedBolda.length}点の段差・棚板・板厚等は組立画像基準の暫定3Dです。正確化にはメーカー3D/CAD、各段の高さ・奥行、板厚、棚板位置、組立図が必要です。`
+      level: provisionalCount ? "warn" : "ok",
+      message: provisionalCount
+        ? `TB13 ${exactTb13Count}点は提供テンプレートどおりのW900×D500×H800、下部H650、2開口各約W413×H100、板厚25mmです。ほか${provisionalCount}点は外形W/D/Hのみ照合済みで、段差・棚板等は暫定3Dです。正確化にはメーカー3D/CADと組立図が必要です。`
+        : `TB13 ${exactTb13Count}点は提供テンプレートどおりのW900×D500×H800、下部H650、2開口各約W413×H100、板厚25mmです。前面商品画像も提供PSDの埋め込み元画像から下切れなしで表示します。`
     });
   }
   if (state.preset === "jex") {
@@ -4051,7 +4056,9 @@ function syncFixtureMasterInfo(item, master) {
     ? (matchesMaster ? "マスター寸法一致" : "マスター寸法と不一致")
     : (matchesMaster ? "マスター初期寸法一致（編集可）" : "個別寸法登録（マスター初期値から変更）");
   const modelNote = master.type === "bolda"
-    ? "外形W/D/Hは提供ファイル名で確認済み。段差・棚板等の詳細3D形状は組立画像基準で、製造CAD未確認です。"
+    ? (getBoldaCode(item) === "TB13"
+      ? "提供テンプレートから、外形W900×D500×H800、下部H650、2開口各約W413×H100、板厚25mmを反映済みです。前面商品画像は提供PSDの埋め込み元画像から下切れなしで再出力しています。製造CAD・内部折り構造は未確認です。"
+      : "外形W/D/Hは提供ファイル名で確認済み。段差・棚板等の詳細3D形状は組立画像基準で、製造CAD未確認です。")
     : master.type === "product"
       ? (master.dimensionAccuracy === "partial-verified"
         ? "容器本体寸法は資料確認済み。トリガー込み外形は暫定値で、現物実測後に確定してください。3Dは暫定外形内の参照形状です。"
@@ -5732,7 +5739,7 @@ function buildImagePrompt() {
     "BOLDA AND FURNITURE RULES",
     "- Render bolda products fully assembled as real white paper-board/cardboard counters or shelves. Never show flat development drawings, unfolded print sheets or generic substitute boxes.",
     "- Match ED04 as a W900 x D600 x H1100 three-level stepped display with exactly three usable horizontal display levels. Match TB13 exactly as W900 x D500 x H800: lower printed body H650, 25mm lower shelf board, exactly two openings each approximately W413 x H100 with 25mm side/center boards, and 25mm top board. Never enlarge the openings. Match TB05 as W900 x D600 x H800.",
-    "- TB13 exact front artwork must fill the full W900 x H650 lower face without cropping, stretching, moving the product image, or inventing any orange/brown strip below it. Preserve the supplied artwork pixels as-is.",
+    "- TB13 front artwork must fill the full W900 x H650 lower face. Use the corrected supplied-PSD-derived texture as-is: keep the exact heater photograph fully visible through its lower feet, with no cropping, stretching, invented extension, or orange/brown strip below it.",
     "- ED04 has three separate print themes. Keep Custom Fit, Screw Extraction & Hand Polishing, and Trial Frames & Measurement on their matching fixtures; never exchange or merge their panels.",
     "- A TB05 + AS01 composite is two real parts: one W900 x D600 x H800 TB05 base on floor Z0 and one W900 x D250 x H300 AS01 yokan-bar riser resting directly on the rear of its top at Z800. No air gap, no separate floor placement, total height H1100.",
     "- Preserve real width/depth/height proportions. W1500xD900 must visibly be 50% deeper than W1500xD600; W1800 must visibly be 20% wider than W1500 at the same camera depth.",
