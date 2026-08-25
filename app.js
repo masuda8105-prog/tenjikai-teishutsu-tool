@@ -8,18 +8,18 @@ const presets = {
   wof: { label: "WOF 東京 2コマ", eventName: "WOF 東京 2コマ", width: 5940, depth: 2500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   imf: { label: "IMF 大阪秋 2コマ", eventName: "IMF 大阪秋 2コマ", width: 9000, depth: 4500, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
   egf: { label: "EGF 大阪春 2コマ", eventName: "EGF 大阪春 2コマ", width: 6000, depth: 3600, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
-  jex: { label: "JEX 東京 2小間・Aプラン", eventName: "JEX 東京 2小間・Aプラン", width: 8000, depth: 2000, wallHeight: 2100, wallSide: "top", aisleSide: "bottom" },
-  neotokyo: { label: "NEO TOKYO 2026 2コマ・Plan A", eventName: "NEO TOKYO EYEWEAR SHOW 2026", width: 6000, depth: 2700, wallHeight: 0, heightLimitMm: 2400, floorLoadKgPerM2: 500, wallSide: "top", aisleSide: "bottom", spaceOnly: true },
+  jex: { label: "JEX 東京 2階装飾・2小間", eventName: "JEX 東京 2階装飾・2小間", width: 8000, depth: 2000, wallHeight: 2100, heightLimitMm: 2700, floorLoadKgPerM2: 1000, wallSide: "top", aisleSide: "bottom", sideWallHeightMm: 900, sideReturnDepthMm: 990, wallPanelCount: 8, wallPanelWidthMm: 990, wallColorHex: "#343434", wallFrameColorHex: "#111111" },
+  neotokyo: { label: "NEO TOKYO 2026 2コマ・Plan A", eventName: "NEO TOKYO EYEWEAR SHOW 2026", width: 6000, depth: 2700, wallHeight: 0, heightLimitMm: 2400, floorLoadKgPerM2: 500, wallSide: "top", aisleSide: "bottom", spaceOnly: true, plannedBackPanelWidthMm: 6000, plannedBackPanelHeightMm: 2400, plannedBackPanelThicknessMm: 50, plannedBackPanelStatus: "provisional-user-request" },
   wide: { label: "横長 2小間", eventName: "横長 2小間", width: 6000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   deep: { label: "奥行き広め", eventName: "奥行き広め", width: 3000, depth: 4500, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" },
   custom: { label: "自由入力", eventName: "自由入力", width: 3000, depth: 3000, wallHeight: 2400, wallSide: "top", aisleSide: "bottom" }
 };
 
-const jexRuleNote = "JEX 3階レンタル装飾 2小間・Aプラン: W8000 x D2000、壁面パネルH2100。標準装備: テーブルW1500 x D600を2台、社名板W1800 x H300を2枚、アームスポットライト8灯、100V2口コンセント。常設備品・レンタル備品はパレットから追加し、名称・寸法を実際の申込内容に合わせて編集してください。装飾物・展示品は高さ2.7m以下、通路・小間外へのはみ出し不可。";
+const jexRuleNote = "JEX 2階レンタル装飾 シンプルパッケージ・2小間: W8000 x D2000、黒色壁面システムパネルW990 x H2100を8枚、外側の袖壁H900、黒布巻きテーブルW1500 x D600 x H700を2台。床面カーペットと電気は付属しません。装飾・展示物はH2700以下、天井構造不可、床アンカー不可、床耐荷重1000kg/㎡。電源・照明・追加備品は申込確定後に個別配置してください。根拠: JEX出展案内 p.7-11、出展要項、2階装飾2小間。";
 const imfRuleNote = "IMF 2コマ: W9000 x D4500 x H2100。サンニシムラ1.5コマ（W6750）、鈴木眼鏡様0.5コマ（W2250）の共同出店。電気使用は1.5kWまで事務局負担、1.5kW超の電気使用料および小間内配線工事・コンセント等は出展社負担。装飾物の高さは2.1m以下、装飾は小間内、通路側への突出は禁止。";
 const egfRuleNote = "EGF 2コマ: Aタイプ1コマ W3000 x D3600 x H2100を2コマ運用として W6000 x D3600 x H2100。サンニシムラ1.5コマ、鈴木眼鏡様0.5コマの共同出店。電気使用は1.5kW 100Vまでは事務局負担、1.5kW超の電気使用料およびコンセント等の小間内配線工事は出展社負担。";
 const wofRuleNote = "WOF 2小間 ブースプランA: 間口W5940 x 奥行D2500 x 高さH2400。標準装備: 背面W5940 x H2400オクタパネル、袖面W990 x H2400オクタパネル1枚、W990 x H1200オクタパネル1枚、展示台W1500 x D600 x H700を4台、イス4脚、サインパネルW1500 x H300を1枚。";
-const neoTokyoRuleNote = "NEO TOKYO EYEWEAR SHOW 2026 出展マニュアル確認済み: 1コマW3000 x D2700mm（コマ位置により変形あり）の2コマ横連結としてW6000 x D2700mm、スペース渡し、装飾高上限H2400mm、床積載荷重500kg/㎡。申込予定はPlan A（1コマ一式）1セット: 商品展示テーブルW1500 x D750 x H830を2台、商談テーブルW1000 x D600 x H730を1台、椅子4脚、スタンドライト1SET、電源1SET。追加レンタル予定は展示テーブルD W1500 x D750 x H820を3台。椅子・ライト・電源は外形寸法が資料にないため一覧だけに記録し、平面位置・3D形状は未推測。最終割当小間が変形している場合は割当図の実寸へ更新すること。根拠: 【NEO TOKYO】/【2026】/NEOTOKYO出展マニュアル2026_FIX.pdf。";
+const neoTokyoRuleNote = "NEO TOKYO EYEWEAR SHOW 2026 出展マニュアル確認済み: 1コマW3000 x D2700mm（コマ位置により変形あり）の2コマ横連結としてW6000 x D2700mm、公式引渡しはスペース渡し、装飾高上限H2400mm、床積載荷重500kg/㎡。申込予定はPlan A（1コマ一式）1セット: 商品展示テーブルW1500 x D750 x H830を2台、商談テーブルW1000 x D600 x H730を1台、椅子4脚、スタンドライト1SET、電源1SET。追加レンタル予定は展示テーブルD W1500 x D750 x H820を3台。ユーザー指定により自社装飾の全幅背面パネルW6000 x H2400 x D50を計画表示し、共通アイテムの壁面吊り下げ看板W1400 x H500 x D20を背面中央へ配置する。ただし背面パネルの施工方式・分割・厚みD50は資料未確認の仮設定で、施工会社図面受領後に確定すること。椅子・ライト・電源は外形寸法が資料にないため一覧だけに記録し、平面位置・3D形状は未推測。根拠: 【NEO TOKYO】/【2026】/NEOTOKYO出展マニュアル2026_FIX.pdf p.17-20。";
 
 const rawFixtureMasters = [
   { type: "fixture", label: "常設備品（名称を編集）", width: 900, depth: 450, height: 900, color: "#77a7d9" },
@@ -28,12 +28,14 @@ const rawFixtureMasters = [
   { type: "table", label: "受付机", width: 1200, depth: 600, color: "#f2b84b" },
   { type: "table", label: "展示台 W1500xD600", width: 1500, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#f2b84b" },
-  { type: "table", label: "NEO Plan A 商品展示テーブル W1500xD750xH830", width: 1500, depth: 750, height: 830, color: "#f2b84b", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
-  { type: "table", label: "NEO Plan A 商談テーブル W1000xD600xH730", width: 1000, depth: 600, height: 730, color: "#e6a93e", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
-  { type: "table", label: "NEO レンタル展示テーブルD W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#e6b65b", material: "ツヤありホワイト（出展マニュアル記載）", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.21 / レンタル備品D" },
+  { type: "table", masterId: "JEX-2F-TABLE-BLACK-1500", label: "JEX 2F付属 会議テーブル（黒布巻き） W1500xD600xH700", width: 1500, depth: 600, height: 700, color: "#252525", material: "黒布巻き", dimensionLocked: true, dimensionSource: "JEX出展案内 p.10-11 / 2Fシンプルパッケージ2小間", model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/package-reference" }, setupInfo: { status: "reference-source", instructions: ["2小間で2台付属", "黒布巻き", "配置位置は初期案。提出前に確定"] } },
+  { type: "table", masterId: "NEO-PLAN-A-DISPLAY-1500", label: "NEO Plan A 商品展示テーブル W1500xD750xH830", width: 1500, depth: 750, height: 830, color: "#f2b84b", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
+  { type: "table", masterId: "NEO-PLAN-A-MEETING-1000", label: "NEO Plan A 商談テーブル W1000xD600xH730", width: 1000, depth: 600, height: 730, color: "#e6a93e", material: "資料に材質記載なし", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.20 / Plan A" },
+  { type: "table", masterId: "NEO-RENTAL-D-1500", label: "NEO レンタル展示テーブルD W1500xD750xH820", width: 1500, depth: 750, height: 820, color: "#e6b65b", material: "ツヤありホワイト（出展マニュアル記載）", dimensionLocked: true, dimensionSource: "NEOTOKYO出展マニュアル2026_FIX.pdf p.21 / レンタル備品D" },
   { type: "product", productCategory: "gacha-machine", productCode: "A0002", masterId: "AMUZU-A0002", label: "ガチャコップ 白 メダル仕様 A0002", width: 240, depth: 370, height: 440, weightKg: 5, color: "#eef1ef", material: "ABS外装、鉄、アクリル、アルミ、塩ビ、ダイキャスト、ポリアセタール樹脂（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ A0002公式商品ページ / 本体サイズW240×D370×H440mm", sourceUrl: "https://www.a-muzu.com/category/GACHA_MACHINE_001/A0002.html", surfacePlaceable: true, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["卓上設置タイプ", "電源不要", "約5kg", "A0007設置時は公式公称高さ約530mmを使用"] } },
   { type: "product", productCategory: "gacha-stand", productCode: "A0007", masterId: "AMUZU-A0007", label: "ガチャコップ専用 簡易卓上台 白 A0007", width: 250, depth: 315, height: 100, color: "#f6f4ec", material: "紙製（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ A0007公式商品ページ / 組立後W250×D315×H100mm", sourceUrl: "https://www.a-muzu.com/item/A0007.html", surfacePlaceable: true, supportSurface: true, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, productPlacementPositions: [{ itemMasterId: "AMUZU-A0002", zOffsetMm: 90, allowOverhang: true, source: "A0007公式記載のマシン設置時高さ約530mm - A0002本体H440mm" }], setupInfo: { status: "official-source", instructions: ["カプセル受けを含む奥行315mm", "A0002との組合せ時は公称全高約530mm"] } },
   { type: "product", productCategory: "capsule-recovery-box", productCode: "E1237", masterId: "AMUZU-E1237", label: "簡易カプセル回収ボックス E1237", width: 275, depth: 275, height: 460, color: "#d4a65d", material: "段ボール（公式記載）", dimensionLocked: true, dimensionSource: "あミューズ E1237公式商品ページ / 組立後W275×D275×H460mm", sourceUrl: "https://www.a-muzu.com/item/E1237.html", surfacePlaceable: false, model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["回収口直径約85mm", "対応カプセル75mmまで", "床置き運用"] } },
+  { type: "product", productCategory: "aluminum-pegboard", productCode: "B0897LVM4J", masterId: "AMAZON-B0897LVM4J", label: "アルミ有孔ボード シルバー P25 W450xH450xT1.6", width: 450, depth: 1.6, height: 450, color: "#c4c7c6", material: "アルミ・シルバー", dimensionLocked: true, dimensionSource: "Amazon.co.jp ASIN B0897LVM4J / 450×450×1.6mm・穴間ピッチ25mm・穴径5mm", sourceUrl: "https://www.amazon.co.jp/dp/B0897LVM4J", image: "assets/images/products/aluminum-pegboard-b0897lvm4j.jpg", surfacePlaceable: true, visibilityRole: "product", model3d: { kind: "parametric-official-envelope", accuracy: "verified-sheet-envelope/reference-page-detail" }, setupInfo: { status: "official-source", instructions: ["机上で縦置き", "板単体T1.6mm", "スタンド・固定具は商品ページ寸法に含まれないため別途用意し、固定方法を設営前に確認", "穴間ピッチ25mm・穴径5mm"] } },
   { type: "product", productCategory: "mist-bottle", productCode: "1064", masterId: "SANNI-1064", label: "メガネミスト No.1064（全体外形 要実測）", width: 90, depth: 60, height: 225, color: "#17356f", material: "容器・トリガー材質は未登録", dimensionLocked: false, dimensionAccuracy: "partial-verified", dimensionSource: "IB-300SN印刷範囲図で容器本体φ54.7×H165.2mmを確認。トリガー込みW90×D60×H225mmは展示計画用の暫定外形で、現物実測が必要", catalogReference: "2026/【新製品】/【No.1064】メガネミスト / No.1064チラシ・IB-300SN印刷範囲", image: "assets/products/mist-1064.png", surfacePlaceable: true, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-bottle-body/provisional-trigger-envelope" }, setupInfo: { status: "reference-source", instructions: ["容量300mL", "机上展示", "トリガー込み全外形を現物実測後に確定"] } },
   { type: "product", productCategory: "frame-heater-169", productCode: "169", masterId: "SANNI-169", label: "フレームヒーター No.169 クリーム", width: 125, depth: 125, height: 200, color: "#e4d5ad", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.202 / 底の直径125×H200mm", catalogReference: "総合カタログ2025-2027 p.202", image: "assets/products/heater-169.png", surfacePlaceable: true, watt: 380, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V 50/60Hz", "消費電力380W", "水滴を熱源へ落とさない"] } },
   { type: "product", productCategory: "frame-heater-767", productCode: "767", masterId: "SANNI-767", label: "サーモレックス No.767", width: 185, depth: 160, height: 160, color: "#e9eceb", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.203 / W185×D160×H160mm", catalogReference: "総合カタログ2025-2027 p.203", image: "assets/products/heater-767.png", surfacePlaceable: true, watt: 270, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力270W", "温度80〜140℃", "水滴を熱源へ落とさない"] } },
@@ -58,9 +60,10 @@ const rawFixtureMasters = [
   { type: "bolda", label: "bolda TB05 工具", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "工具", frontTexture: "assets/bolda/textures/tb05-tools.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn1.png"] },
   { type: "bolda", label: "bolda TB05 ヒーター", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb05-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn2.png"] },
   { type: "bolda", label: "bolda TB05 ドライバー", width: 900, depth: 600, height: 800, color: "#5fb7b2", image: "assets/bolda/TB05.png", boldaCode: "TB05", printTheme: "ドライバー", frontTexture: "assets/bolda/textures/tb05-screwdrivers.png", referenceImages: ["assets/bolda/print-references/sample_TB05_ptn3.png"] },
-  { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB13.png"] },
+  { type: "bolda", label: "bolda TB13 ヒーター展示", width: 900, depth: 500, height: 800, color: "#5fb7b2", image: "assets/bolda/TB13.png", boldaCode: "TB13", printTheme: "電子ヒーター", frontTexture: "assets/bolda/textures/tb13-heater.png", referenceImages: ["assets/bolda/print-references/sample_TB13.png"], setupInfo: { status: "reference-source", instructions: ["全体W900×D500×H800", "下部印刷面H650", "上部棚H150", "開口2室・各約W413×H100", "板厚約25mm"] } },
   { type: "bolda", label: "bolda VB01_600CB", width: 600, depth: 600, height: 600, color: "#5fb7b2", image: "assets/bolda/VB01_600CB.png" },
   { type: "wall", label: "サイン", width: 1200, depth: 80, height: 300, color: "#7bcb9d" },
+  { type: "wall", masterId: "SANNI-WALL-SIGN-1400", label: "サンニシムラ 壁面吊り下げ看板 W1400xH500xD20", width: 1400, depth: 20, height: 500, color: "#f6f6f2", material: "共通アイテム現物看板", dimensionLocked: true, dimensionSource: "共通アイテム/【看板】/壁面吊り下げ看板_1400x500x20.ai・png", frontTexture: "assets/images/signs/sannishimura-wall-sign-1400x500x20.png", model3d: { kind: "parametric-source-artwork", accuracy: "verified-envelope/exact-front-artwork" }, setupInfo: { status: "reference-source", instructions: ["背面壁へ水平取付", "実寸W1400×H500×D20mm", "固定金具・壁面耐荷重は施工会社確認"] } },
   { type: "power", label: "コンセント", width: 300, depth: 300, color: "#d85a5a", watt: 0 },
   { type: "powerstrip", label: "電源タップ（名称・定格を編集）", width: 300, depth: 150, color: "#e38354", watt: 0 },
   { type: "device", label: "接続機器（名称・寸法・消費電力を編集）", width: 300, depth: 300, color: "#8a9fb5", watt: 0 },
@@ -101,7 +104,7 @@ const boldaDetails = {
   },
   TB13: {
     code: "TB13",
-    visual: "a tall white counter cabinet; flat top; upper front has two open rectangular cubby shelves separated by a center divider; lower half is a solid smooth front panel",
+    visual: "exact W900 x D500 x H800 white bolda TB13 counter: a full H650 printed lower body, then a 25mm lower shelf board, two shallow open cubbies each approximately W413 x H100 separated and bordered by 25mm boards, then a 25mm top board; the openings occupy only the upper H150 band and must not be enlarged",
     printData: "共通アイテム/【bolda】/to/bolda_Sannishimura_260323/TB13"
   },
   TB05_AS01: {
@@ -208,7 +211,7 @@ const state = {
   contactName: "",
   notes: "",
   jointSide: "right",
-  booth: { width: 3000, depth: 3000, wallHeight: 2400, heightLimitMm: 2400, floorLoadKgPerM2: 0, wallSide: "top", aisleSide: "bottom", spaceOnly: false },
+  booth: { width: 3000, depth: 3000, wallHeight: 2400, heightLimitMm: 2400, floorLoadKgPerM2: 0, wallSide: "top", aisleSide: "bottom", spaceOnly: false, sideWallHeightMm: 1200, sideReturnDepthMm: 3000, wallPanelCount: 0, wallPanelWidthMm: 990, wallColorHex: "#f7f7f3", wallFrameColorHex: "#bfc5c4", plannedBackPanelWidthMm: 0, plannedBackPanelHeightMm: 0, plannedBackPanelThicknessMm: 0, plannedBackPanelStatus: "" },
   gridSize: 50,
   snapEnabled: true,
   viewerEyeHeight: 1600,
@@ -575,7 +578,17 @@ function applyPreset(key) {
     floorLoadKgPerM2: preset.floorLoadKgPerM2 || 0,
     wallSide: preset.wallSide,
     aisleSide: preset.aisleSide,
-    spaceOnly: preset.spaceOnly === true
+    spaceOnly: preset.spaceOnly === true,
+    sideWallHeightMm: Math.max(0, Domain.finiteNumber(preset.sideWallHeightMm, Math.min(1200, preset.wallHeight || 0))),
+    sideReturnDepthMm: Math.max(0, Domain.finiteNumber(preset.sideReturnDepthMm, preset.depth)),
+    wallPanelCount: Math.max(0, Math.floor(Domain.finiteNumber(preset.wallPanelCount, 0))),
+    wallPanelWidthMm: Math.max(0, Domain.finiteNumber(preset.wallPanelWidthMm, 990)),
+    wallColorHex: preset.wallColorHex || "#f7f7f3",
+    wallFrameColorHex: preset.wallFrameColorHex || "#bfc5c4",
+    plannedBackPanelWidthMm: Math.max(0, Domain.finiteNumber(preset.plannedBackPanelWidthMm, 0)),
+    plannedBackPanelHeightMm: Math.max(0, Domain.finiteNumber(preset.plannedBackPanelHeightMm, 0)),
+    plannedBackPanelThicknessMm: Math.max(0, Domain.finiteNumber(preset.plannedBackPanelThicknessMm, 0)),
+    plannedBackPanelStatus: String(preset.plannedBackPanelStatus || "")
   };
   $("presetSelect").value = key;
   $("eventName").value = state.eventName;
@@ -839,6 +852,11 @@ function addItem(template) {
     standingImage: template.standingImage || "",
     seatedImage: template.seatedImage || "",
     color: template.color,
+    material: template.material || "",
+    dimensionLocked: template.dimensionLocked === true,
+    dimensionSource: template.dimensionSource || "",
+    model3d: template.model3d ? { ...template.model3d } : undefined,
+    setupInfo: template.setupInfo ? { ...template.setupInfo, instructions: [...(template.setupInfo.instructions || [])] } : undefined,
     watt: template.watt || 0,
     circuitId: template.circuitId || "",
     powerSourceId: template.powerSourceId || "",
@@ -951,20 +969,10 @@ function applyImfEgfLayout(renderNow = true) {
 function applyJexTwoBoothLayout(renderNow = true) {
   const w = state.booth.width;
   const d = state.booth.depth;
-  const spotlightY = 80;
-  const spacing = w / 8;
   state.items = [
-    makeItem("wall", "社名板 左 W1800xH300", 1800, 80, "#7bcb9d", 300, 0, 0, 300),
-    makeItem("wall", "社名板 右 W1800xH300", 1800, 80, "#7bcb9d", w - 2100, 0, 0, 300),
-    makeItem("table", "JEX付属テーブル 左 W1500xD600", 1500, 600, "#f2b84b", 2100, d - 850),
-    makeItem("table", "JEX付属テーブル 右 W1500xD600", 1500, 600, "#f2b84b", 4400, d - 850),
-    makeItem("power", "100V2口コンセント", 300, 300, "#d85a5a", 350, d - 420, 0)
+    makeMasterItem("JEX 2F付属 会議テーブル（黒布巻き） W1500xD600xH700", "JEX 2F付属 黒布巻きテーブル 1", w / 2 - 1500, d - 800),
+    makeMasterItem("JEX 2F付属 会議テーブル（黒布巻き） W1500xD600xH700", "JEX 2F付属 黒布巻きテーブル 2", w / 2, d - 800)
   ];
-
-  for (let i = 0; i < 8; i += 1) {
-    state.items.push(makeItem("spotlight", `アームスポットライト ${i + 1}`, 280, 280, "#ffd45f", Math.round((spacing * i + spacing / 2 - 140) / 50) * 50, spotlightY, 100));
-  }
-
   state.items.forEach(clampItem);
   state.selectedId = state.items[0]?.id || null;
   if (renderNow) render();
@@ -1024,20 +1032,43 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
   };
 }
 
-function applyNeoTokyoLayout(renderNow = true) {
-  const placeMaster = (masterLabel, label, x, y) => {
-    const master = itemTypes.find((entry) => entry.label === masterLabel);
-    const item = makeItem(master.type, label, master.width, master.depth, master.color, x, y, master.watt || 0, master.height || 0, master.image || "");
-    item.masterId = master.masterId;
-    return item;
+function makeMasterItem(masterLabel, label, x, y, z = 0) {
+  const master = itemTypes.find((entry) => entry.label === masterLabel);
+  if (!master) throw new Error(`什器マスターが見つかりません: ${masterLabel}`);
+  return {
+    ...makeItem(master.type, label || master.label, master.width, master.depth, master.color, x, y, master.watt || 0, master.height || 0, master.image || ""),
+    masterId: master.masterId,
+    productCategory: master.productCategory || "",
+    productCode: master.productCode || "",
+    sourceUrl: master.sourceUrl || "",
+    catalogReference: master.catalogReference || "",
+    dimensionAccuracy: master.dimensionAccuracy || "",
+    weightKg: master.weightKg || 0,
+    surfacePlaceable: master.surfacePlaceable === true,
+    supportSurface: master.supportSurface === true,
+    material: master.material || "",
+    dimensionLocked: master.dimensionLocked === true,
+    dimensionSource: master.dimensionSource || "",
+    model3d: master.model3d ? { ...master.model3d } : undefined,
+    setupInfo: master.setupInfo ? { ...master.setupInfo, instructions: [...(master.setupInfo.instructions || [])] } : undefined,
+    frontTexture: master.frontTexture || "",
+    riserTexture: master.riserTexture || "",
+    tierTextures: [...(master.tierTextures || [])],
+    referenceImages: [...(master.referenceImages || [])],
+    visibilityRole: master.visibilityRole || "none",
+    z
   };
+}
+
+function applyNeoTokyoLayout(renderNow = true) {
   state.items = [
-    placeMaster("NEO Plan A 商品展示テーブル W1500xD750xH830", "Plan A 商品展示テーブル 1", 0, 1950),
-    placeMaster("NEO Plan A 商品展示テーブル W1500xD750xH830", "Plan A 商品展示テーブル 2", 1500, 1950),
-    placeMaster("NEO Plan A 商談テーブル W1000xD600xH730", "Plan A 商談テーブル", 1000, 350),
-    placeMaster("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 1", 3000, 150),
-    placeMaster("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 2", 4500, 150),
-    placeMaster("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 3", 3750, 1000)
+    makeMasterItem("NEO Plan A 商品展示テーブル W1500xD750xH830", "Plan A 商品展示テーブル 1", 0, 1950),
+    makeMasterItem("NEO Plan A 商品展示テーブル W1500xD750xH830", "Plan A 商品展示テーブル 2", 1500, 1950),
+    makeMasterItem("NEO Plan A 商談テーブル W1000xD600xH730", "Plan A 商談テーブル", 1000, 350),
+    makeMasterItem("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 1", 3000, 150),
+    makeMasterItem("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 2", 4500, 150),
+    makeMasterItem("NEO レンタル展示テーブルD W1500xD750xH820", "追加レンタル展示テーブルD 3", 3750, 1000),
+    makeMasterItem("サンニシムラ 壁面吊り下げ看板 W1400xH500xD20", "サンニシムラ 壁面吊り下げ看板", 2300, 0, 1650)
   ];
   state.items.forEach(clampItem);
   state.selectedId = state.items[0]?.id || null;
@@ -1051,7 +1082,23 @@ function selectedItem() {
 function getFixtureMaster(item) {
   if (!item) return null;
   const byId = itemTypes.find((master) => master.masterId === item.masterId);
-  if (byId) return byId;
+  const byProductIdentity = itemTypes.find((master) => master.type === item.type && (
+    (item.productCode && master.productCode === item.productCode)
+    || (item.productCategory && master.productCategory === item.productCategory)
+  ));
+  if (byProductIdentity) return byProductIdentity;
+  const label = String(item.label || "");
+  const knownLabelMaster = itemTypes.find((master) => {
+    if (master.type !== item.type) return false;
+    if (label.startsWith("Plan A 商品展示テーブル")) return master.masterId === "NEO-PLAN-A-DISPLAY-1500";
+    if (label === "Plan A 商談テーブル") return master.masterId === "NEO-PLAN-A-MEETING-1000";
+    if (label.startsWith("追加レンタル展示テーブルD")) return master.masterId === "NEO-RENTAL-D-1500";
+    if (label.includes("JEX") && label.includes("テーブル")) return master.masterId === "JEX-2F-TABLE-BLACK-1500";
+    if (label.includes("サンニシムラ 壁面吊り下げ看板")) return master.masterId === "SANNI-WALL-SIGN-1400";
+    return master.label === label;
+  });
+  if (knownLabelMaster) return knownLabelMaster;
+  if (byId && byId.type === item.type && (!byId.dimensionLocked || dimensionsMatchMaster(item, byId))) return byId;
   if (item.type !== "bolda") return null;
   return itemTypes.find((master) => master.type === "bolda" && master.label === item.label)
     || itemTypes.find((master) => master.type === "bolda" && master.boldaCode === item.boldaCode && master.printTheme === item.printTheme)
@@ -1428,7 +1475,8 @@ function normalizeItems() {
   state.items.forEach((item) => {
     hydrateLegacyItem(item);
     const master = getFixtureMaster(item);
-    if (master && !item.masterId) item.masterId = master.masterId;
+    const migratedMaster = Boolean(master && item.masterId !== master.masterId);
+    if (master) item.masterId = master.masterId;
     item.productCategory = String(item.productCategory || master?.productCategory || "");
     item.productCode = String(item.productCode || master?.productCode || "");
     item.sourceUrl = String(item.sourceUrl || master?.sourceUrl || "");
@@ -1436,6 +1484,8 @@ function normalizeItems() {
     item.dimensionAccuracy = String(item.dimensionAccuracy || master?.dimensionAccuracy || "");
     item.scenarioKind = String(item.scenarioKind || master?.scenarioKind || "");
     item.weightKg = Math.max(0, Domain.finiteNumber(item.weightKg, master?.weightKg || 0));
+    if (master && (migratedMaster || !item.material)) item.material = master.material || "";
+    if (master && (migratedMaster || !item.dimensionSource)) item.dimensionSource = master.dimensionSource || "";
     item.surfacePlaceable = master ? master.surfacePlaceable === true : item.surfacePlaceable === true;
     item.supportSurface = master ? master.supportSurface === true : item.supportSurface === true;
     item.supportItemId = String(item.supportItemId || "");
@@ -1499,8 +1549,9 @@ function normalizeItems() {
     if (state.preset === "jex" && item.type === "table" && String(item.label || "").includes("JEX付属テーブル")) {
       item.width = 1500;
       item.depth = 600;
-      item.height = 0;
-      item.label = item.label.includes("左") ? "JEX付属テーブル 左 W1500xD600" : "JEX付属テーブル 右 W1500xD600";
+      item.height = 700;
+      item.material = "黒布巻き";
+      item.label = item.label.includes("左") ? "JEX 2F付属 黒布巻きテーブル 1" : "JEX 2F付属 黒布巻きテーブル 2";
     }
   });
   syncSupportedItems();
@@ -1625,7 +1676,7 @@ function syncHeader() {
   $("metaCompany").textContent = state.companyName || "-";
   $("metaDate").textContent = new Date().toLocaleDateString("ja-JP");
   $("boothSpec").textContent = state.booth.spaceOnly
-    ? `W${state.booth.width} x D${state.booth.depth}mm / スペース渡し・装飾高上限H${state.booth.heightLimitMm || "未登録"}mm / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`
+    ? `W${state.booth.width} x D${state.booth.depth}mm / 公式スペース渡し・装飾高上限H${state.booth.heightLimitMm || "未登録"}mm${hasPlannedBackPanel() ? ` / 自社計画背面パネル W${state.booth.plannedBackPanelWidthMm} x H${state.booth.plannedBackPanelHeightMm} x D${state.booth.plannedBackPanelThicknessMm}mm（仮）` : ""} / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`
     : `W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm / 壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)} / 状態: ${operationModeLabel(state.operationMode)}`;
   $("printNotes").textContent = state.notes || "-";
 }
@@ -1885,7 +1936,7 @@ function syncView() {
   if (state.view === "preview3d") {
     $("preview3dTitle").textContent = `${state.eventName || "展示ブース"} 3D配置確認`;
     $("preview3dSpec").textContent = state.booth.spaceOnly
-      ? `W${state.booth.width} x D${state.booth.depth}mm / スペース渡し・装飾高上限H${state.booth.heightLimitMm || "未登録"}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`
+      ? `W${state.booth.width} x D${state.booth.depth}mm / 公式スペース渡し${hasPlannedBackPanel() ? `＋自社計画背面パネルW${state.booth.plannedBackPanelWidthMm} x H${state.booth.plannedBackPanelHeightMm}mm（仮）` : ""} / 装飾高上限H${state.booth.heightLimitMm || "未登録"}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`
       : `W${state.booth.width} x D${state.booth.depth} x H${state.booth.wallHeight}mm / 通路: ${sideLabel(state.booth.aisleSide)} / ${operationModeLabel(state.operationMode)}`;
     $("viewerEyeHeight").value = Math.round(state.viewerEyeHeight || 1600);
     draw3dScene();
@@ -1977,18 +2028,31 @@ function drawBooth(boothPxW, boothPxH) {
   if (!state.booth.spaceOnly) {
     ["top", "bottom", "left", "right"].forEach((side) => {
       if (side === state.booth.aisleSide) return;
-      ctx.strokeStyle = side === state.booth.wallSide ? "#23875b" : "#7bcb9d";
+      ctx.strokeStyle = state.booth.wallColorHex || (side === state.booth.wallSide ? "#23875b" : "#7bcb9d");
       ctx.lineWidth = side === state.booth.wallSide ? 10 : 5;
-      drawSide(side, boothPxW, boothPxH);
+      drawShellSide2d(side, boothPxW, boothPxH);
     });
+  } else if (hasPlannedBackPanel()) {
+    ctx.strokeStyle = "#5d7fb4";
+    ctx.lineWidth = 10;
+    drawSide(state.booth.wallSide, boothPxW, boothPxH);
   }
 
   ctx.fillStyle = "#334346";
   const boothLabelFont = printRenderMode ? 58 : 16;
   ctx.font = `${boothLabelFont}px sans-serif`;
   ctx.textAlign = "center";
-  ctx.fillText(state.booth.spaceOnly ? `スペース渡し（壁未登録） / 通路側: ${sideLabel(state.booth.aisleSide)}` : `壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)}`, origin.x + boothPxW / 2, origin.y + boothPxH + (printRenderMode ? 88 : 36));
+  ctx.fillText(state.booth.spaceOnly ? `${hasPlannedBackPanel() ? "公式スペース渡し / 自社計画背面パネル（仮）" : "スペース渡し（壁未登録）"} / 通路側: ${sideLabel(state.booth.aisleSide)}` : `壁側: ${sideLabel(state.booth.wallSide)} / 通路側: ${sideLabel(state.booth.aisleSide)}`, origin.x + boothPxW / 2, origin.y + boothPxH + (printRenderMode ? 88 : 36));
   ctx.restore();
+}
+
+function hasPlannedBackPanel() {
+  return state.booth.plannedBackPanelWidthMm > 0 && state.booth.plannedBackPanelHeightMm > 0;
+}
+
+function effectiveShellHeight() {
+  if (hasPlannedBackPanel()) return state.booth.plannedBackPanelHeightMm;
+  return state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
 }
 
 function drawSide(side, boothPxW, boothPxH) {
@@ -2052,6 +2116,27 @@ function drawJointSplit() {
   ctx.fillText("サンニシムラ 1.5コマ", sannishiX + sannishiW / 2, top + height / 2);
   ctx.fillText("鈴木眼鏡様 0.5コマ", suzukiX + suzukiW / 2, top + height / 2);
   ctx.restore();
+}
+
+function drawShellSide2d(side, boothPxW, boothPxH) {
+  if (side === state.booth.wallSide || !state.booth.sideReturnDepthMm) {
+    drawSide(side, boothPxW, boothPxH);
+    return;
+  }
+  const returnPx = state.booth.sideReturnDepthMm * scale;
+  if ((state.booth.wallSide === "top" || state.booth.wallSide === "bottom") && (side === "left" || side === "right")) {
+    const x = side === "left" ? origin.x : origin.x + boothPxW;
+    if (state.booth.wallSide === "top") line(x, origin.y, x, origin.y + Math.min(boothPxH, returnPx));
+    else line(x, origin.y + boothPxH, x, origin.y + boothPxH - Math.min(boothPxH, returnPx));
+    return;
+  }
+  if ((state.booth.wallSide === "left" || state.booth.wallSide === "right") && (side === "top" || side === "bottom")) {
+    const y = side === "top" ? origin.y : origin.y + boothPxH;
+    if (state.booth.wallSide === "left") line(origin.x, y, origin.x + Math.min(boothPxW, returnPx), y);
+    else line(origin.x + boothPxW, y, origin.x + boothPxW - Math.min(boothPxW, returnPx), y);
+    return;
+  }
+  drawSide(side, boothPxW, boothPxH);
 }
 
 function drawPowerRoutes() {
@@ -3114,14 +3199,14 @@ function getChecks() {
   if (state.preset === "jex") {
     const spotlights = state.items.filter((item) => item.type === "spotlight").length;
     const outlets = state.items.filter((item) => item.type === "power").length;
-    const tables = state.items.filter((item) => item.type === "table").length;
-    const jexOk = state.booth.width === 8000 && state.booth.depth === 2000 && spotlights >= 8 && outlets >= 1 && tables >= 2;
+    const tables = state.items.filter((item) => item.type === "table" && item.width === 1500 && item.depth === 600 && item.height === 700 && String(item.material || "").includes("黒布")).length;
+    const jexOk = state.booth.width === 8000 && state.booth.depth === 2000 && state.booth.wallHeight === 2100 && state.booth.heightLimitMm === 2700 && state.booth.floorLoadKgPerM2 === 1000 && state.booth.sideWallHeightMm === 900 && state.booth.sideReturnDepthMm === 990 && state.booth.wallPanelCount === 8 && spotlights === 0 && outlets === 0 && tables === 2;
     checks.unshift({
       name: "JEXルール",
       level: jexOk ? "ok" : "warn",
       message: jexOk
-        ? "JEX 3階レンタル装飾 2小間の基本構成です。W8000 x D2000、スポット8灯、100V2口コンセント、付属テーブルW1500 x D600を2台。"
-        : "JEX 2小間の基本構成から変更されています。必要に応じて標準レイアウトを置き直してください。"
+        ? "JEX 2階シンプルパッケージ・2小間の基本構成です。W8000 x D2000、黒壁パネルW990 x H2100を8枚、外側袖壁H900、黒布巻きテーブルW1500 x D600 x H700を2台。床カーペット・電気は付属しません。"
+        : "JEX 2階装飾・2小間の基本外形、壁、備品数または『電気なし』条件から変更されています。標準レイアウトを置き直すか変更根拠を記録してください。"
     });
   }
   if (state.preset === "wof") {
@@ -3140,12 +3225,13 @@ function getChecks() {
     const planDisplayTables = state.items.filter((item) => item.masterId && item.label.startsWith("Plan A 商品展示テーブル") && item.width === 1500 && item.depth === 750 && item.height === 830).length;
     const planMeetingTables = state.items.filter((item) => item.label === "Plan A 商談テーブル" && item.width === 1000 && item.depth === 600 && item.height === 730).length;
     const rentalTables = state.items.filter((item) => item.label.startsWith("追加レンタル展示テーブルD") && item.width === 1500 && item.depth === 750 && item.height === 820).length;
-    const presetOk = state.booth.width === 6000 && state.booth.depth === 2700 && state.booth.wallHeight === 0 && state.booth.heightLimitMm === 2400 && state.booth.floorLoadKgPerM2 === 500 && state.booth.spaceOnly === true && planDisplayTables === 2 && planMeetingTables === 1 && rentalTables === 3;
+    const signs = state.items.filter((item) => item.masterId === "SANNI-WALL-SIGN-1400" && item.width === 1400 && item.depth === 20 && item.height === 500).length;
+    const presetOk = state.booth.width === 6000 && state.booth.depth === 2700 && state.booth.wallHeight === 0 && state.booth.heightLimitMm === 2400 && state.booth.floorLoadKgPerM2 === 500 && state.booth.spaceOnly === true && state.booth.plannedBackPanelWidthMm === 6000 && state.booth.plannedBackPanelHeightMm === 2400 && planDisplayTables === 2 && planMeetingTables === 1 && rentalTables === 3 && signs === 1;
     checks.unshift({
       name: "NEO TOKYO 2026ルール",
       level: presetOk ? "ok" : "warn",
       message: presetOk
-        ? "2コマ横連結W6000 x D2700、スペース渡し、装飾高上限H2400、床積載荷重500kg/㎡、Plan Aの寸法確認済み机3台、追加レンタル展示テーブルD 3台を確認しました。Plan Aの椅子4脚・スタンドライト1SET・電源1SETは寸法未記載のため配置未確定です。"
+        ? "2コマ横連結W6000 x D2700、公式スペース渡し、装飾高上限H2400、床積載荷重500kg/㎡、Plan Aの寸法確認済み机3台、追加レンタル展示テーブルD 3台を確認しました。ユーザー指定の自社計画背面パネルと実寸看板も表示中です。パネル施工仕様は未確定です。"
         : "NEO TOKYO 2コマ・Plan A・追加レンタル机の基準構成から変更されています。標準レイアウトを置き直すか、変更根拠を備考へ記録してください。"
     });
   }
@@ -3206,7 +3292,7 @@ function renderSubmissionSummary() {
   const floorItems = currentItems.filter((item) => !["wall", "power", "spotlight", "zone"].includes(item.type));
   const steps = [
     state.booth.spaceOnly
-      ? `ブース外形 W${state.booth.width} x D${state.booth.depth}mm、装飾高上限H${state.booth.heightLimitMm || "未登録"}mmを墨出し確認。スペース渡しのため壁面は未支給。`
+      ? `ブース外形 W${state.booth.width} x D${state.booth.depth}mm、装飾高上限H${state.booth.heightLimitMm || "未登録"}mmを墨出し確認。公式引渡しはスペースのみで壁面は未支給。${hasPlannedBackPanel() ? `自社計画背面パネルW${state.booth.plannedBackPanelWidthMm} x H${state.booth.plannedBackPanelHeightMm} x D${state.booth.plannedBackPanelThicknessMm}mm（仮）は施工会社承認図と照合してから設置。` : ""}`
       : `ブース外形 W${state.booth.width} x D${state.booth.depth} x 壁H${state.booth.wallHeight}mm、壁側${sideLabel(state.booth.wallSide)}・通路側${sideLabel(state.booth.aisleSide)}を墨出し確認。`,
     ...wallItems.map((item) => `${item.label}: X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(getItemVerticalRange(item).center)}mm付近へ取付。`),
     ...floorItems.map((item) => `${item.label}: X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(item.z || 0)}mm、${Domain.normalizeRotationDegrees(item.rotationDeg)}°で配置。`)
@@ -3217,7 +3303,7 @@ function renderSubmissionSummary() {
     return !master || master.setupInfo.status !== "registered";
   }).length;
   $("setupDataWarning").textContent = state.preset === "neotokyo"
-    ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。Plan Aの椅子4脚・スタンドライト1SET・電源1SETは外形/位置/電気仕様が資料にないため、平面・3Dへ未配置です。事務局の最終レイアウトと備品仕様を入手後に確定してください。`
+    ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。自社計画背面パネルのD50、分割、構造、固定方法、耐荷重は資料未確認の仮設定です。Plan Aの椅子4脚・スタンドライト1SET・電源1SETも外形/位置/電気仕様が資料にないため未配置です。施工会社承認図と事務局の最終備品仕様を入手後に確定してください。`
     : missingSetup
       ? `${missingSetup}点は組立手順・必要工具・固定方法が未登録です。現場設営指示として確定する前に、メーカー組立図と会場施工規定を添付してください。`
     : "全配置物にマスター設営情報が登録されています。";
@@ -3402,9 +3488,14 @@ function typeLabel(type) {
 }
 
 function itemSizeLabel(item) {
-  const base = `W${Math.round(item.width)} x D${Math.round(item.depth)}`;
+  const base = `W${formatMmValue(item.width)} x D${formatMmValue(item.depth)}`;
   if (item.type === "zone") return `${base}mm / ${formatSquareMetres(item.width * item.depth)}㎡`;
-  return item.height ? `${base} x H${Math.round(item.height)}mm` : `${base} x H未登録`;
+  return item.height ? `${base} x H${formatMmValue(item.height)}mm` : `${base} x H未登録`;
+}
+
+function formatMmValue(value) {
+  const number = Domain.finiteNumber(value, 0);
+  return Number.isInteger(number) ? String(number) : number.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
 }
 
 function escapeHtml(value) {
@@ -3444,13 +3535,15 @@ function applyLoadedState(incoming) {
   }
   const fallbackBooth = state.booth;
   const nextBooth = incoming.booth;
+  const presetBooth = presets[presets[incoming.preset] ? incoming.preset : "custom"] || {};
   const sides = ["top", "bottom", "left", "right"];
   state.preset = presets[incoming.preset] ? incoming.preset : "custom";
   state.eventName = String(incoming.eventName || "");
   state.boothNo = String(incoming.boothNo || "");
   state.companyName = String(incoming.companyName || "");
   state.contactName = String(incoming.contactName || "");
-  state.notes = String(incoming.notes || "");
+  const presetDefaultNote = { jex: jexRuleNote, imf: imfRuleNote, egf: egfRuleNote, wof: wofRuleNote, neotokyo: neoTokyoRuleNote }[state.preset];
+  state.notes = presetDefaultNote ? normalizeRuleNote(String(incoming.notes || ""), presetDefaultNote) : String(incoming.notes || "");
   state.jointSide = incoming.jointSide === "left" ? "left" : "right";
   state.gridSize = Domain.sanitizeGridSize(incoming.gridSize);
   state.snapEnabled = incoming.snapEnabled !== false;
@@ -3470,7 +3563,17 @@ function applyLoadedState(incoming) {
     floorLoadKgPerM2: Math.max(0, Domain.finiteNumber(nextBooth.floorLoadKgPerM2, fallbackBooth.floorLoadKgPerM2 || 0)),
     wallSide: sides.includes(nextBooth.wallSide) ? nextBooth.wallSide : "top",
     aisleSide: sides.includes(nextBooth.aisleSide) ? nextBooth.aisleSide : "bottom",
-    spaceOnly: nextBooth.spaceOnly === true
+    spaceOnly: nextBooth.spaceOnly === true,
+    sideWallHeightMm: Math.max(0, Domain.finiteNumber(nextBooth.sideWallHeightMm, presetBooth.sideWallHeightMm ?? Math.min(1200, nextBooth.wallHeight || fallbackBooth.wallHeight))),
+    sideReturnDepthMm: Math.max(0, Domain.finiteNumber(nextBooth.sideReturnDepthMm, presetBooth.sideReturnDepthMm ?? nextBooth.depth ?? fallbackBooth.depth)),
+    wallPanelCount: Math.max(0, Math.floor(Domain.finiteNumber(nextBooth.wallPanelCount, presetBooth.wallPanelCount ?? 0))),
+    wallPanelWidthMm: Math.max(0, Domain.finiteNumber(nextBooth.wallPanelWidthMm, presetBooth.wallPanelWidthMm ?? 990)),
+    wallColorHex: String(nextBooth.wallColorHex ?? presetBooth.wallColorHex ?? "#f7f7f3"),
+    wallFrameColorHex: String(nextBooth.wallFrameColorHex ?? presetBooth.wallFrameColorHex ?? "#bfc5c4"),
+    plannedBackPanelWidthMm: Math.max(0, Domain.finiteNumber(nextBooth.plannedBackPanelWidthMm, presetBooth.plannedBackPanelWidthMm ?? 0)),
+    plannedBackPanelHeightMm: Math.max(0, Domain.finiteNumber(nextBooth.plannedBackPanelHeightMm, presetBooth.plannedBackPanelHeightMm ?? 0)),
+    plannedBackPanelThicknessMm: Math.max(0, Domain.finiteNumber(nextBooth.plannedBackPanelThicknessMm, presetBooth.plannedBackPanelThicknessMm ?? 0)),
+    plannedBackPanelStatus: String(nextBooth.plannedBackPanelStatus ?? presetBooth.plannedBackPanelStatus ?? "")
   };
   state.items = incoming.items.map((source, index) => ({
     ...source,
@@ -3528,6 +3631,8 @@ function normalizeRuleNote(current, expected) {
   if (current.includes("IMF/EGF 2コマ")) return expected;
   if (current.includes("WOF 2コマ: 標準プリセット")) return expected;
   if (current.includes("JEX 3階レンタル装飾 2小間")) return expected;
+  if (current.includes("JEX 2階レンタル装飾")) return expected;
+  if (current.includes("NEO TOKYO EYEWEAR SHOW 2026 出展マニュアル確認済み") && current.includes("最終割当小間が変形")) return expected;
   if (current.includes("WOF 2小間 ブースプランA")) return expected;
   if (current.includes("IMF 2コマ: Bタイプ")) return expected;
   if (current.includes("EGF 2コマ: Aタイプ")) return expected;
@@ -3703,44 +3808,74 @@ function addThreeBoothFloor(scene) {
 }
 
 function addThreeBoothWalls(scene) {
-  if (state.booth.spaceOnly) return;
+  if (state.booth.spaceOnly) {
+    if (hasPlannedBackPanel()) {
+      addThreeWall(scene, state.booth.wallSide, state.booth.plannedBackPanelHeightMm, true, {
+        span: Math.min(state.booth.plannedBackPanelWidthMm, state.booth.wallSide === "top" || state.booth.wallSide === "bottom" ? state.booth.width : state.booth.depth),
+        thickness: state.booth.plannedBackPanelThicknessMm || 50,
+        wallColor: "#f4f4f1",
+        frameColor: "#aeb4b3"
+      });
+    }
+    return;
+  }
   ["top", "right", "bottom", "left"].forEach((side) => {
     if (side === state.booth.aisleSide) return;
     const isMain = side === state.booth.wallSide;
-    const height = isMain ? state.booth.wallHeight : Math.min(1200, state.booth.wallHeight);
-    addThreeWall(scene, side, height, isMain);
+    const height = isMain ? state.booth.wallHeight : Math.min(state.booth.sideWallHeightMm || 1200, state.booth.wallHeight);
+    const options = isMain ? {} : sideReturnWallOptions(side);
+    addThreeWall(scene, side, height, isMain, options);
   });
 }
 
-function addThreeWall(scene, side, height, isMain) {
+function sideReturnWallOptions(side) {
+  const w = state.booth.width;
+  const d = state.booth.depth;
+  const desired = Math.max(0, state.booth.sideReturnDepthMm || (side === "left" || side === "right" ? d : w));
+  if ((state.booth.wallSide === "top" || state.booth.wallSide === "bottom") && (side === "left" || side === "right")) {
+    const span = Math.min(d, desired);
+    return { span, alongCenter: state.booth.wallSide === "top" ? -d / 2 + span / 2 : d / 2 - span / 2 };
+  }
+  if ((state.booth.wallSide === "left" || state.booth.wallSide === "right") && (side === "top" || side === "bottom")) {
+    const span = Math.min(w, desired);
+    return { span, alongCenter: state.booth.wallSide === "left" ? -w / 2 + span / 2 : w / 2 - span / 2 };
+  }
+  return {};
+}
+
+function addThreeWall(scene, side, height, isMain, options = {}) {
   const T = window.THREE;
   const w = state.booth.width;
   const d = state.booth.depth;
-  const thickness = 42;
+  const thickness = Math.max(1, options.thickness || 42);
   const horizontal = side === "top" || side === "bottom";
+  const span = Math.min(options.span || (horizontal ? w : d), horizontal ? w : d);
+  const alongCenter = Domain.finiteNumber(options.alongCenter, 0);
+  const wallColor = options.wallColor || state.booth.wallColorHex || "#f7f7f3";
+  const frameColor = options.frameColor || state.booth.wallFrameColorHex || "#bfc5c4";
   const wall = new T.Mesh(
-    new T.BoxGeometry(horizontal ? w : thickness, height, horizontal ? thickness : d),
-    new T.MeshStandardMaterial({ color: isMain ? 0xf7f7f3 : 0xeeeeea, roughness: 0.76, metalness: 0.02 })
+    new T.BoxGeometry(horizontal ? span : thickness, height, horizontal ? thickness : span),
+    new T.MeshStandardMaterial({ color: wallColor, roughness: 0.76, metalness: 0.02 })
   );
   wall.position.set(
-    side === "left" ? -w / 2 - thickness / 2 : side === "right" ? w / 2 + thickness / 2 : 0,
+    side === "left" ? -w / 2 - thickness / 2 : side === "right" ? w / 2 + thickness / 2 : horizontal ? alongCenter : 0,
     height / 2,
-    side === "top" ? -d / 2 - thickness / 2 : side === "bottom" ? d / 2 + thickness / 2 : 0
+    side === "top" ? -d / 2 - thickness / 2 : side === "bottom" ? d / 2 + thickness / 2 : horizontal ? 0 : alongCenter
   );
   wall.castShadow = true;
   wall.receiveShadow = true;
   scene.add(wall);
 
-  const span = horizontal ? w : d;
-  for (let along = -span / 2; along <= span / 2 + 1; along += 990) {
+  const panelPitch = Math.max(100, state.booth.wallPanelWidthMm || 990);
+  for (let along = -span / 2; along <= span / 2 + 1; along += panelPitch) {
     const post = new T.Mesh(
       new T.BoxGeometry(horizontal ? 18 : 24, height + 18, horizontal ? 24 : 18),
-      new T.MeshStandardMaterial({ color: 0xbfc5c4, roughness: 0.4, metalness: 0.55 })
+      new T.MeshStandardMaterial({ color: frameColor, roughness: 0.4, metalness: 0.55 })
     );
     post.position.set(
-      horizontal ? along : wall.position.x,
+      horizontal ? alongCenter + along : wall.position.x,
       height / 2,
-      horizontal ? wall.position.z : along
+      horizontal ? wall.position.z : alongCenter + along
     );
     post.castShadow = true;
     scene.add(post);
@@ -4010,9 +4145,19 @@ function addThreeOfficialProduct(scene, item) {
   if (item.productCategory === "gacha-stand") return addThreeGachaStand(scene, item);
   if (item.productCategory === "capsule-recovery-box") return addThreeCapsuleRecoveryBox(scene, item);
   if (item.productCategory === "mist-bottle") return addThreeMistBottle(scene, item);
+  if (item.productCategory === "aluminum-pegboard") return addThreeAluminumPegboard(scene, item);
   if (item.productCategory.startsWith("frame-heater-")) return addThreeFrameHeater(scene, item);
   if (item.productCategory.startsWith("buff-motor-")) return addThreeBuffMotor(scene, item);
   addThreeCounter(scene, item);
+}
+
+function addThreeAluminumPegboard(scene, item) {
+  const group = createFacingGroup(item);
+  const thickness = Math.max(1, item.depth);
+  const silver = threeStandardMaterial(0xc4c7c6, { roughness: 0.34, metalness: 0.78 });
+  addLocalBox(group, item.width, item.height, thickness, 0, item.height / 2, 0, silver);
+  addThreeImagePlane(group, item.image, item.width, item.height, thickness / 2 + 1, item.height / 2);
+  scene.add(group);
 }
 
 function addThreeGachaMachine(scene, item) {
@@ -4228,6 +4373,7 @@ function syncThreeOverlapWarning() {
 }
 
 function addThreeFoldingTable(scene, item) {
+  if (String(item.material || "").includes("黒布") || String(item.label || "").includes("黒布巻き")) return addThreeClothedTable(scene, item);
   const T = window.THREE;
   const height = item.height || 700;
   const group = createFacingGroup(item);
@@ -4239,6 +4385,16 @@ function addThreeFoldingTable(scene, item) {
   [[-item.width / 2 + ix, -item.depth / 2 + iz], [item.width / 2 - ix, -item.depth / 2 + iz], [-item.width / 2 + ix, item.depth / 2 - iz], [item.width / 2 - ix, item.depth / 2 - iz]]
     .forEach(([x, z]) => addLocalCylinder(group, 16, height - 45, x, (height - 45) / 2, z, metal));
   addLocalBox(group, item.width * 0.76, 24, 24, 0, height * 0.43, 0, metal);
+  scene.add(group);
+}
+
+function addThreeClothedTable(scene, item) {
+  const height = item.height || 700;
+  const group = createFacingGroup(item);
+  const cloth = threeStandardMaterial(0x202120, { roughness: 0.96, metalness: 0 });
+  const top = threeStandardMaterial(0x181918, { roughness: 0.9, metalness: 0 });
+  addLocalBox(group, item.width, Math.max(1, height - 30), item.depth, 0, (height - 30) / 2, 0, cloth);
+  addLocalBox(group, item.width, 30, item.depth, 0, height - 15, 0, top);
   scene.add(group);
 }
 
@@ -4438,15 +4594,18 @@ function addThreeBolda(scene, item) {
     addThreeImagePlane(group, item.tierTextures?.[0], item.width - 8, rise - 8, item.depth / 6 + 4, baseH + rise / 2);
     addThreeImagePlane(group, item.tierTextures?.[1], item.width - 8, rise - 8, -item.depth / 6 + 4, baseH + rise + rise / 2);
   } else if (code === "TB13") {
-    const lowerH = h * 0.58;
-    const cubbyH = h - lowerH - 34;
+    const lowerH = h * (650 / 800);
+    const boardThickness = h * (25 / 800);
+    const cubbyH = h * (100 / 800);
+    const sideBoard = item.width * (25 / 900);
+    const centerBoard = item.width * (25 / 900);
     addLocalBox(group, item.width, lowerH, item.depth, 0, lowerH / 2, 0, board);
-    addLocalBox(group, item.width, 34, item.depth, 0, h - 17, 0, top);
-    addLocalBox(group, 34, cubbyH, item.depth, -item.width / 2 + 17, lowerH + cubbyH / 2, 0, board);
-    addLocalBox(group, 34, cubbyH, item.depth, item.width / 2 - 17, lowerH + cubbyH / 2, 0, board);
-    addLocalBox(group, 30, cubbyH, item.depth, 0, lowerH + cubbyH / 2, 0, board);
-    addLocalBox(group, item.width, 28, item.depth, 0, lowerH + 14, 0, board);
-    addThreeImagePlane(group, item.frontTexture, item.width - 8, lowerH - 8, item.depth / 2 + 4, lowerH / 2);
+    addLocalBox(group, item.width, boardThickness, item.depth, 0, lowerH + boardThickness / 2, 0, top);
+    addLocalBox(group, sideBoard, cubbyH, item.depth, -item.width / 2 + sideBoard / 2, lowerH + boardThickness + cubbyH / 2, 0, board);
+    addLocalBox(group, sideBoard, cubbyH, item.depth, item.width / 2 - sideBoard / 2, lowerH + boardThickness + cubbyH / 2, 0, board);
+    addLocalBox(group, centerBoard, cubbyH, item.depth, 0, lowerH + boardThickness + cubbyH / 2, 0, board);
+    addLocalBox(group, item.width, boardThickness, item.depth, 0, h - boardThickness / 2, 0, top);
+    addThreeImagePlane(group, item.frontTexture, item.width, lowerH, item.depth / 2 + 1, lowerH / 2);
   } else if (code === "SF03") {
     addLocalBox(group, Math.max(70, item.width * 0.24), h, 42, 0, h / 2, -item.depth / 2 + 24, board);
     for (let i = 0; i < 4; i += 1) {
@@ -4471,24 +4630,24 @@ function addThreeWallSign(scene, item) {
   const available = horizontal ? state.booth.width : state.booth.depth;
   const length = Math.min(item.width, Math.max(200, available - 100));
   const center = wallAlongPosition(item, side, length);
-  const sign = new T.Mesh(
-    new T.BoxGeometry(horizontal ? length : 46, item.height || 300, horizontal ? 46 : length),
-    threeStandardMaterial(0xffffff, { roughness: 0.58 })
+  const signHeight = item.height || 300;
+  const thickness = Math.max(1, item.depth || 20);
+  const group = createWallMountedGroup(item, side, mount.center);
+  group.position.set(
+    horizontal ? center : side === "left" ? -state.booth.width / 2 + thickness / 2 : state.booth.width / 2 - thickness / 2,
+    mount.center,
+    horizontal ? (side === "top" ? -state.booth.depth / 2 + thickness / 2 : state.booth.depth / 2 - thickness / 2) : center
   );
-  sign.userData.itemId = item.id;
-  sign.position.set(
-    horizontal ? center : side === "left" ? -state.booth.width / 2 + 30 : state.booth.width / 2 - 30,
-    (mount.bottom + mount.top) / 2,
-    horizontal ? (side === "top" ? -state.booth.depth / 2 + 30 : state.booth.depth / 2 - 30) : center
-  );
-  sign.castShadow = true;
-  scene.add(sign);
-
-  const plane = createThreeTextPlane(state.companyName || item.label, length * 0.88, (item.height || 300) * 0.72, "#ffffff", "#172225", 48);
-  plane.userData.itemId = item.id;
-  plane.position.copy(sign.position);
-  orientWallPlane(plane, side, 27);
-  scene.add(plane);
+  addLocalBox(group, length, signHeight, thickness, 0, 0, 0, threeStandardMaterial(0xf6f6f2, { roughness: 0.58 }));
+  if (item.frontTexture) {
+    addThreeImagePlane(group, item.frontTexture, length, signHeight, thickness / 2 + 1, 0);
+  } else {
+    const plane = createThreeTextPlane(state.companyName || item.label, length * 0.88, signHeight * 0.72, "#ffffff", "#172225", 48);
+    plane.userData.itemId = item.id;
+    plane.position.set(0, 0, thickness / 2 + 1);
+    group.add(plane);
+  }
+  scene.add(group);
 }
 
 function addThreeSpotlight(scene, item) {
@@ -4617,11 +4776,11 @@ function getItemVerticalRange(item) {
   const h = item.height || defaultItemHeight(item);
   if (item.type === "wall") {
     if (item.z > 0) return { bottom: item.z, top: item.z + h, center: item.z + h / 2 };
-    const top = Math.max(h + 150, state.booth.wallHeight - 260);
+    const top = Math.max(h + 150, effectiveShellHeight() - 260);
     return { bottom: Math.max(120, top - h), top, center: Math.max(120, top - h) + h / 2 };
   }
   if (item.type === "spotlight") {
-    const center = item.z > 0 ? item.z : Math.max(700, state.booth.wallHeight - 210);
+    const center = item.z > 0 ? item.z : Math.max(700, effectiveShellHeight() - 210);
     return { bottom: center - h / 2, top: center + h / 2, center };
   }
   if (item.type === "power") {
@@ -4652,7 +4811,7 @@ function configureThreeCamera(reset) {
   }
   const w = state.booth.width;
   const d = state.booth.depth;
-  const h = state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
+  const h = effectiveShellHeight();
   const maxSize = Math.max(w, d);
   const side = state.booth.aisleSide;
   const outward = {
@@ -4833,7 +4992,7 @@ function createIsoProjector(cw, ch) {
   const isoX = 0.75;
   const isoY = 0.34;
   const zScale = 0.42;
-  const wallH = state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
+  const wallH = effectiveShellHeight();
   const raw = [
     rawIsoPoint(0, 0, 0, isoX, isoY, zScale),
     rawIsoPoint(state.booth.width, 0, 0, isoX, isoY, zScale),
@@ -4872,7 +5031,12 @@ function rawIsoPoint(x, y, z, isoX, isoY, zScale) {
 }
 
 function drawBoothWalls3d(ctx3, iso) {
-  if (state.booth.spaceOnly) return;
+  if (state.booth.spaceOnly) {
+    if (!hasPlannedBackPanel()) return;
+    const planned = boothWallSegment(state.booth.wallSide, state.booth.plannedBackPanelWidthMm, 0);
+    drawWallSegment3d(ctx3, iso, planned[0], planned[1], state.booth.plannedBackPanelHeightMm, true, "#f4f4f1", "#8092ae");
+    return;
+  }
   const sides = {
     top: [[0, 0], [state.booth.width, 0]],
     bottom: [[0, state.booth.depth], [state.booth.width, state.booth.depth]],
@@ -4882,18 +5046,32 @@ function drawBoothWalls3d(ctx3, iso) {
   Object.entries(sides).forEach(([side, points]) => {
     if (side === state.booth.aisleSide) return;
     const isMainWall = side === state.booth.wallSide;
-    drawWallSegment3d(ctx3, iso, points[0], points[1], isMainWall ? state.booth.wallHeight : Math.min(1200, state.booth.wallHeight), isMainWall);
+    let segment = points;
+    if (!isMainWall && state.booth.sideReturnDepthMm) {
+      const options = sideReturnWallOptions(side);
+      const horizontal = side === "top" || side === "bottom";
+      const fullSpan = horizontal ? state.booth.width : state.booth.depth;
+      segment = boothWallSegment(side, options.span || fullSpan, options.alongCenter || 0);
+    }
+    drawWallSegment3d(ctx3, iso, segment[0], segment[1], isMainWall ? state.booth.wallHeight : Math.min(state.booth.sideWallHeightMm || 1200, state.booth.wallHeight), isMainWall, state.booth.wallColorHex, state.booth.wallFrameColorHex);
   });
 }
 
-function drawWallSegment3d(ctx3, iso, a, b, height, isMainWall) {
+function boothWallSegment(side, span, alongCenter = 0) {
+  if (side === "top") return [[state.booth.width / 2 + alongCenter - span / 2, 0], [state.booth.width / 2 + alongCenter + span / 2, 0]];
+  if (side === "bottom") return [[state.booth.width / 2 + alongCenter - span / 2, state.booth.depth], [state.booth.width / 2 + alongCenter + span / 2, state.booth.depth]];
+  if (side === "left") return [[0, state.booth.depth / 2 + alongCenter - span / 2], [0, state.booth.depth / 2 + alongCenter + span / 2]];
+  return [[state.booth.width, state.booth.depth / 2 + alongCenter - span / 2], [state.booth.width, state.booth.depth / 2 + alongCenter + span / 2]];
+}
+
+function drawWallSegment3d(ctx3, iso, a, b, height, isMainWall, wallColor = "#f8fbfa", frameColor = "#73a990") {
   const p1 = iso.project(a[0], a[1], 0);
   const p2 = iso.project(b[0], b[1], 0);
   const p3 = iso.project(b[0], b[1], height);
   const p4 = iso.project(a[0], a[1], height);
-  ctx3.fillStyle = isMainWall ? "#f8fbfa" : "#f2f4f3";
+  ctx3.fillStyle = wallColor || (isMainWall ? "#f8fbfa" : "#f2f4f3");
   polygon(ctx3, [p1, p2, p3, p4]);
-  ctx3.strokeStyle = isMainWall ? "#73a990" : "#c9d0cf";
+  ctx3.strokeStyle = frameColor || (isMainWall ? "#73a990" : "#c9d0cf");
   ctx3.lineWidth = isMainWall ? 2 : 1;
   strokePolygon(ctx3, [p1, p2, p3, p4]);
 }
@@ -4947,10 +5125,44 @@ function drawBoldaItem3d(ctx3, iso, item) {
     drawShelfStand3d(ctx3, iso, item);
     return;
   }
+  if (item.type === "table" && (String(item.material || "").includes("黒布") || String(item.label || "").includes("黒布巻き"))) {
+    drawBlackClothedTable3d(ctx3, iso, item);
+    return;
+  }
+  if (code === "TB13") {
+    drawTb13Item3d(ctx3, iso, item);
+    return;
+  }
   drawSoftFootprintShadow(ctx3, iso, item, 0.18);
   drawBox3d(ctx3, iso, item.x, item.y, item.width, item.depth, item.height || 800, boldaBoxColors());
   if (code === "ED04") drawSteppedDisplay3d(ctx3, iso, item);
-  if (code === "TB13") drawCubbyFace3d(ctx3, iso, item);
+}
+
+function drawBlackClothedTable3d(ctx3, iso, item) {
+  const height = item.height || 700;
+  drawSoftFootprintShadow(ctx3, iso, item, 0.18);
+  drawBox3d(ctx3, iso, item.x, item.y, item.width, item.depth, height, {
+    left: "#171817",
+    right: "#242524",
+    top: "#303130",
+    stroke: "rgba(0,0,0,0.55)"
+  });
+}
+
+function drawTb13Item3d(ctx3, iso, item) {
+  const h = item.height || 800;
+  const lowerH = h * (650 / 800);
+  const board = h * (25 / 800);
+  const openingH = h * (100 / 800);
+  const sideW = item.width * (25 / 900);
+  drawSoftFootprintShadow(ctx3, iso, item, 0.18);
+  drawBox3d(ctx3, iso, item.x, item.y, item.width, item.depth, lowerH, boldaBoxColors());
+  drawCubbyFace3d(ctx3, iso, item);
+  drawBox3d(ctx3, iso, item.x, item.y, item.width, item.depth, board, boldaBoxColors(), lowerH);
+  drawBox3d(ctx3, iso, item.x, item.y, sideW, item.depth, openingH, boldaBoxColors(), lowerH + board);
+  drawBox3d(ctx3, iso, item.x + item.width - sideW, item.y, sideW, item.depth, openingH, boldaBoxColors(), lowerH + board);
+  drawBox3d(ctx3, iso, item.x + item.width / 2 - sideW / 2, item.y, sideW, item.depth, openingH, boldaBoxColors(), lowerH + board);
+  drawBox3d(ctx3, iso, item.x, item.y, item.width, item.depth, board, boldaBoxColors(), h - board);
 }
 
 function boldaBoxColors() {
@@ -5025,23 +5237,20 @@ function drawSteppedDisplay3d(ctx3, iso, item) {
 }
 
 function drawCubbyFace3d(ctx3, iso, item) {
-  const z = (item.height || 800) * 0.64;
+  const h = item.height || 800;
+  const z = h * (675 / 800);
+  const openingH = h * (100 / 800);
   const y = item.y + item.depth;
-  const p1 = iso.project(item.x + item.width * 0.12, y, z);
-  const p2 = iso.project(item.x + item.width * 0.88, y, z);
-  const p3 = iso.project(item.x + item.width * 0.88, y, z + 160);
-  const p4 = iso.project(item.x + item.width * 0.12, y, z + 160);
+  const left = item.x + item.width * (25 / 900);
+  const openingW = item.width * (412.5 / 900);
   ctx3.save();
-  ctx3.fillStyle = "rgba(180, 184, 178, 0.42)";
-  polygon(ctx3, [p1, p2, p3, p4]);
-  ctx3.strokeStyle = "rgba(54, 62, 62, 0.18)";
-  strokePolygon(ctx3, [p1, p2, p3, p4]);
-  const mid1 = iso.project(item.x + item.width * 0.5, y, z);
-  const mid2 = iso.project(item.x + item.width * 0.5, y, z + 160);
-  ctx3.beginPath();
-  ctx3.moveTo(mid1.x, mid1.y);
-  ctx3.lineTo(mid2.x, mid2.y);
-  ctx3.stroke();
+  ctx3.fillStyle = "rgba(94, 99, 98, 0.42)";
+  ctx3.strokeStyle = "rgba(54, 62, 62, 0.32)";
+  [left, left + openingW + item.width * (25 / 900)].forEach((x) => {
+    const opening = [iso.project(x, y, z), iso.project(x + openingW, y, z), iso.project(x + openingW, y, z + openingH), iso.project(x, y, z + openingH)];
+    polygon(ctx3, opening);
+    strokePolygon(ctx3, opening);
+  });
   ctx3.restore();
 }
 
@@ -5117,13 +5326,14 @@ function drawSoftFootprintShadow(ctx3, iso, item, alpha) {
 function getPreviewAssetSrc(item) {
   const base = "assets/furniture/preview-assets/";
   if (item.type === "person") return getChairForPerson(item) ? item.seatedImage : item.standingImage;
+  if (item.type === "product" && item.image) return item.image;
   if (item.type === "bolda") {
     const code = getBoldaCode(item);
     if (code) return `assets/bolda/preview-assets/${code}.png`;
   }
   if (item.type === "power") return "";
   if (item.type === "spotlight") return base + "spotlight-100w.png";
-  if (item.type === "wall") return base + "sign-panel.png";
+  if (item.type === "wall") return item.frontTexture || base + "sign-panel.png";
   if (item.type === "chair") return base + "chair.png";
   if (item.type === "fixture") {
     return item.label.includes("姿見") ? base + "sign-panel.png" : base + "counter-1500x600.png";
@@ -5338,8 +5548,9 @@ function drawFallbackItem3d(ctx3, iso, item) {
 
 function drawWallPanelItem3d(ctx3, iso, item) {
   const height = item.height || inferWallPanelHeight(item);
-  const zTop = Math.max(height, state.booth.wallHeight - 140);
-  const zBottom = Math.max(0, zTop - height);
+  const vertical = getItemVerticalRange(item);
+  const zTop = vertical.top;
+  const zBottom = vertical.bottom;
   const wall = nearestHorizontalWall(item);
   const y = wall === "top" ? 0 : state.booth.depth;
   const p1 = iso.project(item.x, y, zBottom);
@@ -5481,12 +5692,12 @@ function buildImagePrompt() {
     "Treat the attached 2D plan and every coordinate below as construction constraints, not inspiration. Establish the booth shell and all object volumes first, then add materials, graphics and products. Never improve the composition by moving, rotating, spreading, duplicating or resizing an object.",
     "All dimensions and coordinates below are millimetres.",
     state.booth.spaceOnly
-      ? `Booth shell: exact floor allocation W${state.booth.width} x D${state.booth.depth}; space-only handover. No wall or panel is supplied. Maximum decoration height is H${state.booth.heightLimitMm || "unregistered"}.`
+      ? `Booth shell: exact floor allocation W${state.booth.width} x D${state.booth.depth}; official space-only handover. No wall or panel is supplied by the organizer. Maximum decoration height is H${state.booth.heightLimitMm || "unregistered"}.${hasPlannedBackPanel() ? ` Separately render the user-planned self-decoration back panel W${state.booth.plannedBackPanelWidthMm} x H${state.booth.plannedBackPanelHeightMm} x D${state.booth.plannedBackPanelThicknessMm} on the ${sideEnglish(state.booth.wallSide)} side; its construction method and thickness remain provisional.` : ""}`
       : `Booth shell: interior W${state.booth.width} x D${state.booth.depth}; main wall height H${state.booth.wallHeight}.`,
     `Plan coordinate system: origin X0 Y0 is the upper-left/back-left corner. X increases left-to-right. Y increases from the back edge toward the front/depth edge. Vertical height is Z, with floor Z0.`,
     state.booth.spaceOnly
-      ? `Do not render or infer any back wall, side panel, fascia, light, power outlet or included fixture. Aisle reference side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}).`
-      : `Main wall side: ${sideLabel(state.booth.wallSide)} (${sideEnglish(state.booth.wallSide)}). Fully open aisle side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}). The other non-aisle side panels may be H${Math.min(1200, state.booth.wallHeight)} unless the attached layout shows otherwise.`,
+      ? `Do not infer organizer-supplied walls, side panels, fascia, light, power outlet or fixtures.${hasPlannedBackPanel() ? " Render only the separately specified user-planned back panel and placed wall signs." : ""} Aisle reference side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}).`
+      : `Main wall side: ${sideLabel(state.booth.wallSide)} (${sideEnglish(state.booth.wallSide)}). Fully open aisle side: ${sideLabel(state.booth.aisleSide)} (${sideEnglish(state.booth.aisleSide)}). Other side returns are H${Math.min(state.booth.sideWallHeightMm || 1200, state.booth.wallHeight)} and extend only D${state.booth.sideReturnDepthMm || state.booth.depth} from the main wall.`,
     `The customer-facing front of counters, tables and chairs points toward the ${sideEnglish(state.booth.aisleSide)} aisle.`,
     joint.trim(),
     "",
@@ -5504,7 +5715,7 @@ function buildImagePrompt() {
     "",
     "REAL-BOOTH MATERIAL AND MERCHANDISING STYLE",
     realBoothReferenceNotes.map((note) => `- ${note}`).join("\n"),
-    "- Use white modular exhibition panels with slim aluminium posts, grey commercial carpet, clean overhead hall lighting, and soft contact shadows.",
+    "- Use the registered booth wall colors and panel dimensions; use grey commercial carpet, clean overhead hall lighting, and soft contact shadows. Do not turn a registered black wall shell into white panels.",
     "- Keep every counter, table, shelf and riser empty unless a product or accessory is explicitly listed as its own placed object. Do not auto-populate surfaces.",
     "",
     `OBJECT COUNT CHECK: ${counts}. The final image must contain exactly these specified fixtures; do not omit or duplicate them.`,
@@ -5520,7 +5731,8 @@ function buildImagePrompt() {
     "",
     "BOLDA AND FURNITURE RULES",
     "- Render bolda products fully assembled as real white paper-board/cardboard counters or shelves. Never show flat development drawings, unfolded print sheets or generic substitute boxes.",
-    "- Match ED04 as a W900 x D600 x H1100 three-level stepped display with exactly three usable horizontal display levels. Match TB13 as the two-cubby counter and TB05 as the W900 x D600 x H800 rectangular counter.",
+    "- Match ED04 as a W900 x D600 x H1100 three-level stepped display with exactly three usable horizontal display levels. Match TB13 exactly as W900 x D500 x H800: lower printed body H650, 25mm lower shelf board, exactly two openings each approximately W413 x H100 with 25mm side/center boards, and 25mm top board. Never enlarge the openings. Match TB05 as W900 x D600 x H800.",
+    "- TB13 exact front artwork must fill the full W900 x H650 lower face without cropping, stretching, moving the product image, or inventing any orange/brown strip below it. Preserve the supplied artwork pixels as-is.",
     "- ED04 has three separate print themes. Keep Custom Fit, Screw Extraction & Hand Polishing, and Trial Frames & Measurement on their matching fixtures; never exchange or merge their panels.",
     "- A TB05 + AS01 composite is two real parts: one W900 x D600 x H800 TB05 base on floor Z0 and one W900 x D250 x H300 AS01 yokan-bar riser resting directly on the rear of its top at Z800. No air gap, no separate floor placement, total height H1100.",
     "- Preserve real width/depth/height proportions. W1500xD900 must visibly be 50% deeper than W1500xD600; W1800 must visibly be 20% wider than W1500 at the same camera depth.",
@@ -5532,7 +5744,7 @@ function buildImagePrompt() {
     "- Compare every footprint edge to the 2D plan and preserve touching/near-touching edges without artificial gaps.",
     "- Keep equal X or Y edges in straight rows. Keep floor-standing roots level on Z0. Keep every supported tabletop object at its specified support Z and never drop it to the floor or float it above the surface. Keep all wall equipment attached to its specified wall and Z range.",
     "- A plan marker for an outlet or spotlight is an annotation zone, not the physical size of the device. Never create a 300mm outlet box or a 350mm furniture block for a spotlight.",
-    "- Signboards are shallow H300 wall-mounted panels at the stated Z elevation, not floor-to-ceiling wall panels.",
+    "- Signboards use each item's registered W/D/H and exact front artwork at the stated Z elevation; they are shallow wall-mounted panels, not floor-to-ceiling walls.",
     "- Keep the specified aisle side fully open. Do not add doors, extra counters, unlisted people, decorative structures or ceiling truss. Preserve every explicitly listed person's position and standing/seated state.",
     "- Ensure spotlight wattage cues are legible where practical. Show outlets as outlet plates only, without wattage text. Render no unrelated text, logos or watermarks."
   ].filter(Boolean).join("\n");
@@ -5566,7 +5778,8 @@ function buildPromptItemBlock(item, index) {
   }
 
   if (item.type === "wall") {
-    lines.push(`   - Physical signboard: W${Math.round(item.width)} x D46 x H${h}; mount flat on the ${sideEnglish(side)} wall, vertical range Z${Math.round(vertical.bottom)}..Z${Math.round(vertical.top)}. It must remain a shallow panel and must not extend to the floor.`);
+    lines.push(`   - Physical signboard: W${Math.round(item.width)} x D${item.depth} x H${h}; mount flat on the ${sideEnglish(side)} wall, vertical range Z${Math.round(vertical.bottom)}..Z${Math.round(vertical.top)}. It must remain a shallow panel and must not extend to the floor.`);
+    if (item.frontTexture) lines.push(`   - Exact sign front artwork: ${item.frontTexture}. Apply it unaltered across the complete W${Math.round(item.width)} x H${h} front face.`);
   } else if (item.type === "spotlight") {
     lines.push(`   - Physical fixture: compact wall-mounted arm spotlight, approximately W180 x arm projection D450 x head H180; mount on the ${sideEnglish(side)} wall with centre Z${Math.round(vertical.center)}; aim downward and inward toward the plan marker centre X${Math.round(item.x + item.width / 2)} Y${Math.round(item.y + item.depth / 2)}.`);
     lines.push(`   - Electrical cue: ${item.watt || 0}W must be visible; do not render a floor-standing object or tall column.`);
@@ -5619,7 +5832,7 @@ function buildPromptCameraInstruction() {
   const w = state.booth.width;
   const d = state.booth.depth;
   const maxSize = Math.max(w, d);
-  const shellHeight = state.booth.spaceOnly ? (state.booth.heightLimitMm || 0) : state.booth.wallHeight;
+  const shellHeight = effectiveShellHeight();
   const z = Math.round(Math.max(shellHeight * 1.08, maxSize * 0.46));
   const cameras = {
     bottom: { x: Math.round(w * 0.78), y: Math.round(d + maxSize * 1.15) },
@@ -5628,7 +5841,7 @@ function buildPromptCameraInstruction() {
     right: { x: Math.round(w + maxSize * 1.15), y: Math.round(d * 0.22) }
   };
   const camera = cameras[state.booth.aisleSide] || cameras.bottom;
-  return `Camera is outside the ${sideEnglish(state.booth.aisleSide)} aisle, approximately plan X${camera.x} Y${camera.y} at Z${z}, looking toward target X${Math.round(w / 2)} Y${Math.round(d / 2)} Z${Math.round(Math.min(shellHeight * 0.38, 900))}. Use an elevated front three-quarter viewpoint that clearly shows the floor plan${state.booth.spaceOnly ? " without inventing walls" : " and the main wall"}.`;
+  return `Camera is outside the ${sideEnglish(state.booth.aisleSide)} aisle, approximately plan X${camera.x} Y${camera.y} at Z${z}, looking toward target X${Math.round(w / 2)} Y${Math.round(d / 2)} Z${Math.round(Math.min(shellHeight * 0.38, 900))}. Use an elevated front three-quarter viewpoint that clearly shows the floor plan${state.booth.spaceOnly ? (hasPlannedBackPanel() ? " and the separately specified planned back panel without inventing other walls" : " without inventing walls") : " and the main wall"}.`;
 }
 
 function buildPromptCountSummary() {
@@ -5832,6 +6045,7 @@ function buildItemVisualInstruction(item, bolda) {
       "gacha-stand": "official A0007 white paper tabletop stand inside the exact W250 x D315 x H100mm envelope; depth includes the capsule receiver",
       "capsule-recovery-box": "official E1237 cardboard capsule recovery box inside the exact W275 x D275 x H460mm envelope; circular collection opening approximately 85mm",
       "mist-bottle": "No.1064 glasses mist bottle; verified bottle body diameter 54.7 x H165.2mm; trigger-included planning envelope is provisional and must not be presented as verified",
+      "aluminum-pegboard": "Amazon ASIN B0897LVM4J silver aluminum pegboard standing vertically on a tabletop; exact board W450 x H450 x T1.6mm, hole pitch P25 and hole diameter 5mm; show the exact supplied product image and do not invent a stand inside the board envelope",
       "frame-heater-169": "No.169 frame heater inside the catalog-verified diameter 125 x H200mm envelope",
       "frame-heater-767": "No.767 Thermorex frame heater inside the catalog-verified W185 x D160 x H160mm envelope",
       "buff-motor-694": "No.694 Digimotor inside the catalog-verified W300 x D180 x H200mm envelope",
