@@ -7,7 +7,7 @@ const crypto = require('node:crypto');
 const Domain = require('../booth-domain.js');
 
 // Execute the actual app placement/pointer handlers, without a renderer or browser storage.
-function app() {
+function app(withThree = false) {
   const elements = new Map();
   const noop = () => {};
   const context2d = new Proxy({ measureText: text => ({ width: text.length * 7 }) }, { get: (o, key) => o[key] || noop });
@@ -30,6 +30,9 @@ function app() {
     setTimeout: () => 0, clearTimeout: noop, requestAnimationFrame: noop,
   });
   const source = fs.readFileSync(path.join(__dirname, '../app.js'), 'utf8').replace(/^init\(\);\s*$/m, '');
+  if (withThree) {
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../assets/vendor/three.bundle.min.js'), 'utf8'), context);
+  }
   vm.runInContext(source, context);
   vm.runInContext(`
     render = () => { normalizeItems(); recordHistorySnapshot(); };
@@ -45,7 +48,8 @@ function app() {
       placementTree, hasPlacementCollision, normalizeItems, clampItem, availableSupportSurfaces,
       onPointerDown, onPointerMove, endDrag, canvasView, canvasPointers,
       historyPast, historyFuture, undoDesignChange, redoDesignChange, applyLoadedState,
-      compactLabel, paletteSearchText, paletteCategory, element: $,
+      compactLabel, paletteSearchText, paletteCategory, thinItemHandle, element: $,
+      createFacingGroup, createThreeDisplayItem, addThreeRotatingNetDisplay, prepareThreePickTargets, THREE: window.THREE,
     };
   `, context);
   const api = context.api;
@@ -75,6 +79,70 @@ test('01 薄い有孔ボードをtouchで選択・移動・回転・削除・Und
   a.deleteSelected(); assert.equal(a.state.items.length, 0);
   a.undoDesignChange(); assert.equal(a.state.items.length, 1);
   a.redoDesignChange(); assert.equal(a.state.items.length, 0);
+});
+
+test('PC: 薄いボードの見える名前ハンドルを、高い物の判定より優先してドラッグ', () => {
+  for (const rotated of [false, true]) {
+    const a = app(); const board = a.add('B0897LVM4J');
+    if (rotated) a.rotateSelected();
+    const handle = a.thinItemHandle(board);
+    assert.equal(handle.width, 132); assert.equal(handle.height, 32);
+    // Older selection walked Z order first; a lamp's hit target stole this click.
+    a.state.items.push({ id: 'lamp', type: 'spotlight', x: board.x - 200, y: board.y - 200,
+      width: 900, depth: 900, height: 200, z: 2200 });
+    const e = { pointerId: 1, pointerType: 'mouse', button: 0,
+      clientX: handle.x + handle.width / 2, clientY: handle.y + 2, preventDefault() {} };
+    a.state.selectedId = null; a.onPointerDown(e);
+    assert.equal(a.state.selectedId, board.id);
+    const before = board.x;
+    a.onPointerMove({ ...e, clientX: e.clientX + 40 }); a.endDrag({ ...e, type: 'pointerup' });
+    assert.ok(board.x > before);
+    assert.equal(Math.min(board.width, board.depth), 1.6, 'editing grip must not resize the real sheet');
+  }
+});
+
+test('61-127-7-2: 公式外形・検索・机上設置・追従・回転・削除・復元', () => {
+  const a = app(); const table = a.add('長机'); const rack = a.add('61-127-7-2');
+  assert.deepEqual([rack.width, rack.depth, rack.height], [330, 330, 390]);
+  assert.equal(rack.supportItemId, table.id); assert.equal(rack.z, 700);
+  assert.equal(rack.supportSurface, false); assert.equal(rack.dimensionLocked, true);
+  assert.equal(a.paletteCategory(rack), 'fixtures');
+  assert.match(a.paletteSearchText(a.master('61-127-7-2')), /b016puu2re/);
+  const before = rack.x; a.moveItemTo(table, table.x + 300, table.y); assert.equal(rack.x, before + 300);
+  a.state.selectedId = rack.id; a.rotateSelected(); assert.equal(rack.rotationDeg, 90);
+  assert.equal(a.hasPlacementCollision(rack), false);
+  a.deleteSelected(); assert.ok(!a.state.items.some(x => x.id === rack.id));
+  a.undoDesignChange(); assert.ok(a.state.items.some(x => x.id === rack.id));
+  const saved = JSON.parse(JSON.stringify(a.state)); a.applyLoadedState(saved);
+  const restored = a.state.items.find(x => x.id === rack.id);
+  assert.equal(restored.supportItemId, table.id); assert.equal(restored.z, 700);
+});
+
+test('3D: 板の真横とネットの空洞を透明な操作領域で選択できる', () => {
+  const a = app(true), T = a.THREE;
+  for (const identity of ['B0897LVM4J', '61-127-7-2']) {
+    const item = a.add(identity), display = a.createThreeDisplayItem(item);
+    const scene = new T.Scene();
+    const group = a.createFacingGroup(display); scene.add(group);
+    const proxy = group.children.find(x => x.userData.pickDimensions);
+    assert.ok(proxy); assert.equal(proxy.material.visible, false);
+    const center = new T.Vector3(); scene.updateMatrixWorld(true); proxy.getWorldPosition(center);
+    const camera = new T.PerspectiveCamera(50, 1.5, 1, 20000);
+    camera.position.copy(center).add(new T.Vector3(4000, 0, 0)); camera.lookAt(center); camera.updateMatrixWorld(true);
+    a.prepareThreePickTargets(scene, camera, 900, 'mouse');
+    const ray = new T.Raycaster(); ray.setFromCamera(new T.Vector2(.01, 0), camera);
+    assert.ok(ray.intersectObjects(scene.children, true).length, identity);
+    assert.equal(item.depth, identity === 'B0897LVM4J' ? 1.6 : 330);
+  }
+});
+
+test('3D: 回転ネットは円形台座・3面メッシュ付きで実寸外形内に描画', () => {
+  const a = app(true), T = a.THREE, item = a.add('61-127-7-2'), scene = new T.Scene();
+  a.addThreeRotatingNetDisplay(scene, a.createThreeDisplayItem(item));
+  const bounds = new T.Box3().setFromObject(scene), size = bounds.getSize(new T.Vector3());
+  assert.ok(size.x <= 330.1 && size.z <= 330.1 && size.y <= 390.1, JSON.stringify(size));
+  const group = scene.children[0];
+  assert.equal(group.children.filter(x => x.isGroup).length, 3);
 });
 
 test('02/04/05/07 ヒーター・PC・プリンター・912は天板上へ自動設置', () => {

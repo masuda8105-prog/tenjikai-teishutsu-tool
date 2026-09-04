@@ -85,7 +85,17 @@ const rawFixtureMasters = [
   { type: "scenario", scenarioKind: "paper-bag-stock", label: "紙袋ストック（要実測）", width: 400, depth: 250, height: 450, color: "#b7a27f", operationalCategory: "bag", activationMode: "operating", dimensionsConfirmed: false },
   { type: "scenario", scenarioKind: "staff-bag", label: "スタッフバッグ置き（要実測）", width: 450, depth: 220, height: 350, color: "#7d6c87", operationalCategory: "bag", activationMode: "operating", dimensionsConfirmed: false },
   { type: "person", label: "人物A 179cm", width: 600, depth: 600, height: 1790, color: "#ef6fa8", image: "assets/people/person-a-standing-crop.png", standingImage: "assets/people/person-a-standing-crop.png", seatedImage: "assets/people/person-a-seated-crop.png" },
-  { type: "person", label: "人物B 179cm", width: 600, depth: 600, height: 1790, color: "#3b69d8", image: "assets/people/person-b-standing-crop.png", standingImage: "assets/people/person-b-standing-crop.png", seatedImage: "assets/people/person-b-seated-crop.png" }
+  { type: "person", label: "人物B 179cm", width: 600, depth: 600, height: 1790, color: "#3b69d8", image: "assets/people/person-b-standing-crop.png", standingImage: "assets/people/person-b-standing-crop.png", seatedImage: "assets/people/person-b-seated-crop.png" },
+  // Append new masters: old STD IDs depend on the existing array order.
+  { type: "product", productCategory: "rotating-net-display", productCode: "61-127-7-2", masterId: "STORE-EXPRESS-61-127-7-2",
+    label: "樹脂製卓上回転ネットディスプレイ 黒 61-127-7-2", width: 330, depth: 330, height: 390,
+    color: "#30343a", material: "回転台・POP立て：ABS樹脂、クリップ：PP、すべり止め：エラストマー樹脂",
+    dimensionLocked: true, dimensionSource: "ストア・エキスプレス公式 61-127-7-2（2026-09-04確認）本体W33×D33×H39cm、ネット面W30×H37.2cm、ピッチ3cm、線径3.8mm、台座φ28.5cm",
+    sourceUrl: "https://www.store-express.com/shop/g/g61-127-7-2/", purchaseUrl: "https://www.amazon.co.jp/dp/B016PUU2RE",
+    searchAliases: ["回転什器", "卓上ネット", "回転有孔", "ストアエキスプレス", "B016PUU2RE", "6142-128"],
+    surfacePlaceable: true, supportSurface: false, visibilityRole: "product",
+    model3d: { kind: "rotating-net-display", accuracy: "verified-envelope/reference-based-detail", baseDiameterMm: 285, meshPitchMm: 30, wireDiameterMm: 3.8 },
+    setupInfo: { status: "official-source", instructions: ["本体セット黒・幅330×奥行330×高さ390mm", "回転台・POP立て・カード用クリップ6個", "フック・ディスプレイボックスは別売（このモデルには含まない）", "耐荷重2kg／枚。上面への積み重ねには非対応", "組立後は分解不可。フック付きの必要空間は別途確認"] } }
 ];
 
 const boldaDetails = {
@@ -808,7 +818,9 @@ function buildScenarioPaletteSvg(item) {
 function buildProductPaletteSvg(item) {
   const code = escapeHtml(item.productCode || "商品");
   let shape = "";
-  if (item.productCategory === "gacha-machine") {
+  if (item.model3d?.kind === "rotating-net-display") {
+    shape = '<defs><pattern id="mesh" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M6 0H0V6" fill="none" stroke="#454d51" stroke-width="1.2"/></pattern></defs><ellipse cx="60" cy="88" rx="27" ry="7" fill="#30343a"/><path d="M34 25L60 18L86 25L60 36Z" fill="#ebefec" stroke="#30343a" stroke-width="3"/><path d="M34 25V77L60 88L86 77V25L60 36Z" fill="url(#mesh)" stroke="#30343a" stroke-width="3"/><path d="M60 36V88" stroke="#30343a" stroke-width="4"/>';
+  } else if (item.productCategory === "gacha-machine") {
     shape = '<rect x="39" y="18" width="42" height="72" rx="4" fill="#f4f5f2" stroke="#6f7979" stroke-width="2"/><rect x="44" y="22" width="32" height="34" rx="5" fill="#d8f1f4" stroke="#6f7979" stroke-width="2"/><circle cx="60" cy="70" r="6" fill="#c7ccd0" stroke="#5b6264" stroke-width="2"/><rect x="47" y="79" width="26" height="7" rx="2" fill="#d5d9da"/>';
   } else if (item.productCategory === "gacha-stand") {
     shape = '<polygon points="32,52 78,44 89,57 43,66" fill="#fff" stroke="#7c8585" stroke-width="2"/><polygon points="43,66 89,57 89,76 43,85" fill="#f1efe8" stroke="#7c8585" stroke-width="2"/><path d="M32 52 L43 66 L43 85 L32 71 Z" fill="#e5e3dc" stroke="#7c8585" stroke-width="2"/>';
@@ -929,7 +941,7 @@ function addPowerCircuit() {
 }
 
 function paletteCategory(item) {
-  if (item.productCategory === "aluminum-pegboard") return "fixtures";
+  if (["aluminum-pegboard", "rotating-net-display"].includes(item.productCategory)) return "fixtures";
   if (["table", "fixture", "bolda", "wall", "chair"].includes(item.type)) return "fixtures";
   if (item.type === "product") return "products";
   if (item.type === "scenario" || item.type === "device") return "equipment";
@@ -2398,7 +2410,37 @@ function drawCanvas() {
   if (!printRenderMode) drawDropPreview();
   if (!printRenderMode && dimensionsVisible) drawSelectedMeasurements(selectedItem());
   if (!printRenderMode) drawSelectionOutline(selectedItem());
+  if (!printRenderMode) state.items.forEach(drawThinItemHandle);
   if (dimensionsVisible || printRenderMode) drawDimensions(boothPxW, boothPxH);
+}
+
+// A real 1.6 mm sheet is sub-pixel in a booth plan. Give thin objects a visible
+// editing handle, separate from their physical footprint and printed dimensions.
+function thinItemHandle(item) {
+  if (!["product", "fixture", "wall", "device", "scenario"].includes(item.type)) return null;
+  const pixelRatio = canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
+  if (Math.min(item.width, item.depth) * scale >= 8 * pixelRatio) return null;
+  const width = 132 * pixelRatio, height = 32 * pixelRatio;
+  return { x: origin.x + (item.x + item.width / 2) * scale - width / 2,
+    y: origin.y + (item.y + item.depth / 2) * scale - height / 2, width, height, pixelRatio };
+}
+
+function drawThinItemHandle(item) {
+  const handle = thinItemHandle(item);
+  if (!handle) return;
+  const { x, y, width, height, pixelRatio } = handle;
+  ctx.save();
+  ctx.fillStyle = item.id === state.selectedId ? "#d9f4ee" : "#ffffff";
+  ctx.strokeStyle = "#007f78";
+  ctx.lineWidth = 1.5 * pixelRatio;
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeRect(x, y, width, height);
+  ctx.fillStyle = "#075f58";
+  ctx.font = `bold ${11 * pixelRatio}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(fitCanvasText(`↔ ${compactLabel(item.label)}`, width - 12 * pixelRatio), x + width / 2, y + height / 2);
+  ctx.restore();
 }
 
 function drawDropPreview() {
@@ -2730,7 +2772,7 @@ function drawItem(item) {
   ctx.fillRect(x, y, w, h);
   ctx.strokeRect(x, y, w, h);
   ctx.setLineDash([]);
-  ctx.fillStyle = "#132124";
+  ctx.fillStyle = item.model3d?.kind === "rotating-net-display" ? "#ffffff" : "#132124";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   drawItemText(item, x, y, w, h);
@@ -3047,7 +3089,15 @@ function onPointerDown(event) {
     .map((candidate, index) => ({ candidate, index }))
     .sort((a, b) => getItemVerticalRange(b.candidate).bottom - getItemVerticalRange(a.candidate).bottom || b.index - a.index)
     .map((entry) => entry.candidate);
-  const item = reversed.find((candidate) => candidate.type !== "zone" && hit(candidate))
+  // Handles are painted last. Their exact visible rectangles must win even
+  // when a lamp, table or other object's enlarged hit target is above the sheet.
+  const canvasPoint = { x: origin.x + point.x * scale, y: origin.y + point.y * scale };
+  const handleItem = [...state.items].reverse().find((candidate) => {
+    const handle = thinItemHandle(candidate);
+    return handle && canvasPoint.x >= handle.x && canvasPoint.x <= handle.x + handle.width &&
+      canvasPoint.y >= handle.y && canvasPoint.y <= handle.y + handle.height;
+  });
+  const item = handleItem || reversed.find((candidate) => candidate.type !== "zone" && hit(candidate))
     || reversed.find((candidate) => candidate.type === "zone" && hit(candidate));
   state.selectedId = item ? item.id : null;
   if (item) {
@@ -3086,7 +3136,7 @@ function onPointerMove(event) {
   if (drag.pointerId !== event.pointerId) return;
   if (!drag.moved && Math.hypot(event.clientX - drag.startClientX, event.clientY - drag.startClientY) < 5) return;
   drag.moved = true;
-  const item = selectedItem();
+  const item = state.items.find((candidate) => candidate.id === drag.id);
   if (!item) return;
   const point = canvasToMm(event);
   const nextX = Domain.snapMm(point.x - drag.dx, state.gridSize, state.snapEnabled);
@@ -4651,6 +4701,13 @@ function createFacingGroup(item) {
   const quarterTurns = item.threeQuarterTurns ?? (aisleFacingQuarterTurns(state.booth.aisleSide) + itemRotationQuarterTurns(item));
   group.position.set(threeWorldX(item.x + planWidth / 2), item.z || 0, threeWorldZ(item.y + planDepth / 2));
   group.rotation.y = quarterTurns * Math.PI / 2;
+  if (Math.min(item.width, item.depth) < 24 || item.model3d?.kind === "rotating-net-display") {
+    // Invisible picking volume: net holes and thin edges remain selectable.
+    // Material visibility does not disable Three's mesh raycasting.
+    const pick = addLocalBox(group, item.width, item.height, item.depth, 0, item.height / 2, 0,
+      new T.MeshBasicMaterial({ visible: false }), false);
+    pick.userData.pickDimensions = { width: item.width, height: item.height, depth: item.depth };
+  }
   return group;
 }
 
@@ -4700,6 +4757,7 @@ function addThreeOfficialProduct(scene, item) {
   if (item.productCategory === "capsule-recovery-box") return addThreeCapsuleRecoveryBox(scene, item);
   if (item.productCategory === "mist-bottle") return addThreeMistBottle(scene, item);
   if (item.productCategory === "aluminum-pegboard") return addThreeAluminumPegboard(scene, item);
+  if (item.model3d?.kind === "rotating-net-display") return addThreeRotatingNetDisplay(scene, item);
   if (item.productCategory === "processing-storage-rack") return addThreeProcessingRack(scene, item);
   if (item.productCategory === "ultrasonic-cleaner") return addThreeUltrasonicCleaner(scene, item);
   if (item.productCategory.startsWith("frame-heater-")) return addThreeFrameHeater(scene, item);
@@ -4731,6 +4789,39 @@ function addThreeUltrasonicCleaner(scene, item) {
   addLocalBox(group, item.width * 0.88, item.height * 0.2, item.depth * 0.82, 0, bodyH + item.height * 0.1, 0, steel);
   addLocalBox(group, item.width * 0.74, 1, item.depth * 0.66, 0, item.height - .5, 0, dark, false);
   addLocalBox(group, item.width * 0.6, item.height * 0.14, 5, 0, bodyH * 0.48, item.depth / 2 + 2, threeStandardMaterial(0xf8f8f4, { roughness: 0.68 }), false);
+  scene.add(group);
+}
+
+function addThreeRotatingNetDisplay(scene, item) {
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const dark = threeStandardMaterial(item.color, { roughness: .68 });
+  const clip = threeStandardMaterial(0xd9dee0, { roughness: .4 });
+  const model = item.model3d;
+  const baseRadius = model.baseDiameterMm / 2;
+  addLocalCylinder(group, baseRadius, 10, 0, 5, 0, dark, 48);
+  addLocalCylinder(group, 17, item.height - 12, 0, (item.height - 12) / 2, 0, dark, 16);
+  // Three mesh faces and a round rotating foot follow the official photo.
+  // Frame/clip details are illustrative; the outer 330×330×390 envelope is fixed.
+  const vertices = [[-item.width / 2 + 8, -item.depth / 2 + 8],
+    [item.width / 2 - 8, -item.depth / 2 + 8], [0, item.depth / 2 - 8]];
+  const bottom = 30, top = item.height - 18, meshHeight = top - bottom;
+  vertices.forEach(([x1, z1], index) => {
+    const [x2, z2] = vertices[(index + 1) % vertices.length];
+    const face = new T.Group();
+    const length = Math.hypot(x2 - x1, z2 - z1);
+    face.position.set((x1 + x2) / 2, 0, (z1 + z2) / 2);
+    face.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
+    for (const x of [-length / 2, length / 2]) addLocalBox(face, 9, meshHeight, 9, x, (top + bottom) / 2, 0, dark);
+    for (const y of [bottom, top]) addLocalBox(face, length, 10, 9, 0, y, 0, dark);
+    for (let x = -length / 2 + model.meshPitchMm; x < length / 2; x += model.meshPitchMm)
+      addLocalBox(face, model.wireDiameterMm, meshHeight, model.wireDiameterMm, x, (top + bottom) / 2, 0, dark, false);
+    for (let y = bottom + model.meshPitchMm; y < top; y += model.meshPitchMm)
+      addLocalBox(face, length, model.wireDiameterMm, model.wireDiameterMm, 0, y, 0, dark, false);
+    for (const x of [-length / 3, length / 3]) addLocalBox(face, 10, 14, 6, x, top + 7, 0, clip, false);
+    group.add(face);
+  });
+  addLocalBox(group, 42, 8, 12, 0, item.height - 4, 0, clip, false);
   scene.add(group);
 }
 
@@ -5544,6 +5635,7 @@ function selectThreeItemAtPointer(event) {
   );
   const raycaster = new T.Raycaster();
   raycaster.setFromCamera(pointer, threePreview.camera);
+  prepareThreePickTargets(threePreview.scene, threePreview.camera, rect.height, event.pointerType);
   const intersections = raycaster.intersectObjects(threePreview.scene.children, true);
   let itemId = null;
   for (const intersection of intersections) {
@@ -5566,6 +5658,22 @@ function selectThreeItemAtPointer(event) {
   autosave();
   draw3dScene();
   syncThreeSelectionUi();
+}
+
+function prepareThreePickTargets(scene, camera, viewportHeight, pointerType) {
+  scene.updateMatrixWorld(true);
+  camera.updateMatrixWorld(true);
+  const T = window.THREE;
+  scene.traverse((node) => {
+    const dimensions = node.userData?.pickDimensions;
+    if (!dimensions) return;
+    const center = node.getWorldPosition(new T.Vector3()).applyMatrix4(camera.matrixWorldInverse);
+    const minimum = 2 * Math.max(1, -center.z) * Math.tan(camera.fov * Math.PI / 360) /
+      Math.max(1, viewportHeight) * (pointerType === "touch" ? 44 : 28);
+    node.scale.set(...["width", "height", "depth"].map((axis) => dimensions[axis] < 24
+      ? Math.max(1, minimum / Math.max(1, dimensions[axis])) : 1));
+  });
+  scene.updateMatrixWorld(true);
 }
 
 function syncThreeSelectionUi() {
