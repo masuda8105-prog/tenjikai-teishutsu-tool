@@ -49,7 +49,7 @@ function app(withThree = false) {
       onPointerDown, onPointerMove, endDrag, canvasView, canvasPointers,
       historyPast, historyFuture, undoDesignChange, redoDesignChange, applyLoadedState,
       compactLabel, paletteSearchText, paletteCategory, thinItemHandle, element: $,
-      createFacingGroup, createThreeDisplayItem, addThreeRotatingNetDisplay, prepareThreePickTargets, THREE: window.THREE,
+      createFacingGroup, createThreeDisplayItem, addThreeRotatingNetDisplay, addThreeOfficialProduct, getFixtureMaster, buildProductPaletteSvg, prepareThreePickTargets, THREE: window.THREE,
     };
   `, context);
   const api = context.api;
@@ -63,6 +63,85 @@ function app(withThree = false) {
   };
   return api;
 }
+
+test('追加3製品: 公式外寸・検索・カテゴリ・支持面を区別する', () => {
+  const a = app();
+  for (const [code, dims, category, query] of [
+    ['SSD-2737-00', [211,69,296], 'equipment', 'b002dbxzme'],
+    ['383', [208,117,135], 'products', 'no.383'],
+    ['718', [133,115,133], 'products', 'no.718'],
+  ]) {
+    const m = a.master(code);
+    assert.deepEqual([m.width,m.depth,m.height], dims);
+    assert.equal(m.dimensionLocked, true); assert.equal(m.surfacePlaceable, true);
+    assert.equal(m.supportSurface, false); assert.equal(a.paletteCategory(m), category);
+    assert.ok(a.paletteSearchText(m).includes(query));
+    assert.match(a.buildProductPaletteSvg(m), /<svg/);
+    assert.ok(m.sourceUrl.startsWith('https://'));
+  }
+});
+
+test('同じ工具台カテゴリのNo.383とNo.718を保存後も取り違えない', () => {
+  const a = app(), table = a.add('長机');
+  for (const code of ['383', '718', 'SSD-2737-00']) {
+    a.state.selectedId = table.id;
+    const item = a.add(code);
+    assert.equal(item.productCode, code); assert.equal(item.supportItemId, table.id);
+    assert.equal(item.z, 700);
+  }
+  const parsed = Domain.parseProjectDocument(JSON.stringify(Domain.createProjectDocument(a.state)));
+  a.applyLoadedState(parsed.state); a.normalizeItems();
+  for (const code of ['383', '718', 'SSD-2737-00']) {
+    const item = a.state.items.find(x => x.productCode === code), master = a.master(code);
+    assert.ok(item, code); assert.equal(item.masterId, master.masterId);
+    assert.equal(item.width, master.width); assert.equal(item.depth, master.depth);
+    assert.equal(item.height, master.height); assert.equal(item.supportItemId, table.id);
+    assert.equal(item.z, 700); assert.equal(a.hasPlacementCollision(item), false);
+  }
+  const small = { ...a.master('718'), masterId: 'SANNI-383' };
+  assert.equal(a.getFixtureMaster(small).productCode, '718', 'exact code wins over category and stale id');
+  assert.equal(a.getFixtureMaster({ type:'product', productCategory:'wooden-tool-stand' }), null, 'ambiguous category is not guessed');
+});
+
+test('追加3製品: 机・ヨーカン棒への載せ替え、親追従・回転・複製・削除Undo', () => {
+  for (const code of ['383','718','SSD-2737-00']) {
+    const a = app(), table = a.add('長机'), item = a.add(code);
+    const beforeX = item.x; a.moveItemTo(table, table.x + 200, table.y);
+    assert.equal(item.x, beforeX + 200);
+    a.state.selectedId = table.id; const riser = a.add('AS01');
+    assert.ok(a.drop(item, riser.x + 50, riser.y + 50));
+    assert.equal(item.supportItemId, riser.id); assert.equal(item.z, 1000);
+    a.state.selectedId = item.id; a.rotateSelected();
+    assert.equal(item.rotationDeg, 90); assert.equal(item.width, a.master(code).depth);
+    a.duplicateSelected(); const copy = a.state.items.find(x => x.id === a.state.selectedId);
+    assert.equal(copy.productCode, code); assert.equal(a.hasPlacementCollision(copy), false);
+    a.deleteSelected(); a.undoDesignChange();
+    assert.ok(a.state.items.some(x => x.id === copy.id));
+    assert.ok(a.drop(item, 5000, 3000)); assert.equal(item.z, 0);
+  }
+});
+
+test('追加3製品: 3Dが公式外形内で、透明面・工具台の空洞から選択できる', () => {
+  const a = app(true), T = a.THREE;
+  for (const code of ['383','718','SSD-2737-00']) {
+    const item = a.add(code);
+    for (const turn of [0,1]) {
+      if (turn) { a.state.selectedId = item.id; a.rotateSelected(); }
+      const scene = new T.Scene(); a.addThreeOfficialProduct(scene, a.createThreeDisplayItem(item));
+      const group = scene.children[0], proxy = group.children.find(x => x.userData.pickDimensions);
+      assert.ok(proxy); group.remove(proxy);
+      const bounds = new T.Box3().setFromObject(group), size = bounds.getSize(new T.Vector3());
+      assert.ok(size.x <= item.width + .01, `${code} width ${size.x}`);
+      assert.ok(size.z <= item.depth + .01, `${code} depth ${size.z}`);
+      assert.ok(size.y <= item.height + .01, `${code} height ${size.y}`);
+      assert.ok(bounds.min.y >= item.z - .01);
+      group.add(proxy); group.updateMatrixWorld(true);
+      const center = proxy.getWorldPosition(new T.Vector3());
+      const ray = new T.Raycaster(center.clone().add(new T.Vector3(0,0,1000)), new T.Vector3(0,0,-1));
+      assert.ok(ray.intersectObject(proxy).length, `${code} transparent pick`);
+    }
+  }
+});
 
 test('01 薄い有孔ボードをtouchで選択・移動・回転・削除・Undo/Redo', () => {
   const a = app(); const board = a.add('B0897LVM4J');

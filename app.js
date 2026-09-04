@@ -95,7 +95,30 @@ const rawFixtureMasters = [
     searchAliases: ["回転什器", "卓上ネット", "回転有孔", "ストアエキスプレス", "B016PUU2RE", "6142-128"],
     surfacePlaceable: true, supportSurface: false, visibilityRole: "product",
     model3d: { kind: "rotating-net-display", accuracy: "verified-envelope/reference-based-detail", baseDiameterMm: 285, meshPitchMm: 30, wireDiameterMm: 3.8 },
-    setupInfo: { status: "official-source", instructions: ["本体セット黒・幅330×奥行330×高さ390mm", "回転台・POP立て・カード用クリップ6個", "フック・ディスプレイボックスは別売（このモデルには含まない）", "耐荷重2kg／枚。上面への積み重ねには非対応", "組立後は分解不可。フック付きの必要空間は別途確認"] } }
+    setupInfo: { status: "official-source", instructions: ["本体セット黒・幅330×奥行330×高さ390mm", "回転台・POP立て・カード用クリップ6個", "フック・ディスプレイボックスは別売（このモデルには含まない）", "耐荷重2kg／枚。上面への積み重ねには非対応", "組立後は分解不可。フック付きの必要空間は別途確認"] } },
+  { type: "product", productCategory: "acrylic-sign-stand", productCode: "SSD-2737-00", masterId: "SEKISEI-SSD-2737-00",
+    label: "セキセイ サインスタンド A4縦・片面 SSD-2737-00", width: 211, depth: 69, height: 296,
+    color: "#d9ebed", material: "アクリル樹脂（厚み1.7mm）", paletteGroup: "equipment",
+    dimensionLocked: true, dimensionSource: "セキセイ公式 SSD-2737（2026-09-04確認）外寸W211×D69×H296mm。収容サイズA4縦210×297mmとは別",
+    sourceUrl: "https://www.sedia.co.jp/product/ssd2712-2737/", purchaseUrl: "https://www.amazon.co.jp/dp/B002DBXZME",
+    searchAliases: ["SEKISEI", "SSD-2737", "A4", "POP", "ポップスタンド", "サインスタンド", "B002DBXZME", "4974214143081"],
+    surfacePlaceable: true, supportSurface: false, visibilityRole: "pop",
+    model3d: { kind: "acrylic-sign-stand", accuracy: "verified-envelope/reference-based-detail", thicknessMm: 1.7, pickVolume: true },
+    setupInfo: { status: "official-source", instructions: ["A4縦置き・片面用の卓上サインスタンド", "外寸211×69×296mmで配置", "3Dの傾斜・折り返し形状は写真に基づく概略。中紙は無地の表示見本", "上面への積み重ねには非対応"] } },
+  { type: "product", productCategory: "wooden-tool-stand", productCode: "383", masterId: "SANNI-383",
+    label: "工具台 No.383", width: 208, depth: 117, height: 135, color: "#d9b479", material: "木製",
+    dimensionLocked: true, dimensionSource: "サンニシムラ公式 工具台 No.383（2026-09-04確認）208(W)×117(D)×135(H)mm",
+    sourceUrl: "https://www.san-nishimura.co.jp/product/item/工具台-2/", searchAliases: ["No.383", "木製工具台", "ヤットコ", "ドライバー", "サンニシムラ"],
+    surfacePlaceable: true, supportSurface: false, visibilityRole: "product",
+    model3d: { kind: "wooden-tool-stand", accuracy: "verified-envelope/reference-based-detail", driverHoles: 9, pickVolume: true },
+    setupInfo: { status: "official-source", instructions: ["ヤットコ・ドライバーを立てて収納する木製工具台", "工具台単体。工具・ドライバーはモデルに含まない", "板厚・穴径・横桟位置は公式写真に基づく概略。上面への積み重ねには非対応"] } },
+  { type: "product", productCategory: "wooden-tool-stand", productCode: "718", masterId: "SANNI-718",
+    label: "工具台 No.718（小型）", width: 133, depth: 115, height: 133, color: "#d9b479", material: "木製",
+    dimensionLocked: true, dimensionSource: "サンニシムラ公式 工具台 No.718（2026-09-04確認）133(W)×115(D)×133(H)mm",
+    sourceUrl: "https://www.san-nishimura.co.jp/product/item/工具台-3/", searchAliases: ["No.718", "木製工具台", "小型工具台", "ヤットコ", "ドライバー", "サンニシムラ"],
+    surfacePlaceable: true, supportSurface: false, visibilityRole: "product",
+    model3d: { kind: "wooden-tool-stand", accuracy: "verified-envelope/reference-based-detail", driverHoles: 5, pickVolume: true },
+    setupInfo: { status: "official-source", instructions: ["横幅を縮めた小型の木製工具台", "工具台単体。工具・ドライバーはモデルに含まない", "板厚・穴径・横桟位置は公式写真に基づく概略。上面への積み重ねには非対応"] } }
 ];
 
 const boldaDetails = {
@@ -820,6 +843,12 @@ function buildProductPaletteSvg(item) {
   let shape = "";
   if (item.model3d?.kind === "rotating-net-display") {
     shape = '<defs><pattern id="mesh" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M6 0H0V6" fill="none" stroke="#454d51" stroke-width="1.2"/></pattern></defs><ellipse cx="60" cy="88" rx="27" ry="7" fill="#30343a"/><path d="M34 25L60 18L86 25L60 36Z" fill="#ebefec" stroke="#30343a" stroke-width="3"/><path d="M34 25V77L60 88L86 77V25L60 36Z" fill="url(#mesh)" stroke="#30343a" stroke-width="3"/><path d="M60 36V88" stroke="#30343a" stroke-width="4"/>';
+  } else if (item.model3d?.kind === "acrylic-sign-stand") {
+    shape = '<path d="M32 88L47 20H88L78 78L93 88Z" fill="#e4f1f4" stroke="#829ba3" stroke-width="2"/><path d="M47 24H84L74 77H36Z" fill="#fff" stroke="#c2d4d8"/><text x="60" y="56" text-anchor="middle" font-size="14" fill="#6e858d">A4</text><path d="M32 88L36 79H78" fill="none" stroke="#829ba3"/>';
+  } else if (item.model3d?.kind === "wooden-tool-stand") {
+    const side = item.width < item.height * 1.1 ? 36 : 24;
+    const holes = Array.from({ length: item.model3d.driverHoles }, (_, i) => `<ellipse cx="${side + 10 + (100 - 2 * side) * i / (item.model3d.driverHoles - 1)}" cy="69" rx="2.5" ry="1.7" fill="#805c36"/>`).join("");
+    shape = `<path d="M${side} 87V38Q${side + 5} 13 ${side + 12} 35V84M${120 - side} 87V38Q${115 - side} 13 ${108 - side} 35V84" fill="#dbb57c" stroke="#b08a53" stroke-width="3"/><path d="M${side + 9} 34H${111 - side}M${side + 9} 51H${111 - side}M${side + 9} 61H${111 - side}" stroke="#dab477" stroke-width="7"/><path d="M${side + 6} 68H${114 - side}V79H${side + 6}Z" fill="#e4c392" stroke="#b08a53"/>${holes}`;
   } else if (item.productCategory === "gacha-machine") {
     shape = '<rect x="39" y="18" width="42" height="72" rx="4" fill="#f4f5f2" stroke="#6f7979" stroke-width="2"/><rect x="44" y="22" width="32" height="34" rx="5" fill="#d8f1f4" stroke="#6f7979" stroke-width="2"/><circle cx="60" cy="70" r="6" fill="#c7ccd0" stroke="#5b6264" stroke-width="2"/><rect x="47" y="79" width="26" height="7" rx="2" fill="#d5d9da"/>';
   } else if (item.productCategory === "gacha-stand") {
@@ -941,6 +970,7 @@ function addPowerCircuit() {
 }
 
 function paletteCategory(item) {
+  if (["fixtures", "products", "equipment", "planning"].includes(item.paletteGroup)) return item.paletteGroup;
   if (["aluminum-pegboard", "rotating-net-display"].includes(item.productCategory)) return "fixtures";
   if (["table", "fixture", "bolda", "wall", "chair"].includes(item.type)) return "fixtures";
   if (item.type === "product") return "products";
@@ -1359,11 +1389,13 @@ function getFixtureMaster(item) {
   }
   if (!item) return null;
   const byId = itemTypes.find((master) => master.masterId === item.masterId);
-  const byProductIdentity = itemTypes.find((master) => master.type === item.type && (
-    (item.productCode && master.productCode === item.productCode)
-    || (item.productCategory && master.productCategory === item.productCategory)
-  ));
+  // A category may contain several products. Never let its first entry replace a different code.
+  const byProductIdentity = item.productCode && itemTypes.find((master) => master.type === item.type && master.productCode === item.productCode);
   if (byProductIdentity) return byProductIdentity;
+  if (item.type === "product" && byId?.type === "product" && !item.productCode) return byId;
+  const categoryMatches = !item.productCode && item.productCategory
+    ? itemTypes.filter((master) => master.type === item.type && master.productCategory === item.productCategory) : [];
+  if (categoryMatches.length === 1) return categoryMatches[0];
   const label = String(item.label || "");
   const knownLabelMaster = itemTypes.find((master) => {
     if (master.type !== item.type) return false;
@@ -4701,7 +4733,7 @@ function createFacingGroup(item) {
   const quarterTurns = item.threeQuarterTurns ?? (aisleFacingQuarterTurns(state.booth.aisleSide) + itemRotationQuarterTurns(item));
   group.position.set(threeWorldX(item.x + planWidth / 2), item.z || 0, threeWorldZ(item.y + planDepth / 2));
   group.rotation.y = quarterTurns * Math.PI / 2;
-  if (Math.min(item.width, item.depth) < 24 || item.model3d?.kind === "rotating-net-display") {
+  if (Math.min(item.width, item.depth) < 24 || item.model3d?.pickVolume || item.model3d?.kind === "rotating-net-display") {
     // Invisible picking volume: net holes and thin edges remain selectable.
     // Material visibility does not disable Three's mesh raycasting.
     const pick = addLocalBox(group, item.width, item.height, item.depth, 0, item.height / 2, 0,
@@ -4752,6 +4784,8 @@ function addThreeGenericDevice(scene, item) {
 }
 
 function addThreeOfficialProduct(scene, item) {
+  if (item.model3d?.kind === "acrylic-sign-stand") return addThreeAcrylicSignStand(scene, item);
+  if (item.model3d?.kind === "wooden-tool-stand") return addThreeWoodenToolStand(scene, item);
   if (item.productCategory === "gacha-machine") return addThreeGachaMachine(scene, item);
   if (item.productCategory === "gacha-stand") return addThreeGachaStand(scene, item);
   if (item.productCategory === "capsule-recovery-box") return addThreeCapsuleRecoveryBox(scene, item);
@@ -4763,6 +4797,57 @@ function addThreeOfficialProduct(scene, item) {
   if (item.productCategory.startsWith("frame-heater-")) return addThreeFrameHeater(scene, item);
   if (item.productCategory.startsWith("buff-motor-")) return addThreeBuffMotor(scene, item);
   addThreeCounter(scene, item);
+}
+
+function addThreeAcrylicSignStand(scene, item) {
+  const T = window.THREE, group = createFacingGroup(item);
+  const t = item.model3d.thicknessMm;
+  const acrylic = new T.MeshPhysicalMaterial({ color: 0xd9edf0, transparent: true, opacity: .42, roughness: .15, depthWrite: false });
+  const edge = threeStandardMaterial(0x9ebbc3, { roughness: .3 });
+  addLocalBox(group, item.width, t, item.depth, 0, t / 2, 0, acrylic);
+  // Inclination is illustrative; dimensions used by placement remain the official outer envelope.
+  const rise = item.height - t * 2, lean = item.depth * .55;
+  const panelHeight = Math.hypot(rise, lean), panel = new T.Group();
+  panel.rotation.x = -Math.atan2(lean, rise);
+  panel.position.set(0, t + rise / 2, item.depth * .16);
+  addLocalBox(panel, item.width, panelHeight, t, 0, 0, 0, acrylic);
+  addLocalBox(panel, item.width - 8, panelHeight - 9, 1, 0, 0, 0, threeStandardMaterial(0xfdfdfa, { roughness: .86 }));
+  for (const x of [-item.width / 2 + 1, item.width / 2 - 1]) addLocalBox(panel, 2, panelHeight, t, x, 0, 0, edge, false);
+  group.add(panel);
+  scene.add(group);
+}
+
+function addThreeWoodenToolStand(scene, item) {
+  const T = window.THREE, group = createFacingGroup(item);
+  const wood = threeStandardMaterial(item.color, { roughness: .83 });
+  const rail = threeStandardMaterial(0xe4c392, { roughness: .8 });
+  const wall = item.depth * .085, radius = item.depth / 2, straight = item.height - radius;
+  // Both sizes share the rounded side panels, plier rails and perforated front holder.
+  // Internal proportions come from the official photos, not a manufacturing drawing.
+  for (const x of [-item.width / 2 + wall / 2, item.width / 2 - wall / 2]) {
+    addLocalBox(group, wall, straight, item.depth, x, straight / 2, 0, wood);
+    const cap = new T.Mesh(new T.CylinderGeometry(radius, radius, wall, 40), wood);
+    cap.rotation.z = Math.PI / 2; cap.position.set(x, straight, 0);
+    cap.castShadow = true; cap.receiveShadow = true; group.add(cap);
+  }
+  const innerWidth = item.width - wall * 2;
+  for (const [height, z] of [[.87, -.25], [.63, -.25], [.54, .07]])
+    addLocalBox(group, innerWidth, item.height * .12, wall, 0, item.height * height, item.depth * z, rail);
+  const holderDepth = item.depth * .24, holderHeight = item.height * .23;
+  const shape = new T.Shape();
+  shape.moveTo(-innerWidth / 2, -holderDepth / 2); shape.lineTo(innerWidth / 2, -holderDepth / 2);
+  shape.lineTo(innerWidth / 2, holderDepth / 2); shape.lineTo(-innerWidth / 2, holderDepth / 2); shape.closePath();
+  const count = item.model3d.driverHoles, holeRadius = Math.min(5, innerWidth / (count * 3.6));
+  for (let i = 0; i < count; i++) {
+    const hole = new T.Path();
+    hole.absarc(-innerWidth / 2 + innerWidth * (i + .5) / count, 0, holeRadius, 0, Math.PI * 2, true);
+    shape.holes.push(hole);
+  }
+  const holder = new T.Mesh(new T.ExtrudeGeometry(shape, { depth: holderHeight, bevelEnabled: false, curveSegments: 12 }), rail);
+  holder.rotation.x = -Math.PI / 2;
+  holder.position.set(0, item.height * .23, item.depth * .31);
+  holder.castShadow = true; holder.receiveShadow = true; group.add(holder);
+  scene.add(group);
 }
 
 function addThreeProcessingRack(scene, item) {
