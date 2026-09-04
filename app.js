@@ -118,7 +118,27 @@ const rawFixtureMasters = [
     sourceUrl: "https://www.san-nishimura.co.jp/product/item/工具台-3/", searchAliases: ["No.718", "木製工具台", "小型工具台", "ヤットコ", "ドライバー", "サンニシムラ"],
     surfacePlaceable: true, supportSurface: false, visibilityRole: "product",
     model3d: { kind: "wooden-tool-stand", accuracy: "verified-envelope/reference-based-detail", driverHoles: 5, pickVolume: true },
-    setupInfo: { status: "official-source", instructions: ["横幅を縮めた小型の木製工具台", "工具台単体。工具・ドライバーはモデルに含まない", "板厚・穴径・横桟位置は公式写真に基づく概略。上面への積み重ねには非対応"] } }
+    setupInfo: { status: "official-source", instructions: ["横幅を縮めた小型の木製工具台", "工具台単体。工具・ドライバーはモデルに含まない", "板厚・穴径・横桟位置は公式写真に基づく概略。上面への積み重ねには非対応"] } },
+  ...[
+    { code: "MIST-A2X3", label: "メガネミスト 大型POP A2縦3枚・一体", panels: 3, slice: 0, slices: 1 },
+    { code: "MIST-A2-L", label: "メガネミスト POP A2左・キャッチコピー", panels: 1, slice: 0, slices: 3 },
+    { code: "MIST-A2-C", label: "メガネミスト POP A2中央・ボトル", panels: 1, slice: 1, slices: 3 },
+    { code: "MIST-A2-R", label: "メガネミスト POP A2右・使用シーン", panels: 1, slice: 2, slices: 3 }
+  ].map(({ code, label, panels, slice, slices }) => ({
+    type: "product", productCategory: "printed-pop-panel", productCode: code, masterId: `SANNI-${code}`,
+    label, width: 420 * panels, depth: 5, height: 594, color: "#f8f8f2", paletteGroup: "equipment",
+    material: "A2仕上がりに裁断したハレパネ（板厚5mm仮設定・固定具別途）",
+    dimensionLocked: true, dimensionAccuracy: "partial-verified",
+    dimensionSource: "ユーザー指定A2縦3枚。仕上がり1枚W420×H594mm、3枚W1260×H594mm。市販ハレパネA2の未裁断外形455×605mmとは別。板厚5mmは計画用仮設定",
+    sourceUrl: "https://www.platinum-pen.co.jp/products/harepane/11191/",
+    searchAliases: ["大型POP", "ポップ", "ハレパネ", "A2", "A2縦3枚", "メガネミスト", "1064", "MEGANE MIST"],
+    frontTexture: "assets/pop/megane-mist-a2-triptych-v1.png", printTheme: "メガネミスト A2縦3枚",
+    surfacePlaceable: true, supportSurface: false, visibilityRole: "pop",
+    model3d: { kind: "printed-pop-panel", accuracy: "user-defined-trim-size/provisional-thickness", panelCount: panels, artworkSlice: slice, artworkSlices: slices, pickVolume: true },
+    modelNote: "A2仕上がり420×594mmに裁断する計画。板厚5mmは仮設定。正面は生成したPOP原稿、背面は白。自立・固定金具の構造はモデル化していません。",
+    placementNotice: `板単体・固定具別途。${panels === 3 ? "一体版は幅1260mm以上の天板が必要。小さい什器にはA2左・中央・右を分けて配置。" : "左・中央・右の順で並べ、連結・転倒防止を別途確認。"}`,
+    setupInfo: { status: "user-defined", instructions: ["A2縦420×594mm仕上がり。未裁断のハレパネとは寸法が異なる", "印刷順は左・中央・右。幅と高さを変えず100%で出力", "板厚5mm仮設定。実際の板厚・連結方法・什器への固定具・後方の必要空間を設営前に確認", "板単体は自立しません。転倒防止と会場の高さ制限を確認"] }
+  }))
 ];
 
 const boldaDetails = {
@@ -240,6 +260,21 @@ function normalizeFixtureMaster(item, index) {
 }
 
 const itemTypes = Object.freeze(rawFixtureMasters.map(normalizeFixtureMaster));
+
+const monitorScreens = Object.freeze({
+  "megane-mist": Object.freeze({ label: "メガネミスト画像", source: "assets/screens/megane-mist-hero-v1.png", width: 1672, height: 941 })
+});
+
+function getMonitorScreen(item) {
+  return item?.scenarioKind === "monitor" ? monitorScreens[item.monitorScreenId] || null : null;
+}
+
+function updateMonitorScreen() {
+  const item = selectedItem();
+  if (item?.scenarioKind !== "monitor") return;
+  item.monitorScreenId = Object.hasOwn(monitorScreens, $("itemMonitorScreen").value) ? $("itemMonitorScreen").value : "";
+  render();
+}
 
 const furnitureReferenceImage = "assets/furniture/exhibition-furniture-reference.png";
 
@@ -374,6 +409,11 @@ function resetCanvasView() {
 }
 
 function paletteVisual(item) {
+  if (item.model3d?.kind === "printed-pop-panel") {
+    const slices = item.model3d.artworkSlices, index = item.model3d.artworkSlice;
+    const position = slices > 1 ? index / (slices - 1) * 100 : 50;
+    return `<span class="palette-image-stack"><span role="img" aria-label="${escapeHtml(item.label)} 印刷面" style="display:block;width:100%;aspect-ratio:${item.width}/${item.height};background: white url('${escapeHtml(item.frontTexture)}') ${position}% center / ${slices * 100}% 100% no-repeat"></span></span>`;
+  }
   if (item.image) {
     const swatch = item.frontTexture
       ? `<img class="palette-print-swatch" src="${escapeHtml(item.frontTexture)}" alt="${escapeHtml(item.printTheme || item.label)} 実印刷面">`
@@ -586,6 +626,7 @@ function bindInputs() {
   $("placeOnSupportBtn").addEventListener("click", placeSelectedOnSupport);
   $("detachFromSupportBtn").addEventListener("click", detachSelectedFromSupport);
   $("itemSupportId").addEventListener("change", syncSurfacePlacementPreview);
+  $("itemMonitorScreen").addEventListener("change", updateMonitorScreen);
   $("deleteBtn").addEventListener("click", deleteSelected);
   $("undoBtn").addEventListener("click", undoDesignChange);
   $("redoBtn").addEventListener("click", redoDesignChange);
@@ -1081,6 +1122,7 @@ function addItem(template) {
     catalogReference: template.catalogReference || "",
     dimensionAccuracy: template.dimensionAccuracy || "",
     scenarioKind: template.scenarioKind || "",
+    monitorScreenId: template.monitorScreenId || "",
     weightKg: Math.max(0, Domain.finiteNumber(template.weightKg, 0)),
     surfacePlaceable: template.surfacePlaceable === true,
     supportSurface: template.supportSurface === true,
@@ -1720,6 +1762,7 @@ function resetSelectedToMasterDimensions() {
 }
 
 function paletteDetail(item) {
+  if (item.model3d?.kind === "printed-pop-panel") return `W${item.width}×H${item.height}mm・板厚5mm仮・固定具別途`;
   if (item.dimensionAccuracy === "planning-average") return `参考サイズ W${item.width}×D${item.depth}×H${item.height}mm`;
   if (item.type === "zone") return `用途領域 ${formatSquareMetres(item.width * item.depth)}㎡・必要面積を要登録`;
   if (item.type === "scenario") return `仮W${item.width}×D${item.depth}×H${item.height || "未登録"}mm・実測必須`;
@@ -1922,6 +1965,7 @@ function normalizeItems() {
     item.catalogReference = String(item.catalogReference || master?.catalogReference || "");
     item.dimensionAccuracy = String(item.dimensionAccuracy || master?.dimensionAccuracy || "");
     item.scenarioKind = String(item.scenarioKind || master?.scenarioKind || "");
+    item.monitorScreenId = item.scenarioKind === "monitor" && Object.hasOwn(monitorScreens, item.monitorScreenId) ? item.monitorScreenId : "";
     item.weightKg = Math.max(0, Domain.finiteNumber(item.weightKg, master?.weightKg || 0));
     if (master && (migratedMaster || !item.material)) item.material = master.material || "";
     if (master && (migratedMaster || !item.dimensionSource)) item.dimensionSource = master.dimensionSource || "";
@@ -2161,6 +2205,8 @@ function syncSelectionEditor() {
   syncSelectedMeasurements(item);
   syncFixtureMasterInfo(item, master);
   syncSurfacePlacementEditor(item);
+  $("monitorScreenFields").classList.toggle("hidden", item.scenarioKind !== "monitor");
+  $("itemMonitorScreen").value = item.monitorScreenId || "";
   $("wattField").classList.toggle("hidden", !supportsWattInput(item));
   $("wattFieldLabel").textContent = item.type === "spotlight"
     ? "照明消費電力 W"
@@ -2235,12 +2281,12 @@ function syncSurfacePlacementPreview() {
   const support = state.items.find((candidate) => candidate.id === $("itemSupportId").value);
   const definition = getSupportPlacementDefinition(item, support);
   if (!support || !definition?.placement.fits) {
-    info.textContent = "先に実寸が収まる机または専用台を配置してください。";
+    info.textContent = "先に実寸が収まる机または専用台を配置してください。" + (getFixtureMaster(item)?.placementNotice || "");
     return;
   }
   const placement = definition.placement;
   if (!advancedMode) {
-    info.textContent = item.supportItemId ? `${state.items.find((entry) => entry.id === item.supportItemId)?.label || "台"}の上に配置中` : "床に配置中。台へドラッグしても載せられます。";
+    info.textContent = (item.supportItemId ? `${state.items.find((entry) => entry.id === item.supportItemId)?.label || "台"}の上に配置中` : "床に配置中。台へドラッグしても載せられます。") + (getFixtureMaster(item)?.placementNotice ? ` ${getFixtureMaster(item).placementNotice}` : "");
     return;
   }
   const overhang = placement.maximumOverhangMm > 0 ? `｜メーカー指定張り出し 最大${placement.maximumOverhangMm}mm` : "｜天板内に収容";
@@ -4684,7 +4730,7 @@ function syncFixtureMasterInfo(item, master) {
   const dimensionState = master.dimensionLocked
     ? (matchesMaster ? "マスター寸法一致" : "マスター寸法と不一致")
     : (matchesMaster ? "マスター初期寸法一致（編集可）" : "個別寸法登録（マスター初期値から変更）");
-  const modelNote = master.type === "bolda"
+  const modelNote = master.modelNote || (master.type === "bolda"
     ? (getBoldaCode(item) === "TB13"
       ? "提供テンプレートから、外形W900×D500×H800、下部H650、2開口各約W413×H100、板厚25mmを反映済みです。前面商品画像は提供PSDの埋め込み元画像から下切れなしで再出力しています。製造CAD・内部折り構造は未確認です。"
       : "外形W/D/Hは提供ファイル名で確認済み。段差・棚板等の詳細3D形状は組立画像基準で、製造CAD未確認です。")
@@ -4692,7 +4738,7 @@ function syncFixtureMasterInfo(item, master) {
       ? (master.dimensionAccuracy === "partial-verified"
         ? "容器本体寸法は資料確認済み。トリガー込み外形は暫定値で、現物実測後に確定してください。3Dは暫定外形内の参照形状です。"
         : "登録W/D/Hは商品資料で確認済み。3Dは正確な外形寸法内の参照簡略形状で、製造CADではありません。")
-      : "汎用3D形状。正確な製品型番・図面は未登録です。";
+      : "汎用3D形状。正確な製品型番・図面は未登録です。");
   const sourceLink = master.sourceUrl?.startsWith("https://") ? `<br>公式情報: <a href="${escapeHtml(master.sourceUrl)}" target="_blank" rel="noreferrer">商品ページを開く</a>` : "";
   const catalogText = master.catalogReference ? `<br>商品資料: ${escapeHtml(master.catalogReference)}` : "";
   const setupText = master.setupInfo?.instructions?.length ? `<br>設営情報: ${escapeHtml(master.setupInfo.instructions.join(" / "))}` : "";
@@ -4784,6 +4830,7 @@ function addThreeGenericDevice(scene, item) {
 }
 
 function addThreeOfficialProduct(scene, item) {
+  if (item.model3d?.kind === "printed-pop-panel") return addThreePrintedPopPanel(scene, item);
   if (item.model3d?.kind === "acrylic-sign-stand") return addThreeAcrylicSignStand(scene, item);
   if (item.model3d?.kind === "wooden-tool-stand") return addThreeWoodenToolStand(scene, item);
   if (item.productCategory === "gacha-machine") return addThreeGachaMachine(scene, item);
@@ -4797,6 +4844,27 @@ function addThreeOfficialProduct(scene, item) {
   if (item.productCategory.startsWith("frame-heater-")) return addThreeFrameHeater(scene, item);
   if (item.productCategory.startsWith("buff-motor-")) return addThreeBuffMotor(scene, item);
   addThreeCounter(scene, item);
+}
+
+function addThreePrintedPopPanel(scene, item) {
+  const T = window.THREE, group = createFacingGroup(item);
+  const count = item.model3d.panelCount, panelWidth = item.width / count;
+  const board = threeStandardMaterial(0xf7f7f2, { roughness: .9 });
+  for (let index = 0; index < count; index++) {
+    addLocalBox(group, panelWidth, item.height, item.depth,
+      -item.width / 2 + panelWidth * (index + .5), item.height / 2, 0, board);
+  }
+  const print = addThreeImagePlane(group, item.frontTexture, item.width, item.height, item.depth / 2, item.height / 2);
+  if (print) {
+    // Crop the original texture by UVs; never stretch the full panorama onto each A2 sheet.
+    const uv = print.geometry.getAttribute("uv"), slices = item.model3d.artworkSlices;
+    for (let i = 0; i < uv.count; i++) uv.setX(i, (item.model3d.artworkSlice + uv.getX(i)) / slices);
+    uv.needsUpdate = true;
+    print.material.side = T.FrontSide;
+    print.userData.artworkSlice = item.model3d.artworkSlice;
+  }
+  scene.add(group);
+  return group;
 }
 
 function addThreeAcrylicSignStand(scene, item) {
@@ -5048,7 +5116,17 @@ function addThreeOperationalItem(scene, item) {
   } else if (item.scenarioKind === "monitor") {
     const screenH = h * 0.68;
     addLocalBox(group, item.width, screenH, Math.max(24, item.depth * 0.12), 0, h - screenH / 2, -item.depth * 0.18, dark);
-    addLocalBox(group, item.width * 0.9, screenH * 0.82, 5, 0, h - screenH / 2, -item.depth * 0.11, threeStandardMaterial(0x79aeb9, { roughness: 0.28 }), false);
+    const screen = getMonitorScreen(item), screenWidth = item.width * .9, screenHeight = screenH * .82;
+    addLocalBox(group, screenWidth, screenHeight, 5, 0, h - screenH / 2, -item.depth * .11,
+      threeStandardMaterial(screen ? 0x080b10 : 0x79aeb9, { roughness: .28 }), false);
+    if (screen) {
+      const fit = Math.min(screenWidth / screen.width, screenHeight / screen.height);
+      const print = addThreeImagePlane(group, screen.source, screen.width * fit, screen.height * fit,
+        -item.depth * .11 + 2.6, h - screenH / 2);
+      print.userData.monitorScreen = item.monitorScreenId;
+      print.material.side = T.FrontSide;
+      print.material.roughness = .25;
+    }
     addLocalBox(group, item.width * 0.08, h * 0.28, item.depth * 0.12, 0, h * 0.2, 0, body);
     addLocalBox(group, item.width * 0.38, h * 0.05, item.depth * 0.7, 0, h * 0.025, 0, body);
   } else if (item.scenarioKind === "document-tray-3") {
@@ -6468,8 +6546,8 @@ function buildImagePrompt() {
   const camera = buildPromptCameraInstruction();
   const counts = buildPromptCountSummary();
   const references = boldaRefs.length
-    ? `Attach and use these bolda shape and exact print-face images for the matching product codes:\n${boldaRefs.map((ref) => `- ${ref.name}: ${ref.path}; role: ${ref.role}${ref.printData ? `; source folder: ${ref.printData}` : ""}`).join("\n")}`
-    : "No bolda reference images are used in this layout.";
+    ? `Attach and use these fixture shape, exact print-face and monitor screen images for the matching items:\n${boldaRefs.map((ref) => `- ${ref.name}: ${ref.path}; role: ${ref.role}${ref.printData ? `; source folder: ${ref.printData}` : ""}`).join("\n")}`
+    : "No fixture print or monitor screen reference images are used in this layout.";
   const peopleReferences = personRefs.length
     ? `Attach and use these exact character images without changing identity, clothing or costume:\n${personRefs.map((ref) => `- ${ref.name}: ${ref.path}; role: ${ref.role}`).join("\n")}`
     : "No people are specified in this layout. Do not add people.";
@@ -6821,6 +6899,7 @@ function buildBoothSpecification() {
         boldaCode: getBoldaCode(item) || null,
         printTheme: item.printTheme || null,
         printFaces: [item.frontTexture, ...(item.tierTextures || []), item.riserTexture].filter(Boolean),
+        monitorScreen: getMonitorScreen(item),
         personPose: item.type === "person" ? (getChairForPerson(item) ? "seated" : "standing") : null,
         standingImage: item.standingImage || null,
         seatedImage: item.seatedImage || null,
@@ -6831,6 +6910,8 @@ function buildBoothSpecification() {
 }
 
 function buildItemVisualInstruction(item, bolda) {
+  if (getMonitorScreen(item)) return `, visual form: monitor displaying the exact image ${getMonitorScreen(item).source}, keep image aspect ratio without cropping; letterbox if needed`;
+  if (item.model3d?.kind === "printed-pop-panel") return `, visual form: vertical printed foam-board POP; white rear; original panorama ${item.frontTexture}, horizontal slice ${item.model3d.artworkSlice + 1} of ${item.model3d.artworkSlices}; board thickness provisional, mounting hardware not specified`;
   if (item.type === "person") return `, visual form: the exact referenced 1790mm-tall character, ${getChairForPerson(item) ? "naturally seated on the overlapping chair" : "standing upright on the floor"}`;
   if (bolda) return `, visual form: assembled bolda fixture, ${bolda.visual}`;
   if (item.type === "product") {
@@ -6869,7 +6950,7 @@ function buildItemVisualInstruction(item, bolda) {
 function getUsedBoldaReferences() {
   const refs = new Map();
   activeItems()
-    .filter((item) => item.type === "bolda" && item.image)
+    .filter((item) => (item.type === "bolda" && item.image) || item.model3d?.kind === "printed-pop-panel" || getMonitorScreen(item))
     .forEach((item) => {
       const detail = getBoldaDetail(item);
       const add = (path, role) => {
@@ -6878,6 +6959,8 @@ function getUsedBoldaReferences() {
       };
       add(item.image, `assembled blank shape for ${item.label}`);
       add(item.frontTexture, `exact printed main front face for ${item.printTheme || item.label}`);
+      const screen = getMonitorScreen(item);
+      if (screen) add(screen.source, `exact monitor screen artwork; preserve ${screen.width}:${screen.height} aspect ratio, no crop`);
       (item.tierTextures || []).forEach((path, index) => add(path, `exact printed ED04 ${index === 0 ? "lower" : "upper"} riser face for ${item.printTheme}`));
       add(item.riserTexture, `exact printed AS01 yokan-bar front face mounted on the TB05 base for ${item.printTheme}`);
     });
@@ -6922,12 +7005,12 @@ function renderBoldaImageReferences() {
   const refs = getUsedBoldaReferences();
   const personRefs = getUsedPersonReferences();
   if (!refs.length && !personRefs.length) {
-    wrap.innerHTML = `<h3>生成参照画像</h3><p>配置中のbolda什器・人物はありません。</p>`;
+    wrap.innerHTML = `<h3>生成参照画像</h3><p>配置中の什器印刷面・画面画像・人物の参照画像はありません。</p>`;
     return;
   }
   wrap.innerHTML = `
-    <h3>bolda・人物参照画像</h3>
-    <p>GPT image 2.0で画像生成する時は、形状画像、実印刷面、人物画像をプロンプトと一緒に添付してください。</p>
+    <h3>什器・POP・モニター・人物参照画像</h3>
+    <p>GPT image 2.0で画像生成する時は、形状画像、実印刷面、画面画像、人物画像をプロンプトと一緒に添付してください。</p>
     <div class="bolda-ref-grid">
       ${refs.map((ref) => `
         <figure>
@@ -7059,7 +7142,7 @@ async function downloadCodexPack() {
     <img src="${previewData}" alt="3D preview">
   </section>
   <section>
-    <h2>bolda参照画像</h2>
+    <h2>什器・POP・モニター参照画像</h2>
     <div class="grid">
       ${boldaRefs.map((ref) => `
         <figure>

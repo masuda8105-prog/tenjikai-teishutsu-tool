@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>展示ブースプランナー</title>
-  <link rel="stylesheet" href="styles.css?v=20260904-3">
+  <link rel="stylesheet" href="styles.css?v=20260904-4">
 </head>
 <body>
   <header class="app-header no-print">
@@ -156,6 +156,13 @@
             </details>
             <p class="field-help advanced-only">机や台の上へドラッグすると、自動で上に乗ります。台を動かすと上の物も一緒に動きます。</p>
           </div>
+          <label id="monitorScreenFields" class="hidden">モニター画面
+            <select id="itemMonitorScreen">
+              <option value="">通常画面</option>
+              <option value="megane-mist">メガネミスト画像</option>
+            </select>
+              <span class="field-help">3Dに元の縦横比で表示。画像の切り抜き・引き伸ばしはしません。</span>
+          </label>
           <label id="wattField" class="hidden"><span id="wattFieldLabel">消費電力 W</span><input id="itemWatt" type="number" min="0" step="10"></label>
           <label id="circuitField" class="hidden">接続回路<select id="itemCircuitId"></select></label>
           <label id="ratedCapacityField" class="hidden">電源タップ定格容量 W<input id="itemRatedCapacity" type="number" min="0" step="100" placeholder="未登録"></label>
@@ -479,8 +486,8 @@
   </dialog>
   <input id="projectFile" class="hidden" type="file" accept="application/json">
   <script src="assets/vendor/three.bundle.min.js?v=20260716-2"></script>
-  <script src="booth-domain.js?v=20260904-3"></script>
-  <script src="app.js?v=20260904-3"></script>
+  <script src="booth-domain.js?v=20260904-4"></script>
+  <script src="app.js?v=20260904-4"></script>
 </body>
 </html>
 

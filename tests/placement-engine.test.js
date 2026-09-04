@@ -50,6 +50,7 @@ function app(withThree = false) {
       historyPast, historyFuture, undoDesignChange, redoDesignChange, applyLoadedState,
       compactLabel, paletteSearchText, paletteCategory, thinItemHandle, element: $,
       createFacingGroup, createThreeDisplayItem, addThreeRotatingNetDisplay, addThreeOfficialProduct, getFixtureMaster, buildProductPaletteSvg, prepareThreePickTargets, THREE: window.THREE,
+      addThreeOperationalItem, getMonitorScreen, updateMonitorScreen, getUsedBoldaReferences,
     };
   `, context);
   const api = context.api;
@@ -63,6 +64,89 @@ function app(withThree = false) {
   };
   return api;
 }
+
+test('大型POP・モニター: 生成資料に原画像を含め、同じPOPを重複登録しない', () => {
+  const a=app(); a.add('MIST-A2-L'); a.add('MIST-A2-C'); const monitor=a.add('monitor');
+  a.element('itemMonitorScreen').value='megane-mist'; a.updateMonitorScreen();
+  const refs=a.getUsedBoldaReferences();
+  assert.equal(refs.filter(x=>x.path.includes('a2-triptych')).length,1);
+  assert.equal(refs.filter(x=>x.path.includes('megane-mist-hero')).length,1);
+  for(const ref of refs) assert.ok(fs.existsSync(path.join(__dirname,'..',ref.path)));
+  a.element('itemMonitorScreen').value=''; a.updateMonitorScreen();
+  assert.ok(!a.getUsedBoldaReferences().some(x=>x.path.includes('megane-mist-hero')));
+  assert.equal(monitor.monitorScreenId,'');
+});
+
+test('大型POP: A2縦3枚1260×594mm、一体版と分割3枚を区別', () => {
+  const a = app();
+  for (const code of ['MIST-A2X3','MIST-A2-L','MIST-A2-C','MIST-A2-R']) {
+    const master = a.master(code);
+    assert.deepEqual([master.width,master.depth,master.height],[code.endsWith('X3') ? 1260 : 420,5,594]);
+    assert.equal(master.supportSurface,false); assert.equal(master.surfacePlaceable,true);
+    assert.equal(a.paletteCategory(master),'equipment'); assert.match(master.dimensionSource,/仮設定/);
+    assert.match(a.paletteSearchText(master),/ハレパネ/); assert.ok(!a.paletteSearchText(master).includes('a1'));
+  }
+});
+
+test('大型POP: 台上・親追従・回転・保存復元、狭い天板へははみ出さない', () => {
+  const a = app(), table = a.add('展示台 W1500xD600'), pop = a.add('MIST-A2X3');
+  assert.equal(pop.supportItemId,table.id); assert.equal(pop.z,700);
+  const before=pop.x; a.moveItemTo(table,table.x+200,table.y); assert.equal(pop.x,before+200);
+  a.state.selectedId=table.id; a.rotateSelected();
+  assert.deepEqual([pop.width,pop.depth,pop.height],[5,1260,594]);
+  const saved=Domain.parseProjectDocument(JSON.stringify(Domain.createProjectDocument(a.state)));
+  a.applyLoadedState(saved.state);
+  const restored=a.state.items.find(x=>x.id===pop.id);
+  assert.equal(restored.supportItemId,table.id); assert.equal(restored.z,700);
+  assert.match(restored.frontTexture,/a2-triptych/);
+  const b=app(), narrow=b.add('TB05'), full=b.add('MIST-A2X3');
+  assert.equal(b.getSupportPlacementDefinition(full,narrow).placement.fits,false);
+  assert.notEqual(full.supportItemId,narrow.id); assert.equal(full.width,1260);
+  b.state.selectedId=narrow.id; const panel=b.add('MIST-A2-C');
+  assert.equal(panel.supportItemId,narrow.id); assert.equal(panel.z,800);
+});
+
+test('大型POP: 3Dの正面画像を各A2の1/3に切り出し、端面からも選択できる', () => {
+  const a=app(true),T=a.THREE;
+  T.TextureLoader.prototype.load=function(source,onLoad){const texture=new T.Texture();onLoad(texture);return texture;};
+  for (const [code,slice,slices] of [['MIST-A2X3',0,1],['MIST-A2-L',0,3],['MIST-A2-C',1,3],['MIST-A2-R',2,3]]) {
+    const item=a.add(code),scene=new T.Scene(); a.addThreeOfficialProduct(scene,a.createThreeDisplayItem(item));
+    const group=scene.children[0],print=group.children.find(x=>x.userData.artworkSlice!==undefined);
+    assert.ok(group.children.some(x=>x.userData.pickDimensions)); assert.ok(print);
+    const uv=print.geometry.getAttribute('uv'),xs=Array.from({length:uv.count},(_,i)=>uv.getX(i));
+    assert.ok(Math.abs(Math.min(...xs)-slice/slices)<1e-6);
+    assert.ok(Math.abs(Math.max(...xs)-(slice+1)/slices)<1e-6);
+    const size=new T.Box3().setFromObject(group).getSize(new T.Vector3());
+    assert.ok(Math.abs(size.x-item.width)<.01); assert.ok(Math.abs(size.z-5)<.01); assert.ok(Math.abs(size.y-594)<.01);
+    assert.equal(print.material.side,T.FrontSide);
+  }
+});
+
+test('モニター: 画面を個別設定、切替Undo、複製・保存・回転後も保持', () => {
+  const a=app(); a.add('長机'); const first=a.add('monitor'),second=a.add('monitor');
+  a.state.selectedId=first.id; a.element('itemMonitorScreen').value='megane-mist'; a.updateMonitorScreen();
+  assert.ok(a.getMonitorScreen(first)); assert.equal(a.getMonitorScreen(second),null);
+  a.element('itemMonitorScreen').value=''; a.updateMonitorScreen(); assert.equal(a.getMonitorScreen(first),null);
+  a.undoDesignChange(); const restored=a.state.items.find(x=>x.id===first.id); assert.ok(a.getMonitorScreen(restored));
+  a.state.selectedId=restored.id; a.duplicateSelected();
+  const copy=a.state.items.find(x=>x.id===a.state.selectedId); assert.ok(a.getMonitorScreen(copy));
+  a.rotateSelected();
+  a.applyLoadedState(Domain.parseProjectDocument(JSON.stringify(Domain.createProjectDocument(a.state))).state);
+  assert.equal(a.state.items.find(x=>x.id===copy.id).monitorScreenId,'megane-mist');
+  restored.monitorScreenId='unknown'; assert.equal(a.getMonitorScreen(restored),null);
+});
+
+test('モニター: 添付画像を変形・クロップせず画面内に収める', () => {
+  const a=app(true),T=a.THREE;
+  T.TextureLoader.prototype.load=function(source,onLoad){const texture=new T.Texture();onLoad(texture);return texture;};
+  const item=a.add('monitor'); item.monitorScreenId='megane-mist';
+  const scene=new T.Scene(); a.addThreeOperationalItem(scene,a.createThreeDisplayItem(item));
+  const print=scene.children[0].children.find(x=>x.userData.monitorScreen);
+  assert.ok(print); const size=print.geometry.parameters;
+  assert.ok(Math.abs(size.width/size.height-1672/941)<1e-10);
+  assert.ok(size.width<=item.width*.9); assert.ok(size.height<=item.height*.68*.82);
+  assert.equal(print.material.side,T.FrontSide);
+});
 
 test('追加3製品: 公式外寸・検索・カテゴリ・支持面を区別する', () => {
   const a = app();
