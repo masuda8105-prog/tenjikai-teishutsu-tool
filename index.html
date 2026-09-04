@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>展示ブース装飾提出ツール</title>
-  <link rel="stylesheet" href="styles.css?v=20260824-5">
+  <title>展示ブースプランナー</title>
+  <link rel="stylesheet" href="styles.css?v=20260904-1">
 </head>
 <body>
   <header class="app-header no-print">
     <div>
-      <p class="eyebrow">Booth layout submitter</p>
-      <h1>展示ブース装飾提出ツール</h1>
+      <p class="eyebrow">展示ブースプランナー</p>
+      <h1 id="workspaceTitle">ブースをつくる</h1>
+      <span id="mobileAutosaveStatus" role="status" class="mobile-save-status"></span>
     </div>
     <div class="header-actions">
       <button id="undoBtn" class="secondary" disabled>元に戻す</button>
       <button id="redoBtn" class="secondary" disabled>やり直す</button>
+      <span id="autosaveStatus" role="status">自動保存</span>
+      <button id="advancedModeBtn" class="secondary" type="button" aria-pressed="false">詳細設定</button>
       <button id="saveProjectBtn" class="secondary">保存</button>
       <button id="loadProjectBtn" class="secondary">読込</button>
       <button id="printBtn" class="primary">PDF出力</button>
@@ -23,8 +26,15 @@
 
   <main class="workspace">
     <aside class="panel no-print">
-      <section>
-        <h2>展示会</h2>
+      <button id="mobilePanelCloseBtn" class="mobile-panel-close secondary" type="button" aria-label="パネルを閉じる">閉じる</button>
+      <section id="boothSettingsSection">
+        <div class="mobile-settings-actions button-row">
+          <button id="mobileAdvancedBtn" class="secondary" type="button">詳細の切替</button>
+          <button id="mobileLoadBtn" class="secondary" type="button">読込</button>
+          <button id="mobileClearBtn" class="secondary" type="button">配置をクリア</button>
+        </div>
+        <details id="boothSettingsDetails">
+        <summary>ブースの設定</summary>
         <label>
           プリセット
           <select id="presetSelect"></select>
@@ -72,16 +82,17 @@
             <option value="200">200</option>
           </select></label>
         </div>
-        <p class="field-help">動線必要幅は設計目安です。会場規定・避難条件を優先してください。</p>
+        <p class="field-help advanced-only">動線必要幅は設計目安です。会場規定・避難条件を優先してください。</p>
         <label id="jointSideField" class="hidden">鈴木眼鏡様 0.5コマの位置
           <select id="jointSide">
             <option value="right">右側</option>
             <option value="left">左側</option>
           </select>
         </label>
+        </details>
       </section>
 
-      <section>
+      <section id="submissionInfoSection">
         <h2>提出情報</h2>
         <label>展示会名<input id="eventName" type="text"></label>
         <label>小間番号<input id="boothNo" type="text" placeholder="例: A-12"></label>
@@ -90,28 +101,36 @@
         <label>備考<textarea id="notes" rows="3" placeholder="電源位置、壁面装飾、注意事項など"></textarea></label>
       </section>
 
-      <section>
+      <section id="paletteSection">
         <h2>配置するもの</h2>
         <button id="standardLayoutBtn" class="primary wide-btn">標準レイアウトを置く</button>
+        <label class="palette-search">品番・商品名で検索<input id="itemSearch" type="search" placeholder="例: 912、プリンター"></label>
+        <div class="palette-categories" aria-label="追加カテゴリ">
+          <button data-palette-category="all" type="button">すべて</button>
+          <button class="active" data-palette-category="fixtures" type="button">什器</button>
+          <button data-palette-category="products" type="button">商品</button>
+          <button data-palette-category="equipment" type="button">展示備品</button>
+          <button data-palette-category="planning" type="button">設備・計画</button>
+        </div>
         <div id="itemPalette" class="palette"></div>
       </section>
 
-      <section>
+      <section id="powerSection">
         <h2>電源回路</h2>
         <p class="muted circuit-help">容量は会場・施工会社の確定値を入力してください。空欄は「未登録」として検査します。</p>
         <div id="powerCircuitEditor" class="power-circuit-editor"></div>
         <button id="addPowerCircuitBtn" class="secondary wide-btn" type="button">回路を追加</button>
       </section>
 
-      <section>
+      <section id="selectionSection">
         <h2>選択中</h2>
         <div id="emptySelection" class="muted">図面上の備品をクリックしてください。</div>
         <div id="selectionEditor" class="selection-editor hidden">
           <label>名称<input id="itemLabel" type="text"></label>
           <div class="three-col">
-            <label>幅 mm<input id="itemWidth" type="number" min="50" step="50"></label>
-            <label>奥行 mm<input id="itemDepth" type="number" min="50" step="50"></label>
-            <label>高さ mm<input id="itemHeight" type="number" min="20" step="50"></label>
+            <label>幅 mm<input id="itemWidth" type="number" min="1" step="1"></label>
+            <label>奥行 mm<input id="itemDepth" type="number" min="1" step="1"></label>
+            <label>高さ mm<input id="itemHeight" type="number" min="1" step="1"></label>
           </div>
           <div class="two-col">
             <label>X mm<input id="itemX" type="number" step="50"></label>
@@ -125,14 +144,17 @@
           <div id="fixtureMasterInfo" class="fixture-master-info"></div>
           <button id="resetMasterDimensionsBtn" class="secondary hidden" type="button">マスター寸法へ戻す</button>
           <div id="surfacePlacementFields" class="surface-placement-fields hidden">
-            <strong>机上・専用台への配置</strong>
+            <strong>置く場所</strong>
+            <div id="surfacePlacementInfo" class="surface-placement-info"></div>
+            <details>
+            <summary>置き場所を変更</summary>
             <label>載せる机／台<select id="itemSupportId"></select></label>
             <div class="button-row">
-              <button id="placeOnSupportBtn" class="primary" type="button">中央へ正確に載せる</button>
+              <button id="placeOnSupportBtn" class="primary" type="button">この上に置く</button>
               <button id="detachFromSupportBtn" class="secondary hidden" type="button">床へ降ろす</button>
             </div>
-            <div id="surfacePlacementInfo" class="surface-placement-info"></div>
-            <p class="field-help">2Dで中心を机・専用台へ重ねて離すか、X/Yを確定すると自動で机上配置します。載せた物は天板に追従し、Zは天板高から自動計算します。張り出しは許可しません。</p>
+            </details>
+            <p class="field-help advanced-only">机や台の上へドラッグすると、自動で上に乗ります。台を動かすと上の物も一緒に動きます。</p>
           </div>
           <label id="wattField" class="hidden"><span id="wattFieldLabel">消費電力 W</span><input id="itemWatt" type="number" min="0" step="10"></label>
           <label id="circuitField" class="hidden">接続回路<select id="itemCircuitId"></select></label>
@@ -245,7 +267,7 @@
         </div>
       </section>
 
-      <section>
+      <section id="agentsSection">
         <h2>エージェント確認</h2>
         <div id="agentChecks" class="agent-checks"></div>
       </section>
@@ -256,9 +278,15 @@
         <button data-view="layout" class="view-btn active">配置図</button>
         <button data-view="list" class="view-btn">備品一覧</button>
         <button data-view="preview3d" class="view-btn">3D配置確認</button>
+        <button id="visitorViewBtn" class="secondary" type="button">来場者目線</button>
+        <button id="dimensionsBtn" class="secondary" type="button" aria-pressed="false">寸法</button>
+        <button id="zoomOutBtn" class="secondary" type="button" aria-label="縮小">−</button>
+        <button id="zoomInBtn" class="secondary" type="button" aria-label="拡大">＋</button>
+        <button id="fitCanvasBtn" class="secondary" type="button">全体</button>
         <button id="generate3dBtn" class="secondary">完成イメージ用資料</button>
         <button id="clearBtn" class="secondary">初期化</button>
       </div>
+      <div id="editorMessage" class="editor-message" role="status" aria-live="polite"></div>
 
       <article id="printSheet" class="print-sheet">
         <div class="sheet-head">
@@ -274,7 +302,7 @@
         </div>
 
         <div id="layoutView" class="layout-wrap">
-          <canvas id="layoutCanvas" width="980" height="700"></canvas>
+          <canvas id="layoutCanvas" width="980" height="700" tabindex="0" aria-label="ブース配置図。ものをドラッグして移動、背景をドラッグして画面移動"></canvas>
           <img id="printLayoutImage" class="print-layout-image" alt="高画質配置図">
           <div class="legend">
             <span><i class="swatch fixture"></i>什器</span>
@@ -324,7 +352,7 @@
             </div>
             <div id="preview3dWarning" class="preview3d-warning hidden"></div>
             <div class="preview3d-help">ドラッグ: 視点回転 / ホイール: 拡大縮小 / クリック: 什器選択</div>
-            <canvas id="preview3dCanvas" width="1280" height="810" tabindex="0" aria-label="選択した什器だけを表示する3D配置確認"></canvas>
+            <canvas id="preview3dCanvas" width="1280" height="810" tabindex="0" aria-label="ブース全体の3D配置確認"></canvas>
             <div class="preview3d-selection no-print">
               <span id="preview3dSelectionText">3D内の什器をクリックすると選択できます</span>
               <span class="preview3d-selection-actions">
@@ -405,10 +433,54 @@
     </section>
   </main>
 
+  <nav class="mobile-dock no-print" aria-label="スマートフォン主要操作">
+    <button id="mobileAddBtn" class="primary" type="button">＋ 追加</button>
+    <button id="mobileViewBtn" class="secondary" type="button">3D・表示</button>
+    <button id="mobileUndoBtn" class="secondary" type="button">元に戻す</button>
+    <button id="mobileSettingsBtn" class="secondary" type="button">設定</button>
+    <button id="mobileSaveBtn" class="secondary" type="button">保存</button>
+  </nav>
+
+  <section id="mobileAddDrawer" class="mobile-drawer hidden no-print" aria-label="追加するもの">
+    <div class="mobile-drawer-head">
+      <div><strong>＋ 追加</strong><span>配置したいものを選択</span></div>
+      <button id="mobileAddCloseBtn" class="secondary" type="button">閉じる</button>
+    </div>
+    <label class="palette-search">品番・商品名で検索<input id="mobileItemSearch" type="search" placeholder="例: 912、プリンター"></label>
+    <div class="palette-categories" aria-label="追加カテゴリ">
+          <button data-mobile-palette-category="all" type="button">すべて</button>
+          <button class="active" data-mobile-palette-category="fixtures" type="button">什器</button>
+      <button data-mobile-palette-category="products" type="button">商品</button>
+      <button data-mobile-palette-category="equipment" type="button">展示備品</button>
+      <button data-mobile-palette-category="planning" type="button">設備・計画</button>
+    </div>
+    <div id="mobileItemPalette" class="palette mobile-palette"></div>
+  </section>
+
+  <section id="mobileSelectionSheet" class="mobile-selection-sheet hidden no-print" aria-label="選択中の操作">
+    <div class="mobile-selection-summary">
+      <strong id="mobileSelectionName"></strong>
+      <span id="mobileSelectionMeta"></span>
+    </div>
+    <div class="mobile-selection-actions">
+      <button id="mobileRotateBtn" class="secondary" type="button">回転</button>
+      <button id="mobileDuplicateBtn" class="secondary" type="button">複製</button>
+      <button id="mobileDetailsBtn" class="secondary" type="button">詳細</button>
+      <button id="mobileDeleteBtn" class="danger" type="button">削除</button>
+    </div>
+  </section>
+
+  <dialog id="editorConfirmDialog" aria-labelledby="confirmMessage" class="editor-confirm no-print">
+    <p id="confirmMessage"></p>
+    <div class="button-row">
+      <button id="confirmCancelBtn" class="secondary" type="button">キャンセル</button>
+      <button id="confirmAcceptBtn" class="danger" type="button">削除する</button>
+    </div>
+  </dialog>
   <input id="projectFile" class="hidden" type="file" accept="application/json">
   <script src="assets/vendor/three.bundle.min.js?v=20260716-2"></script>
-  <script src="booth-domain.js?v=20260825-6"></script>
-  <script src="app.js?v=20260825-18"></script>
+  <script src="booth-domain.js?v=20260904-1"></script>
+  <script src="app.js?v=20260904-1"></script>
 </body>
 </html>
 

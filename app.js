@@ -43,6 +43,8 @@ const rawFixtureMasters = [
   { type: "product", productCategory: "buff-motor-95", productCode: "95", masterId: "SANNI-95", label: "吸塵バフモーター No.95", width: 370, depth: 312, height: 237, color: "#d7c99f", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.218 / W370×D312×H237mm", catalogReference: "総合カタログ2025-2027 p.218", image: "assets/products/buffer-95.png", surfacePlaceable: true, watt: 230, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "主モーター200W＋吸塵モーター15W×2＝計画負荷230W", "連続25分"] } },
   { type: "product", productCategory: "buff-motor-1010", productCode: "1010", masterId: "SANNI-1010", label: "省スペース吸塵バフモーター No.1010", width: 232, depth: 239, height: 417, color: "#ded3ad", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.219 / W232×D239×H417mm", catalogReference: "総合カタログ2025-2027 p.219", image: "assets/products/buffer-1010.png", surfacePlaceable: true, watt: 127, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力50Hz 127W・60Hz 125W（計画は最大127W）", "連続定格"] } },
   { type: "product", productCategory: "buff-motor-989", productCode: "989", masterId: "SANNI-989", label: "眼鏡バフモーター No.989", width: 340, depth: 135, height: 215, color: "#e4dfcf", material: "カタログに材質記載なし", dimensionLocked: true, dimensionSource: "サンニシムラ総合カタログ2025-2027 p.219 / W340×D135×H215mm", catalogReference: "総合カタログ2025-2027 p.219", image: "assets/products/buffer-989.png", surfacePlaceable: true, watt: 120, visibilityRole: "product", model3d: { kind: "parametric-catalog-reference", accuracy: "verified-envelope/catalog-photo-detail" }, setupInfo: { status: "catalog-source", instructions: ["100V", "消費電力120W", "連続30分"] } },
+  { type: "product", productCategory: "processing-storage-rack", productCode: "271-D", masterId: "SANNI-271-D", label: "加工整理箱・カラーケース用ラック No.271-D", width: 160, depth: 180, height: 350, color: "#edf1f2", material: "アクリル（公式記載）", dimensionLocked: true, dimensionSource: "サンニシムラ公式製品ページ / 外寸W160×D180×H350mm", sourceUrl: "https://www.san-nishimura.co.jp/product/item/加工整理箱・カラーケース用ラック/", image: "assets/products/rack-271-d.png", surfacePlaceable: true, placementType: "surface", allowedSurfaceTypes: ["tabletop", "display-top", "riser-top"], visibilityRole: "product", model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/official-product-image" }, setupInfo: { status: "official-source", instructions: ["No.271用5段通常タイプ", "机・展示台上へ正立", "前後どちらからも出し入れできる向きで配置"] } },
+  { type: "product", productCategory: "ultrasonic-cleaner", productCode: "912", masterId: "SANNI-912", label: "超音波洗浄器 No.912", width: 160, depth: 110, height: 180, color: "#eef1f1", material: "白色ボディ・ステンレス洗浄槽", dimensionLocked: true, dimensionSource: "サンニシムラ公式製品ページ / 外径W160×D110×H180mm（突起物含まず）", sourceUrl: "https://www.san-nishimura.co.jp/product/item/超音波洗浄器-912/", image: "assets/products/ultrasonic-cleaner-912.png", surfacePlaceable: true, placementType: "surface", allowedSurfaceTypes: ["tabletop", "display-top", "riser-top"], ratedOutputW: 70, watt: 0, visibilityRole: "product", model3d: { kind: "parametric-official-envelope", accuracy: "verified-envelope/official-product-image" }, setupInfo: { status: "official-source", instructions: ["省スペース型業務用眼鏡洗浄器", "操作面を来場者・スタッフ側へ向けて正立", "洗浄槽開口を上向きに保持", "AC100V・定格出力70W・電源コード2m"] } },
   { type: "table", label: "展示台 W1500xD900", width: 1500, depth: 900, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD600", width: 1800, depth: 600, height: 700, color: "#f2b84b" },
   { type: "table", label: "展示台 W1800xD900", width: 1800, depth: 900, height: 700, color: "#f2b84b" },
@@ -71,7 +73,12 @@ const rawFixtureMasters = [
   { type: "chair", label: "椅子", width: 450, depth: 450, color: "#9b8ad6" },
   { type: "zone", label: "接客スペース（必要面積を登録）", width: 1500, depth: 1200, height: 0, color: "#3b9e8f", spaceCategory: "contact", activationMode: "always", requiredAreaMm2: 0, inventoryTotalUnits: 0, inventoryUnitsPerCarton: 0, inventoryReplenishmentCount: 0, inventoryCartonWidthMm: 0, inventoryCartonDepthMm: 0, inventoryCartonHeightMm: 0, inventoryMaxStackHeightMm: 0, inventoryDimensionsConfirmed: false },
   { type: "scenario", label: "営業物品（名称・実測寸法を編集）", width: 300, depth: 300, height: 300, color: "#b98a52", operationalCategory: "stock", activationMode: "operating", dimensionsConfirmed: false },
-  { type: "scenario", scenarioKind: "laptop", label: "ノートPC（開いた状態・要実測）", width: 340, depth: 240, height: 220, color: "#677d92", surfacePlaceable: true, operationalCategory: "pc", activationMode: "operating", dimensionsConfirmed: false, watt: 0 },
+  // 展示計画用の汎用備品寸法。特定メーカー値ではなく、一般的な13〜15型PC・小型A4プリンター・27型モニター等の外形包絡です。
+  { type: "scenario", scenarioKind: "laptop", label: "ノートパソコン（13〜15型・開いた状態）", width: 340, depth: 240, height: 220, color: "#677d92", surfacePlaceable: true, placementType: "surface", operationalCategory: "pc", activationMode: "always", dimensionsConfirmed: false, dimensionAccuracy: "planning-average", dimensionSource: "一般的な13〜15型ノートPCの展示計画用外形 W340×D240×H220mm", watt: 0 },
+  { type: "scenario", scenarioKind: "compact-printer", label: "A4小型プリンター", width: 400, depth: 350, height: 180, color: "#e9ecec", surfacePlaceable: true, placementType: "surface", operationalCategory: "pc", activationMode: "always", dimensionsConfirmed: false, dimensionAccuracy: "planning-average", dimensionSource: "一般的なA4対応小型プリンターの展示計画用外形 W400×D350×H180mm", watt: 0 },
+  { type: "scenario", scenarioKind: "tablet", label: "タブレット（11型程度）", width: 250, depth: 175, height: 10, color: "#45545c", surfacePlaceable: true, placementType: "surface", operationalCategory: "pc", activationMode: "always", dimensionsConfirmed: false, dimensionAccuracy: "planning-average", dimensionSource: "一般的な11型タブレットの展示計画用外形 W250×D175×H10mm", watt: 0 },
+  { type: "scenario", scenarioKind: "smartphone", label: "スマートフォン", width: 150, depth: 75, height: 9, color: "#303a40", surfacePlaceable: true, placementType: "surface", operationalCategory: "pc", activationMode: "always", dimensionsConfirmed: false, dimensionAccuracy: "planning-average", dimensionSource: "一般的なスマートフォンの展示計画用外形 W150×D75×H9mm", watt: 0 },
+  { type: "scenario", scenarioKind: "monitor", label: "モニター（27型程度・スタンド込み）", width: 610, depth: 220, height: 450, color: "#3f4d54", surfacePlaceable: true, placementType: "surface", operationalCategory: "pc", activationMode: "always", dimensionsConfirmed: false, dimensionAccuracy: "planning-average", dimensionSource: "一般的な27型モニターのスタンド込み展示計画用外形 W610×D220×H450mm", watt: 0 },
   { type: "scenario", scenarioKind: "document-tray-3", label: "3段書類トレー（要実測）", width: 270, depth: 350, height: 260, color: "#8f9b9f", surfacePlaceable: true, operationalCategory: "promotion", activationMode: "operating", dimensionsConfirmed: false },
   { type: "scenario", scenarioKind: "trash-bin", label: "ゴミ箱（要実測）", width: 250, depth: 250, height: 350, color: "#697579", operationalCategory: "waste", activationMode: "operating", dimensionsConfirmed: false },
   { type: "scenario", scenarioKind: "stock-carton", label: "在庫ダンボール（要実測）", width: 500, depth: 350, height: 300, color: "#b98a52", operationalCategory: "stock", activationMode: "operating", dimensionsConfirmed: false },
@@ -142,15 +149,47 @@ function masterIdSuffix(item) {
   return "STANDARD";
 }
 
+function supportsPlacementSurfaceByDefault(item) {
+  if (!item) return false;
+  if (item.supportSurface === true || item.type === "table" || item.type === "bolda") return true;
+  return item.type === "fixture" && /展示台|什器棚|カウンター/.test(String(item.label || ""));
+}
+
+function defaultSurfaceType(item) {
+  if (item?.surfaceType) return item.surfaceType;
+  if (item?.type === "table") return "tabletop";
+  if (item?.type === "product") return "riser-top";
+  return "display-top";
+}
+
 function normalizeFixtureMaster(item, index) {
+  // Only reference dimensions are generic averages. Power must be entered from the actual equipment.
+  if (item.dimensionAccuracy === "planning-average") item = { ...item, watt: 0 };
   const code = item.boldaCode || (item.type === "bolda" ? Object.keys(boldaDetails).find((candidate) => `${item.label} ${item.image}`.includes(candidate)) : "");
   const masterId = item.masterId || (item.type === "bolda"
     ? `BOLDA-${code || `UNVERIFIED-${index + 1}`}-${masterIdSuffix(item)}`
     : `STD-${String(index + 1).padStart(3, "0")}-${item.type.toUpperCase()}`);
   const printFaces = [item.frontTexture, ...(item.tierTextures || []), item.riserTexture].filter(Boolean);
+  const supportSurface = supportsPlacementSurfaceByDefault(item);
+  const surfacePlaceable = item.surfacePlaceable === true || code === "AS01" || code === "VB01_600CB";
   return Object.freeze({
     ...item,
     masterId,
+    height: item.height || (item.type === "table" ? 700 : 0),
+    surfacePlaceable,
+    searchAliases: Object.freeze([...(item.searchAliases || []), ...(code === "AS01" ? ["ヨーカン棒", "小型展示台"] : []), ...(item.productCategory === "ultrasonic-cleaner" ? ["超音波洗浄機"] : []), ...(item.scenarioKind === "laptop" ? ["PC", "パソコン"] : [])]),
+    placementType: item.placementType || (surfacePlaceable ? "surface" : "floor"),
+    supportSurface,
+    surfaceType: supportSurface ? defaultSurfaceType(item) : "",
+    allowedSurfaceTypes: Object.freeze([...(item.allowedSurfaceTypes || ["tabletop", "display-top", "riser-top"])]),
+    // Usable top face follows the existing reference-based 3D shape, not its bounding box.
+    supportTop: Object.freeze(item.supportTop || ({
+      ED04: { x: 0, y: 0, width: 1, depth: 1 / 3, height: 1 },
+      TB05_AS01: { x: 0, y: 0, width: 1, depth: 250 / 600, height: 1 },
+      SF03: { x: .07, y: .19, width: .86, depth: .72, height: 1405 / 1490 }
+    }[code] || (item.type === "fixture" && /什器棚/.test(item.label)
+      ? { x: .03, y: .06 + 8 / item.depth, width: .94, depth: .88, height: ((item.height || 1400) - 66) / (item.height || 1400) }
+      : { x: 0, y: 0, width: 1, depth: 1, height: 1 }))),
     material: item.material || (item.type === "bolda" ? "材質の確定情報は未登録（提供印刷フォーマット参照）" : "未登録"),
     shape2d: Object.freeze({ kind: "rectangle", width: item.width, depth: item.depth }),
     model3d: Object.freeze(item.model3d || {
@@ -247,10 +286,20 @@ let inventoryAudit = null;
 const historyPast = [];
 const historyFuture = [];
 let historyApplying = false;
+let paletteCategoryFilter = "fixtures";
+let mobilePaletteCategoryFilter = "fixtures";
+let dropPreview = null;
+const canvasPointers = new Map();
+let canvasGesture = null;
+let canvasPan = null;
+const canvasView = { zoom: 1, panX: 0, panY: 0 };
+let dimensionsVisible = false;
+let advancedMode = false;
 
 const $ = (id) => document.getElementById(id);
 
 function init() {
+  initializeSimpleUi();
   Object.entries(presets).forEach(([key, preset]) => {
     const option = document.createElement("option");
     option.value = key;
@@ -258,21 +307,37 @@ function init() {
     $("presetSelect").append(option);
   });
 
-  itemTypes.forEach((item) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "palette-item";
-    const detail = paletteDetail(item);
-    button.innerHTML = `${paletteVisual(item)}<span>${item.label}</span>${detail ? `<small>${detail}</small>` : ""}`;
-    button.addEventListener("click", () => addItem(item));
-    $("itemPalette").append(button);
-  });
+  renderPalettes();
 
   bindInputs();
   if (!loadAutosave()) {
     applyPreset("wof");
+    state.selectedId = null;
   }
   render();
+  new ResizeObserver(resizeLayoutCanvas).observe(canvas);
+  new ResizeObserver(() => { if (state.view === "preview3d" && threePreview) { configureThreeCamera(false); renderThreeScene(); } }).observe(preview3dCanvas);
+}
+
+function initializeSimpleUi() {
+  ["submissionInfoSection", "powerSection", "agentsSection", "operationModeStatus", "fixtureMasterInfo", "selectedMeasurements", "resetMasterDimensionsBtn", "wattField", "circuitField", "ratedCapacityField", "powerConnectionFields", "personRoleField", "activationModeField", "scenarioFields", "spaceFields", "visibilityRoleField", "visibilitySettings", "generate3dBtn", "downloadPromptTxtBtn", "downloadSpecJsonBtn", "downloadCodexPackBtn", "preview3dSpec", "preview3dAssetStatus", "boldaPreview", "downloadLayoutPngBtn", "download3dPngBtn"].forEach((id) => $(id)?.classList.add("advanced-only"));
+  ["itemX", "itemZ", "routeClearanceMm", "gridSizeSelect", "bringForwardBtn", "bringToFrontBtn"].forEach((id) => $(id)?.closest(".two-col, .button-row")?.classList.add("advanced-only"));
+  $("operationMode").closest("label").classList.add("advanced-only");
+  document.querySelectorAll(".image-prompt, .real-booth-refs, .furniture-image-refs, .bolda-image-refs, .preview3d-eye-height").forEach((element) => element.classList.add("advanced-only"));
+}
+
+function resizeLayoutCanvas() {
+  if (printRenderMode || state.view !== "layout") return;
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width < 1 || rect.height < 1) return;
+  canvas.width = Math.round(rect.width);
+  canvas.height = Math.round(rect.height);
+  drawCanvas();
+}
+
+function resetCanvasView() {
+  Object.assign(canvasView, { zoom: 1, panX: 0, panY: 0 });
+  resizeLayoutCanvas();
 }
 
 function paletteVisual(item) {
@@ -521,6 +586,70 @@ function bindInputs() {
   $("loadProjectBtn").addEventListener("click", () => $("projectFile").click());
   $("projectFile").addEventListener("change", loadProject);
 
+  $("itemSearch").addEventListener("input", renderPalettes);
+  $("mobileItemSearch").addEventListener("input", renderPalettes);
+  document.querySelectorAll("[data-palette-category]").forEach((button) => {
+    button.addEventListener("click", () => {
+      paletteCategoryFilter = button.dataset.paletteCategory;
+      document.querySelectorAll("[data-palette-category]").forEach((candidate) => candidate.classList.toggle("active", candidate === button));
+      renderPalettes();
+    });
+  });
+  document.querySelectorAll("[data-mobile-palette-category]").forEach((button) => {
+    button.addEventListener("click", () => {
+      mobilePaletteCategoryFilter = button.dataset.mobilePaletteCategory;
+      document.querySelectorAll("[data-mobile-palette-category]").forEach((candidate) => candidate.classList.toggle("active", candidate === button));
+      renderPalettes();
+    });
+  });
+  $("mobileAddBtn").addEventListener("click", openMobileAddDrawer);
+  $("mobileAddCloseBtn").addEventListener("click", closeMobileDrawers);
+  $("mobileViewBtn").addEventListener("click", () => setView(state.view === "preview3d" ? "layout" : "preview3d"));
+  $("mobileUndoBtn").addEventListener("click", undoDesignChange);
+  $("mobileSettingsBtn").addEventListener("click", () => openMobilePanel("settings"));
+  $("mobileSaveBtn").addEventListener("click", saveProject);
+  $("mobileRotateBtn").addEventListener("click", rotateSelected);
+  $("mobileDuplicateBtn").addEventListener("click", duplicateSelected);
+  $("mobileDeleteBtn").addEventListener("click", deleteSelected);
+  $("mobileDetailsBtn").addEventListener("click", () => openMobilePanel("selection"));
+  $("mobilePanelCloseBtn").addEventListener("click", closeMobilePanel);
+  $("mobileAdvancedBtn").addEventListener("click", () => $("advancedModeBtn").click());
+  $("mobileLoadBtn").addEventListener("click", () => $("projectFile").click());
+  $("mobileClearBtn").addEventListener("click", resetLayout);
+  $("confirmCancelBtn").addEventListener("click", () => $("editorConfirmDialog").close());
+  $("confirmAcceptBtn").addEventListener("click", () => {
+    $("editorConfirmDialog").close();
+    const action = askEditorConfirmation.action;
+    askEditorConfirmation.action = null;
+    if (action) action();
+  });
+  $("advancedModeBtn").addEventListener("click", () => {
+    advancedMode = !advancedMode;
+    document.body.classList.toggle("advanced-mode", advancedMode);
+    $("advancedModeBtn").setAttribute("aria-pressed", String(advancedMode));
+    $("advancedModeBtn").textContent = advancedMode ? "詳細を閉じる" : "詳細設定";
+    render();
+  });
+  $("dimensionsBtn").addEventListener("click", () => {
+    dimensionsVisible = !dimensionsVisible;
+    $("dimensionsBtn").setAttribute("aria-pressed", String(dimensionsVisible));
+    drawCanvas();
+  });
+  $("fitCanvasBtn").addEventListener("click", resetCanvasView);
+  [["zoomInBtn", 1.25], ["zoomOutBtn", .8]].forEach(([id, factor]) => $(id).addEventListener("click", () => {
+    canvasView.zoom = Math.min(6, Math.max(.65, canvasView.zoom * factor));
+    drawCanvas();
+  }));
+  $("visitorViewBtn").addEventListener("click", () => {
+    setView("preview3d");
+    setThreeCameraPreset("visitor");
+  });
+  canvas.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    canvasView.zoom = Math.min(6, Math.max(.65, canvasView.zoom * Math.exp(-event.deltaY * .002)));
+    drawCanvas();
+  }, { passive: false });
+
   document.querySelectorAll(".view-btn").forEach((button) => {
     button.addEventListener("click", () => setView(button.dataset.view));
   });
@@ -531,6 +660,29 @@ function bindInputs() {
   canvas.addEventListener("pointercancel", endDrag);
   bindThreePreviewControls();
   document.addEventListener("keydown", onKeyDown);
+}
+
+function openMobileAddDrawer() {
+  closeMobilePanel();
+  $("mobileAddDrawer").classList.remove("hidden");
+  syncMobileUi();
+}
+
+function closeMobileDrawers() {
+  $("mobileAddDrawer").classList.add("hidden");
+  syncMobileUi();
+}
+
+function openMobilePanel(mode) {
+  closeMobileDrawers();
+  document.body.classList.toggle("mobile-editor-open", mode === "selection");
+  document.body.classList.toggle("mobile-settings-open", mode === "settings");
+  if (mode === "settings") $("boothSettingsDetails").open = true;
+  document.querySelector(".panel")?.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function closeMobilePanel() {
+  document.body.classList.remove("mobile-editor-open", "mobile-settings-open");
 }
 
 function createHighResolutionLayoutDataUrl() {
@@ -564,6 +716,7 @@ window.addEventListener("beforeprint", preparePrintLayoutImage);
 function setView(view) {
   state.view = ["layout", "list", "preview3d"].includes(view) ? view : "layout";
   render();
+  resizeLayoutCanvas();
 }
 
 function applyPreset(key) {
@@ -635,6 +788,10 @@ function buildScenarioPaletteSvg(item) {
   const color = item.color || "#d5963a";
   const shapes = {
     laptop: `<polygon points="28,67 92,67 82,82 38,82" fill="#67747a" stroke="#28373c" stroke-width="2"/><rect x="36" y="29" width="48" height="37" rx="3" fill="#263238" stroke="#172225" stroke-width="3"/><rect x="40" y="33" width="40" height="29" fill="#91c9d4"/>`,
+    "compact-printer": `<rect x="27" y="42" width="66" height="38" rx="7" fill="#e9ecec" stroke="#526166" stroke-width="3"/><rect x="38" y="27" width="44" height="25" fill="#fff" stroke="#8a9699" stroke-width="2"/><path d="M41 69H79" stroke="#526166" stroke-width="4"/>`,
+    tablet: `<rect x="30" y="26" width="60" height="58" rx="6" fill="#263238" stroke="#526166" stroke-width="3"/><rect x="35" y="31" width="50" height="46" fill="#83bcc8"/>`,
+    smartphone: `<rect x="43" y="21" width="34" height="67" rx="7" fill="#273237" stroke="#111" stroke-width="3"/><rect x="47" y="28" width="26" height="49" fill="#87c3cd"/>`,
+    monitor: `<rect x="22" y="23" width="76" height="48" rx="3" fill="#293235" stroke="#172225" stroke-width="3"/><rect x="27" y="28" width="66" height="38" fill="#83bcc8"/><path d="M60 72V84M42 86H78" stroke="#526166" stroke-width="5"/>`,
     "document-tray-3": `<rect x="31" y="24" width="58" height="60" rx="3" fill="#eff2f1" stroke="#526166" stroke-width="3"/><path d="M34 40H86M34 57H86M34 74H86" stroke="${color}" stroke-width="4"/>`,
     "trash-bin": `<path d="M36 30H84L78 84H42Z" fill="${color}" stroke="#6d542d" stroke-width="3"/><ellipse cx="60" cy="30" rx="24" ry="7" fill="#293234"/>`,
     "stock-carton": `<rect x="29" y="32" width="62" height="50" fill="#c99755" stroke="#6d542d" stroke-width="3"/><path d="M60 32V82M29 47H91" stroke="#8a673d" stroke-width="2"/>`,
@@ -655,6 +812,10 @@ function buildProductPaletteSvg(item) {
     shape = '<rect x="39" y="18" width="42" height="72" rx="4" fill="#f4f5f2" stroke="#6f7979" stroke-width="2"/><rect x="44" y="22" width="32" height="34" rx="5" fill="#d8f1f4" stroke="#6f7979" stroke-width="2"/><circle cx="60" cy="70" r="6" fill="#c7ccd0" stroke="#5b6264" stroke-width="2"/><rect x="47" y="79" width="26" height="7" rx="2" fill="#d5d9da"/>';
   } else if (item.productCategory === "gacha-stand") {
     shape = '<polygon points="32,52 78,44 89,57 43,66" fill="#fff" stroke="#7c8585" stroke-width="2"/><polygon points="43,66 89,57 89,76 43,85" fill="#f1efe8" stroke="#7c8585" stroke-width="2"/><path d="M32 52 L43 66 L43 85 L32 71 Z" fill="#e5e3dc" stroke="#7c8585" stroke-width="2"/>';
+  } else if (item.productCategory === "processing-storage-rack") {
+    shape = '<rect x="39" y="19" width="42" height="72" fill="#eaf3f5" fill-opacity=".45" stroke="#718084" stroke-width="2"/><path d="M39 34H81M39 48H81M39 62H81M39 76H81" stroke="#718084" stroke-width="2"/>';
+  } else if (item.productCategory === "ultrasonic-cleaner") {
+    shape = '<path d="M32 38H88L82 85H38Z" fill="#eef1f1" stroke="#647175" stroke-width="2"/><rect x="38" y="27" width="44" height="23" fill="#77878b" stroke="#3f4a4d" stroke-width="2"/><rect x="44" y="66" width="32" height="12" rx="5" fill="#fff" stroke="#9aa4a7"/>';
   } else {
     shape = '<rect x="38" y="24" width="44" height="64" fill="#d4a65d" stroke="#75542a" stroke-width="2"/><circle cx="60" cy="43" r="10" fill="#f7f1e5" stroke="#75542a" stroke-width="2"/><path d="M44 66 H76" stroke="#946a32" stroke-width="2"/>';
   }
@@ -699,6 +860,10 @@ function operationalCategoryLabel(category) {
 function scenarioKindLabel(kind) {
   return {
     laptop: "ノートパソコン",
+    "compact-printer": "A4小型プリンター",
+    tablet: "タブレット",
+    smartphone: "スマートフォン",
+    monitor: "モニター",
     "document-tray-3": "3段書類トレー",
     "trash-bin": "ゴミ箱",
     "stock-carton": "在庫ダンボール",
@@ -763,6 +928,49 @@ function addPowerCircuit() {
   render();
 }
 
+function paletteCategory(item) {
+  if (item.productCategory === "aluminum-pegboard") return "fixtures";
+  if (["table", "fixture", "bolda", "wall", "chair"].includes(item.type)) return "fixtures";
+  if (item.type === "product") return "products";
+  if (item.type === "scenario" || item.type === "device") return "equipment";
+  return "planning";
+}
+
+function paletteSearchText(item) {
+  return [item.label, item.productCode, item.masterId, item.productCategory, scenarioKindLabel(item.scenarioKind), ...(item.searchAliases || [])]
+    .filter(Boolean)
+    .join(" ")
+    .normalize("NFKC")
+    .toLocaleLowerCase("ja");
+}
+
+function renderPaletteInto(containerId, category, query, closeAfterAdd = false) {
+  const container = $(containerId);
+  if (!container) return;
+  const normalizedQuery = String(query || "").normalize("NFKC").trim().toLocaleLowerCase("ja");
+  const items = itemTypes.filter((item) => normalizedQuery ? paletteSearchText(item).includes(normalizedQuery) : (category === "all" || paletteCategory(item) === category));
+  container.innerHTML = "";
+  items.forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "palette-item";
+    button.dataset.masterId = item.masterId;
+    const detail = paletteDetail(item);
+    button.innerHTML = `${paletteVisual(item)}<span>${escapeHtml(item.boldaCode === "AS01" ? item.label.replace("bolda AS01", "ヨーカン棒 AS01") : item.label)}</span>${detail ? `<small>${detail}</small>` : ""}`;
+    button.addEventListener("click", () => {
+      addItem(item);
+      if (closeAfterAdd) closeMobileDrawers();
+    });
+    container.append(button);
+  });
+  if (!items.length) container.innerHTML = '<p class="palette-empty">該当する項目がありません。</p>';
+}
+
+function renderPalettes() {
+  renderPaletteInto("itemPalette", paletteCategoryFilter, $("itemSearch")?.value || "");
+  renderPaletteInto("mobileItemPalette", mobilePaletteCategoryFilter, $("mobileItemSearch")?.value || "", true);
+}
+
 function updatePowerCircuitFromEditor(event, renderNow = true) {
   const field = event.target.dataset.circuitField;
   const card = event.target.closest("[data-circuit-id]");
@@ -820,6 +1028,7 @@ function isImfEgfPreset() {
 }
 
 function addItem(template) {
+  const preferredSupport = selectedItem();
   const item = {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     type: template.type,
@@ -833,6 +1042,9 @@ function addItem(template) {
     weightKg: Math.max(0, Domain.finiteNumber(template.weightKg, 0)),
     surfacePlaceable: template.surfacePlaceable === true,
     supportSurface: template.supportSurface === true,
+    placementType: template.placementType || (template.surfacePlaceable ? "surface" : "floor"),
+    surfaceType: template.surfaceType || "",
+    allowedSurfaceTypes: [...(template.allowedSurfaceTypes || ["tabletop", "display-top", "riser-top"])],
     supportItemId: "",
     supportOffsetX: 0,
     supportOffsetY: 0,
@@ -887,8 +1099,51 @@ function addItem(template) {
     rotationQuarterTurns: 0
   };
   state.items.push(item);
+  if (!placeNewItemSafely(item, preferredSupport)) {
+    state.items.pop();
+    showEditorMessage("置ける空きがありません。ブースや配置を見直してください。");
+    return null;
+  }
   state.selectedId = item.id;
   render();
+  return item;
+}
+
+function placeItemOnSurface(item, support, maxDistanceMm = Infinity) {
+  if (!item.surfacePlaceable) return false;
+  const definition = getSupportPlacementDefinition(item, support);
+  if (!definition?.placement.fits) return false;
+  const placement = definition.kind === "official-fixed" ? definition.placement : freeSurfacePlacement(item, support, maxDistanceMm);
+  if (!placement) return false;
+  Object.assign(item, { supportItemId: support.id, supportOffsetX: placement.offsetX, supportOffsetY: placement.offsetY, supportZOffsetMm: placement.zOffsetMm });
+  syncSupportedItems();
+  return !hasPlacementCollision(item);
+}
+
+function placeOnFreeFloor(item) {
+  detachItemFromSupport(item);
+  const ids = new Set(placementTree(item).map((entry) => entry.id));
+  const top = Math.max(...placementTree(item).map((entry) => getItemVerticalRange(entry).top));
+  const obstacles = state.items.filter((entry) => !ids.has(entry.id) && !["zone", "person", "power", "spotlight", "wall"].includes(entry.type) && getItemVerticalRange(entry).bottom < top);
+  if (["zone", "person", "power", "spotlight", "wall"].includes(item.type)) return true;
+  const placement = Domain.findNearestFreeSupportPlacement(item,
+    { x: 0, y: 0, z: 0, width: state.booth.width, depth: state.booth.depth, height: 0 }, obstacles,
+    { offsetX: item.x, offsetY: item.y, zOffsetMm: 0, stepMm: 100 });
+  if (!placement) return false;
+  item.x = placement.x;
+  item.y = placement.y;
+  syncSupportedItems();
+  return !hasPlacementCollision(item);
+}
+
+function placeNewItemSafely(item, preferredSupport) {
+  if (item.width > state.booth.width || item.depth > state.booth.depth) return false;
+  const snapshot = placementTree(item).map((entry) => ({ ...entry }));
+  if (preferredSupport && placeItemOnSurface(item, preferredSupport)) return true;
+  restorePlacementItems(snapshot);
+  if (autoPlaceItemOnDropSupport(item) && !hasPlacementCollision(item)) return true;
+  restorePlacementItems(snapshot);
+  return placeOnFreeFloor(item);
 }
 
 function applyStandardLayout() {
@@ -990,7 +1245,10 @@ function makeItem(type, label, width, depth, color, x, y, watt = 0, height = 0, 
     scenarioKind: "",
     weightKg: 0,
     surfacePlaceable: false,
-    supportSurface: false,
+    supportSurface: type === "table",
+    placementType: "floor",
+    surfaceType: type === "table" ? "tabletop" : "",
+    allowedSurfaceTypes: ["tabletop", "display-top", "riser-top"],
     supportItemId: "",
     supportOffsetX: 0,
     supportOffsetY: 0,
@@ -1046,6 +1304,9 @@ function makeMasterItem(masterLabel, label, x, y, z = 0) {
     weightKg: master.weightKg || 0,
     surfacePlaceable: master.surfacePlaceable === true,
     supportSurface: master.supportSurface === true,
+    placementType: master.placementType || (master.surfacePlaceable ? "surface" : "floor"),
+    surfaceType: master.surfaceType || "",
+    allowedSurfaceTypes: [...(master.allowedSurfaceTypes || ["tabletop", "display-top", "riser-top"])],
     material: master.material || "",
     dimensionLocked: master.dimensionLocked === true,
     dimensionSource: master.dimensionSource || "",
@@ -1080,6 +1341,10 @@ function selectedItem() {
 }
 
 function getFixtureMaster(item) {
+  if (item?.type === "scenario" && item.scenarioKind) {
+    const scenarioMaster = itemTypes.find((master) => master.type === "scenario" && master.scenarioKind === item.scenarioKind);
+    if (scenarioMaster) return scenarioMaster;
+  }
   if (!item) return null;
   const byId = itemTypes.find((master) => master.masterId === item.masterId);
   const byProductIdentity = itemTypes.find((master) => master.type === item.type && (
@@ -1135,12 +1400,45 @@ function getSupportPlacementDefinition(item, support) {
       })
     };
   }
-  if (support.type !== "table") return null;
+  const allowedSurfaceTypes = item.allowedSurfaceTypes || ["tabletop", "display-top", "riser-top"];
+  const surfaceType = support.surfaceType || defaultSurfaceType(support);
+  if (!support.supportSurface || !allowedSurfaceTypes.includes(surfaceType)) return null;
+  const surface = getSupportTop(support);
+  const placement = Domain.calculateSupportPlacement(item, surface, { zOffsetMm: surface.height });
+  placement.offsetX += surface.x - support.x;
+  placement.offsetY += surface.y - support.y;
   return {
-    kind: "table-surface",
-    source: `${support.label}の登録天板W/D/H`,
-    placement: Domain.calculateSupportPlacement(item, support)
+    kind: "support-surface",
+    source: `${support.label}の登録支持面W/D/H`,
+    surface,
+    placement
   };
+}
+
+function getSupportTop(support) {
+  const profile = getFixtureMaster(support)?.supportTop || { x: 0, y: 0, width: 1, depth: 1, height: 1 };
+  const display = createThreeDisplayItem(support);
+  let x = profile.x * display.width, y = profile.y * display.depth;
+  let width = profile.width * display.width, depth = profile.depth * display.depth;
+  let boundsW = display.width, boundsD = display.depth;
+  for (let turn = 0; turn < ((display.threeQuarterTurns % 4 + 4) % 4); turn += 1) {
+    [x, y, width, depth, boundsW, boundsD] = [boundsD - y - depth, x, depth, width, boundsD, boundsW];
+  }
+  return { ...support, x: support.x + x, y: support.y + y, width, depth, height: (support.height || defaultItemHeight(support)) * profile.height };
+}
+
+function freeSurfacePlacement(item, support, maxDistanceMm = Infinity) {
+  const surface = getSupportTop(support);
+  const placement = Domain.findNearestFreeSupportPlacement(item, surface,
+    supportChildren(support).filter((other) => other.id !== item.id), {
+      offsetX: item.x - surface.x, offsetY: item.y - surface.y,
+      zOffsetMm: surface.height, stepMm: 25, maxDistanceMm
+    });
+  if (placement) {
+    placement.offsetX += surface.x - support.x;
+    placement.offsetY += surface.y - support.y;
+  }
+  return placement;
 }
 
 function availableSupportSurfaces(item) {
@@ -1149,16 +1447,17 @@ function availableSupportSurfaces(item) {
 }
 
 function findBestDropSupport(item) {
-  if (!item?.surfacePlaceable || item.supportItemId) return null;
-  return Domain.selectBestSupportForDrop(item, availableSupportSurfaces(item).map((support) => {
+  if (!item?.surfacePlaceable) return null;
+  const candidate = Domain.selectBestSupportForDrop(item, availableSupportSurfaces(item).map((support) => {
     const definition = getSupportPlacementDefinition(item, support);
-    return { support, kind: definition.kind, placement: definition.placement };
+    return { support: definition.surface || support, rootSupport: support, kind: definition.kind, placement: definition.placement };
   }));
+  return candidate ? { ...candidate, surface: candidate.support, support: candidate.rootSupport } : null;
 }
 
 function autoPlaceItemOnDropSupport(item) {
-  const candidate = findBestDropSupport(item);
-  if (!candidate) return false;
+  const candidate = getDropPlacement(item);
+  if (!candidate?.placement || candidate.blocked) return false;
   const { support, kind, placement } = candidate;
   item.supportItemId = support.id;
   if (kind === "official-fixed") {
@@ -1166,12 +1465,86 @@ function autoPlaceItemOnDropSupport(item) {
     item.supportOffsetY = placement.offsetY;
     item.supportZOffsetMm = placement.zOffsetMm;
   } else {
-    item.supportOffsetX = Math.max(0, Math.min(support.width - item.width, item.x - support.x));
-    item.supportOffsetY = Math.max(0, Math.min(support.depth - item.depth, item.y - support.y));
-    item.supportZOffsetMm = support.height || defaultItemHeight(support);
+    item.supportOffsetX = placement.offsetX;
+    item.supportOffsetY = placement.offsetY;
+    item.supportZOffsetMm = placement.zOffsetMm;
   }
   syncSupportedItems();
   return true;
+}
+
+function getDropPlacement(item, maxDistanceMm = 180) {
+  const candidate = findBestDropSupport(item);
+  if (!candidate) return null;
+  if (candidate.kind === "official-fixed") return candidate;
+  const { support } = candidate;
+  const placement = freeSurfacePlacement(item, support, maxDistanceMm);
+  return { ...candidate, placement: placement || candidate.placement, blocked: !placement };
+}
+
+function placementTree(root) {
+  const result = [];
+  const pending = [root];
+  const visited = new Set();
+  while (pending.length) {
+    const item = pending.pop();
+    if (!item || visited.has(item.id)) continue;
+    visited.add(item.id);
+    result.push(item);
+    pending.push(...supportChildren(item));
+  }
+  return result;
+}
+
+function hasPlacementCollision(root) {
+  const moving = placementTree(root);
+  const ids = new Set(moving.map((item) => item.id));
+  const solid = (item) => !["zone", "person", "power", "spotlight", "wall"].includes(item.type);
+  return moving.filter(solid).some((item) => state.items.some((other) => {
+    if (ids.has(other.id) || !solid(other) || createsSupportCycle(other.id, item.id) || createsSupportCycle(item.id, other.id)) return false;
+    const a = getItemVerticalRange(item), b = getItemVerticalRange(other);
+    return a.bottom < b.top - 0.1 && a.top > b.bottom + 0.1 && Domain.rectanglesOverlap(item, other);
+  }));
+}
+
+function restorePlacementItems(snapshot) {
+  snapshot.forEach((saved) => {
+    const item = state.items.find((entry) => entry.id === saved.id);
+    if (item) Object.assign(item, saved);
+  });
+  syncSupportedItems();
+}
+
+function finishItemPlacement(item, snapshot) {
+  if (!item) return false;
+  const candidate = getDropPlacement(item);
+  if (candidate?.blocked) {
+    restorePlacementItems(snapshot);
+    showEditorMessage("この面には空きがありません。少し位置を変えてください。");
+    return false;
+  }
+  if (candidate) autoPlaceItemOnDropSupport(item);
+  else if (item.surfacePlaceable) detachItemFromSupport(item);
+  if (hasPlacementCollision(item)) {
+    restorePlacementItems(snapshot);
+    showEditorMessage("ここはほかの物と重なります。元の位置に戻しました。");
+    return false;
+  }
+  return true;
+}
+
+function showEditorMessage(message) {
+  const status = $("editorMessage");
+  if (!status) return;
+  status.textContent = message;
+  clearTimeout(showEditorMessage.timer);
+  showEditorMessage.timer = setTimeout(() => { status.textContent = ""; }, 4500);
+}
+
+function askEditorConfirmation(message, action) {
+  $("confirmMessage").textContent = message;
+  askEditorConfirmation.action = action;
+  $("editorConfirmDialog").showModal();
 }
 
 function detachItemFromSupport(item, clampToBooth = true, syncNow = true) {
@@ -1209,9 +1582,11 @@ function syncSupportedItems() {
         item.supportOffsetY = definition.placement.offsetY;
         item.supportZOffsetMm = definition.placement.zOffsetMm;
       } else {
-        item.supportOffsetX = Math.max(0, Math.min(support.width - item.width, Domain.finiteNumber(item.supportOffsetX, definition.placement.offsetX)));
-        item.supportOffsetY = Math.max(0, Math.min(support.depth - item.depth, Domain.finiteNumber(item.supportOffsetY, definition.placement.offsetY)));
-        item.supportZOffsetMm = support.height || defaultItemHeight(support);
+        const surface = definition.surface;
+        const minX = surface.x - support.x, minY = surface.y - support.y;
+        item.supportOffsetX = Math.max(minX, Math.min(minX + surface.width - item.width, Domain.finiteNumber(item.supportOffsetX, definition.placement.offsetX)));
+        item.supportOffsetY = Math.max(minY, Math.min(minY + surface.depth - item.depth, Domain.finiteNumber(item.supportOffsetY, definition.placement.offsetY)));
+        item.supportZOffsetMm = surface.height;
       }
       const nextX = support.x + item.supportOffsetX;
       const nextY = support.y + item.supportOffsetY;
@@ -1235,9 +1610,10 @@ function moveItemTo(item, x, y) {
       item.x = x;
       item.y = y;
       clampItem(item);
-    } else if (definition.kind === "table-surface") {
-      item.supportOffsetX = Math.max(0, Math.min(support.width - item.width, x - support.x));
-      item.supportOffsetY = Math.max(0, Math.min(support.depth - item.depth, y - support.y));
+    } else if (definition.kind === "support-surface") {
+      const surface = definition.surface;
+      item.supportOffsetX = Math.max(surface.x - support.x, Math.min(surface.x - support.x + surface.width - item.width, x - support.x));
+      item.supportOffsetY = Math.max(surface.y - support.y, Math.min(surface.y - support.y + surface.depth - item.depth, y - support.y));
     }
   } else {
     item.x = x;
@@ -1255,18 +1631,22 @@ function placeSelectedOnSupport() {
     alert("選択した台には実寸のまま載せられません。台のW/Dまたは組合せを確認してください。");
     return;
   }
-  item.supportItemId = support.id;
-  item.supportOffsetX = definition.placement.offsetX;
-  item.supportOffsetY = definition.placement.offsetY;
-  item.supportZOffsetMm = definition.placement.zOffsetMm;
-  syncSupportedItems();
+  const snapshot = placementTree(item).map((entry) => ({ ...entry }));
+  if (!placeItemOnSurface(item, support)) {
+    restorePlacementItems(snapshot);
+    showEditorMessage("この台には空きがありません。別の台を選んでください。");
+  }
   render();
 }
 
 function detachSelectedFromSupport() {
   const item = selectedItem();
   if (!item?.supportItemId) return;
-  detachItemFromSupport(item);
+  const snapshot = placementTree(item).map((entry) => ({ ...entry }));
+  if (!placeOnFreeFloor(item)) {
+    restorePlacementItems(snapshot);
+    showEditorMessage("床に空きがありません。先に置く場所を空けてください。");
+  }
   render();
 }
 
@@ -1296,6 +1676,7 @@ function resetSelectedToMasterDimensions() {
 }
 
 function paletteDetail(item) {
+  if (item.dimensionAccuracy === "planning-average") return `参考サイズ W${item.width}×D${item.depth}×H${item.height}mm`;
   if (item.type === "zone") return `用途領域 ${formatSquareMetres(item.width * item.depth)}㎡・必要面積を要登録`;
   if (item.type === "scenario") return `仮W${item.width}×D${item.depth}×H${item.height || "未登録"}mm・実測必須`;
   if (item.type === "spotlight") return `${item.watt}W`;
@@ -1308,15 +1689,16 @@ function paletteDetail(item) {
 function updateSelectedFromForm() {
   const item = selectedItem();
   if (!item) return;
+  const snapshot = placementTree(item).map((entry) => ({ ...entry }));
   const master = getFixtureMaster(item);
   const desiredX = Number($("itemX").value) || 0;
   const desiredY = Number($("itemY").value) || 0;
   item.label = $("itemLabel").value;
   if (!master?.dimensionLocked) {
-    item.width = Math.max(50, Number($("itemWidth").value) || 50);
-    item.depth = Math.max(50, Number($("itemDepth").value) || 50);
+    item.width = Math.max(1, Number($("itemWidth").value) || 1);
+    item.depth = Math.max(1, Number($("itemDepth").value) || 1);
     const heightInput = $("itemHeight").value.trim();
-    item.height = heightInput ? Math.max(20, Number(heightInput) || 20) : 0;
+    item.height = heightInput ? Math.max(1, Number(heightInput) || 1) : 0;
   }
   if (!item.supportItemId) item.z = Math.max(0, Number($("itemZ").value) || 0);
   if (supportsWattInput(item)) {
@@ -1355,32 +1737,41 @@ function updateSelectedFromForm() {
     item.targetFrontSide = $("itemTargetFrontSide").value;
   }
   moveItemTo(item, desiredX, desiredY);
+  if (item.width > state.booth.width || item.depth > state.booth.depth || snapshot.some((entry) => entry.supportItemId && !state.items.find((candidate) => candidate.id === entry.id)?.supportItemId) || hasPlacementCollision(item)) {
+    restorePlacementItems(snapshot);
+    showEditorMessage("その寸法・位置では物が重なるか、台に収まりません。変更を戻しました。");
+  }
   render();
 }
 
 function rotateSelected() {
   const item = selectedItem();
   if (!item) return;
-  if (supportChildren(item).length) {
-    alert("上に載せた物があるため回転できません。先に机上配置から床へ降ろしてください。");
-    return;
-  }
   const support = state.items.find((candidate) => candidate.id === item.supportItemId);
   const currentDefinition = getSupportPlacementDefinition(item, support);
   if (currentDefinition?.kind === "official-fixed") {
     alert("メーカー指定の組合せ配置です。向きを変える場合は支持台側を先に回転してください。");
     return;
   }
-  const previous = { width: item.width, depth: item.depth, rotationDeg: item.rotationDeg, rotationQuarterTurns: item.rotationQuarterTurns };
-  [item.width, item.depth] = [item.depth, item.width];
-  item.rotationDeg = Domain.normalizeRotationDegrees((item.rotationDeg || itemRotationQuarterTurns(item) * 90) + 90);
-  item.rotationQuarterTurns = item.rotationDeg / 90;
-  if (support && !getSupportPlacementDefinition(item, support)?.placement.fits) {
-    Object.assign(item, previous);
-    alert("回転後の実寸では選択中の天板に収まりません。");
-    return;
+  const snapshot = placementTree(item).map((entry) => ({ ...entry }));
+  const oldById = new Map(snapshot.map((entry) => [entry.id, entry]));
+  placementTree(item).forEach((entry) => {
+    const old = oldById.get(entry.id);
+    [entry.width, entry.depth] = [old.depth, old.width];
+    entry.rotationDeg = Domain.normalizeRotationDegrees((old.rotationDeg || itemRotationQuarterTurns(old) * 90) + 90);
+    entry.rotationQuarterTurns = entry.rotationDeg / 90;
+    const oldParent = oldById.get(old.supportItemId);
+    if (oldParent) {
+      entry.supportOffsetX = oldParent.depth - old.supportOffsetY - old.depth;
+      entry.supportOffsetY = old.supportOffsetX;
+    }
+  });
+  const old = snapshot[0];
+  moveItemTo(item, old.x + (old.width - item.width) / 2, old.y + (old.depth - item.depth) / 2);
+  if (item.width > state.booth.width || item.depth > state.booth.depth || (support && !getSupportPlacementDefinition(item, support)?.placement.fits) || hasPlacementCollision(item)) {
+    restorePlacementItems(snapshot);
+    showEditorMessage("回転する空きがありません。位置を変えてから回転してください。");
   }
-  moveItemTo(item, item.x, item.y);
   render();
 }
 
@@ -1402,33 +1793,34 @@ function moveSelectedLayer(direction) {
 
 function deleteSelected() {
   if (!state.selectedId) return;
-  supportChildren(state.selectedId).forEach((child) => detachItemFromSupport(child, true, false));
-  state.items = state.items.filter((item) => item.id !== state.selectedId);
-  state.selectedId = null;
-  syncSupportedItems();
-  render();
+  const tree = placementTree(selectedItem());
+  const ids = new Set(tree.map((item) => item.id));
+  const remove = () => {
+    state.items = state.items.filter((item) => !ids.has(item.id));
+    state.selectedId = null;
+    syncSupportedItems();
+    render();
+  };
+  if (tree.length > 1) askEditorConfirmation(`上に載っている${tree.length - 1}点も一緒に削除します。元に戻すで復元できます。`, remove);
+  else remove();
 }
 
 function duplicateSelected() {
   const source = selectedItem();
   if (!source) return;
-  const offset = Domain.sanitizeGridSize(state.gridSize);
-  const copy = {
-    ...source,
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-    label: `${source.label}（複製）`,
-    tierTextures: [...(source.tierTextures || [])],
-    referenceImages: [...(source.referenceImages || [])],
-    supportItemId: "",
-    supportOffsetX: 0,
-    supportOffsetY: 0,
-    supportZOffsetMm: 0,
-    z: 0,
-    x: source.x + offset,
-    y: source.y + offset
-  };
-  clampItem(copy);
-  state.items.push(copy);
+  const tree = placementTree(source);
+  const ids = new Map(tree.map((entry) => [entry.id, crypto.randomUUID()]));
+  const copies = tree.map((entry) => ({ ...structuredClone(entry), id: ids.get(entry.id), supportItemId: ids.get(entry.supportItemId) || "" }));
+  const copy = copies[0];
+  copy.label = `${source.label}（複製）`;
+  copy.x += 50;
+  copy.y += 50;
+  state.items.push(...copies);
+  if (!placeNewItemSafely(copy, state.items.find((entry) => entry.id === source.supportItemId))) {
+    state.items = state.items.filter((entry) => !copies.includes(entry));
+    showEditorMessage("複製を置く空きがありません。");
+    return;
+  }
   state.selectedId = copy.id;
   render();
 }
@@ -1459,10 +1851,13 @@ function onKeyDown(event) {
 }
 
 function resetLayout() {
-  if (!confirm("配置した備品をすべて削除しますか？")) return;
-  state.items = [];
-  state.selectedId = null;
-  render();
+  askEditorConfirmation("配置したものをすべて削除します。元に戻すで復元できます。", () => {
+    state.items = [];
+    state.selectedId = null;
+    resetCanvasView();
+    closeMobilePanel();
+    render();
+  });
 }
 
 function clampItems() {
@@ -1488,7 +1883,10 @@ function normalizeItems() {
     if (master && (migratedMaster || !item.dimensionSource)) item.dimensionSource = master.dimensionSource || "";
     if (master?.frontTexture && (master.dimensionLocked || !item.frontTexture)) item.frontTexture = master.frontTexture;
     item.surfacePlaceable = master ? master.surfacePlaceable === true : item.surfacePlaceable === true;
-    item.supportSurface = master ? master.supportSurface === true : item.supportSurface === true;
+    item.supportSurface = master ? master.supportSurface === true : supportsPlacementSurfaceByDefault(item);
+    item.placementType = String(item.placementType || master?.placementType || (item.surfacePlaceable ? "surface" : "floor"));
+    item.surfaceType = item.supportSurface ? String(item.surfaceType || master?.surfaceType || defaultSurfaceType(item)) : "";
+    item.allowedSurfaceTypes = [...(Array.isArray(item.allowedSurfaceTypes) ? item.allowedSurfaceTypes : master?.allowedSurfaceTypes || ["tabletop", "display-top", "riser-top"] )];
     item.supportItemId = String(item.supportItemId || "");
     item.supportOffsetX = Domain.finiteNumber(item.supportOffsetX, 0);
     item.supportOffsetY = Domain.finiteNumber(item.supportOffsetY, 0);
@@ -1601,10 +1999,9 @@ function inferWallPanelHeight(item) {
 
 function clampItem(item) {
   if (item.supportItemId) return;
-  item.width = Math.min(item.width, state.booth.width);
-  item.depth = Math.min(item.depth, state.booth.depth);
-  item.x = Math.min(Math.max(0, item.x), state.booth.width - item.width);
-  item.y = Math.min(Math.max(0, item.y), state.booth.depth - item.depth);
+  // Never shrink catalog dimensions to fit a booth.
+  item.x = Math.min(Math.max(0, item.x), Math.max(0, state.booth.width - item.width));
+  item.y = Math.min(Math.max(0, item.y), Math.max(0, state.booth.depth - item.depth));
 }
 
 function render() {
@@ -1618,6 +2015,7 @@ function render() {
   syncHeader();
   syncPowerCircuitEditor();
   syncSelectionEditor();
+  syncMobileUi();
   syncView();
   drawCanvas();
   renderTable();
@@ -1632,7 +2030,7 @@ function historySnapshot() {
 }
 
 function recordHistorySnapshot() {
-  if (historyApplying) return;
+  if (historyApplying || drag) return;
   const snapshot = historySnapshot();
   if (historyPast[historyPast.length - 1] === snapshot) return;
   historyPast.push(snapshot);
@@ -1669,9 +2067,23 @@ function redoDesignChange() {
 function syncHistoryButtons() {
   $("undoBtn").disabled = historyPast.length < 2;
   $("redoBtn").disabled = historyFuture.length === 0;
+  if ($("mobileUndoBtn")) $("mobileUndoBtn").disabled = historyPast.length < 2;
+}
+
+function syncMobileUi() {
+  const item = selectedItem();
+  const selectionSheet = $("mobileSelectionSheet");
+  selectionSheet.classList.toggle("hidden", !item || state.view !== "layout" || !$("mobileAddDrawer").classList.contains("hidden"));
+  if (item) {
+    $("mobileSelectionName").textContent = compactLabel(item.label);
+    const support = state.items.find((candidate) => candidate.id === item.supportItemId);
+    $("mobileSelectionMeta").textContent = `${itemSizeLabel(item)}・${Domain.normalizeRotationDegrees(item.rotationDeg)}°${support ? `・${support.label}の上` : "・床置き"}`;
+  }
+  $("mobileViewBtn").textContent = state.view === "preview3d" ? "配置図" : "3D・表示";
 }
 
 function syncHeader() {
+  $("workspaceTitle").textContent = state.eventName || "ブースをつくる";
   $("sheetTitle").textContent = state.eventName ? `${state.eventName} 展示ブース配置図` : "展示ブース配置図";
   $("metaBoothNo").textContent = state.boothNo || "-";
   $("metaCompany").textContent = state.companyName || "-";
@@ -1761,7 +2173,7 @@ function syncSurfacePlacementEditor(item) {
   const supports = availableSupportSurfaces(item);
   const currentSupport = state.items.find((candidate) => candidate.id === item.supportItemId);
   $("itemSupportId").innerHTML = supports.length
-    ? supports.map((support) => `<option value="${escapeHtml(support.id)}">${escapeHtml(support.label)}｜${escapeHtml(itemSizeLabel(support))}｜天板Z${Math.round((support.z || 0) + (support.height || defaultItemHeight(support)))}mm</option>`).join("")
+    ? supports.map((support) => `<option value="${escapeHtml(support.id)}">${escapeHtml(support.label)}</option>`).join("")
     : '<option value="">実寸適合する机・専用台なし</option>';
   if (currentSupport && supports.some((support) => support.id === currentSupport.id)) $("itemSupportId").value = currentSupport.id;
   $("placeOnSupportBtn").disabled = !supports.length;
@@ -1783,6 +2195,10 @@ function syncSurfacePlacementPreview() {
     return;
   }
   const placement = definition.placement;
+  if (!advancedMode) {
+    info.textContent = item.supportItemId ? `${state.items.find((entry) => entry.id === item.supportItemId)?.label || "台"}の上に配置中` : "床に配置中。台へドラッグしても載せられます。";
+    return;
+  }
   const overhang = placement.maximumOverhangMm > 0 ? `｜メーカー指定張り出し 最大${placement.maximumOverhangMm}mm` : "｜天板内に収容";
   const current = item.supportItemId === support.id ? "配置中" : "配置候補";
   const position = current === "配置中" ? item : placement;
@@ -1852,7 +2268,7 @@ function syncSelectedInventoryResult(item) {
 function isPoweredLoad(item) {
   return Boolean(item && (
     ["spotlight", "device", "powerstrip"].includes(item.type) ||
-    item.scenarioKind === "laptop" ||
+    (item.type === "scenario" && item.operationalCategory === "pc") ||
     isProductElectricalLoad(item)
   ));
 }
@@ -1860,14 +2276,15 @@ function isPoweredLoad(item) {
 function isProductElectricalLoad(item) {
   return Boolean(item?.type === "product" && (
     String(item.productCategory || "").startsWith("frame-heater-") ||
-    String(item.productCategory || "").startsWith("buff-motor-")
+    String(item.productCategory || "").startsWith("buff-motor-") ||
+    item.productCategory === "ultrasonic-cleaner"
   ));
 }
 
 function supportsWattInput(item) {
   return Boolean(item && (
     ["spotlight", "device"].includes(item.type) ||
-    item.scenarioKind === "laptop" ||
+    (item.type === "scenario" && item.operationalCategory === "pc") ||
     isProductElectricalLoad(item)
   ));
 }
@@ -1928,6 +2345,7 @@ function syncBoldaPreview(item) {
 }
 
 function syncView() {
+  document.body.classList.toggle("view-preview3d", state.view === "preview3d");
   document.querySelectorAll(".view-btn").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === state.view);
   });
@@ -1949,31 +2367,84 @@ function syncView() {
   }
 }
 
+function layoutCanvasPadding() {
+  return printRenderMode ? 44 : dimensionsVisible ? 58 : canvas.width < 600 ? 24 : 40;
+}
+
 function drawCanvas() {
-  const padding = printRenderMode ? 44 : 58;
+  const padding = layoutCanvasPadding();
   const usableW = canvas.width - padding * 2;
   const usableH = canvas.height - padding * 2;
-  scale = Math.min(usableW / state.booth.width, usableH / state.booth.depth);
+  const baseScale = Math.min(usableW / state.booth.width, usableH / state.booth.depth);
+  scale = baseScale * (printRenderMode ? 1 : canvasView.zoom);
   const boothPxW = state.booth.width * scale;
   const boothPxH = state.booth.depth * scale;
-  origin = { x: (canvas.width - boothPxW) / 2, y: (canvas.height - boothPxH) / 2 };
+  origin = {
+    x: (canvas.width - boothPxW) / 2 + (printRenderMode ? 0 : canvasView.panX),
+    y: (canvas.height - boothPxH) / 2 + (printRenderMode ? 0 : canvasView.panY)
+  };
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid(boothPxW, boothPxH);
   drawBooth(boothPxW, boothPxH);
   drawJointSplit();
   state.items.filter((item) => item.type === "zone").forEach(drawItem);
-  drawSpaceAnalysis();
-  drawPowerRoutes();
-  drawOperationalOverlays();
+  if (advancedMode || printRenderMode) {
+    drawSpaceAnalysis();
+    drawPowerRoutes();
+    drawOperationalOverlays();
+  }
   state.items.filter((item) => item.type !== "zone").sort((a, b) => getItemVerticalRange(a).bottom - getItemVerticalRange(b).bottom).forEach(drawItem);
-  if (!printRenderMode) drawSelectedMeasurements(selectedItem());
-  drawDimensions(boothPxW, boothPxH);
+  if (!printRenderMode) drawDropPreview();
+  if (!printRenderMode && dimensionsVisible) drawSelectedMeasurements(selectedItem());
+  if (!printRenderMode) drawSelectionOutline(selectedItem());
+  if (dimensionsVisible || printRenderMode) drawDimensions(boothPxW, boothPxH);
+}
+
+function drawDropPreview() {
+  if (!dropPreview?.support || !dropPreview?.placement) return;
+  const support = dropPreview.surface || dropPreview.support;
+  const placement = dropPreview.placement;
+  ctx.save();
+  ctx.fillStyle = dropPreview.blocked ? "rgba(183, 67, 55, .12)" : "rgba(19, 147, 123, 0.12)";
+  ctx.strokeStyle = dropPreview.blocked ? "#b74337" : "rgba(0, 111, 127, 0.88)";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([7, 5]);
+  ctx.fillRect(origin.x + support.x * scale, origin.y + support.y * scale, support.width * scale, support.depth * scale);
+  ctx.strokeRect(origin.x + placement.x * scale, origin.y + placement.y * scale, (selectedItem()?.width || 0) * scale, (selectedItem()?.depth || 0) * scale);
+  ctx.setLineDash([]);
+  ctx.fillStyle = "#006f7f";
+  ctx.font = "bold 11px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(dropPreview.blocked ? "ここには収まりません" : "ここに置けます", origin.x + (placement.x + (selectedItem()?.width || 0) / 2) * scale, origin.y + placement.y * scale - 7);
+  ctx.restore();
+}
+
+function drawSelectionOutline(item) {
+  if (!item) return;
+  const centerX = origin.x + (item.x + item.width / 2) * scale;
+  const centerY = origin.y + (item.y + item.depth / 2) * scale;
+  const width = Math.max(22, item.width * scale + 8);
+  const height = Math.max(22, item.depth * scale + 8);
+  ctx.save();
+  ctx.strokeStyle = "#007f78";
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([]);
+  ctx.strokeRect(centerX - width / 2, centerY - height / 2, width, height);
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => {
+    ctx.fillStyle = "#fff";
+    ctx.strokeStyle = "#007f78";
+    ctx.beginPath();
+    ctx.arc(centerX + sx * width / 2, centerY + sy * height / 2, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  });
+  ctx.restore();
 }
 
 function drawGrid(boothPxW, boothPxH) {
   ctx.save();
-  const grid = Domain.sanitizeGridSize(state.gridSize);
+  const grid = dimensionsVisible || printRenderMode ? Domain.sanitizeGridSize(state.gridSize) : 500;
   for (let mm = 0; mm <= state.booth.width; mm += grid) {
     const major500 = mm % 500 === 0;
     const major100 = mm % 100 === 0;
@@ -2270,6 +2741,7 @@ function drawItem(item) {
 }
 
 function drawSupportBadge(item, x, y, w, h) {
+  if (!advancedMode && !printRenderMode) return;
   if (!item.supportItemId) return;
   ctx.save();
   ctx.globalAlpha = 1;
@@ -2312,6 +2784,7 @@ function drawSpaceZone(item) {
 }
 
 function drawActivationBadge(item, x, y, w, h) {
+  if (!advancedMode && !printRenderMode) return;
   if (!["scenario", "person", "zone"].includes(item.type) || item.activationMode === "always") return;
   ctx.save();
   ctx.globalAlpha = 1;
@@ -2324,6 +2797,7 @@ function drawActivationBadge(item, x, y, w, h) {
 }
 
 function drawVisibilityBadge(item, x, y, w, h) {
+  if (!advancedMode && !printRenderMode) return;
   if (!canBeVisibilityTarget(item) || item.visibilityRole === "none") return;
   const badge = visibilityRoleLabel(item.visibilityRole);
   ctx.save();
@@ -2385,7 +2859,7 @@ function drawItemText(item, x, y, w, h) {
   const padY = Math.max(printRenderMode ? 14 : 4, Math.min(h * 0.12, printRenderMode ? 34 : 8));
   const availableW = Math.max(8, w - padX * 2);
   const availableH = Math.max(8, h - padY * 2);
-  const lines = availableH < (printRenderMode ? 92 : 24) ? [name] : [name, size];
+  const lines = (!dimensionsVisible && !printRenderMode) || availableH < (printRenderMode ? 92 : 24) ? [name] : [name, size];
   let fontSize = Math.min(printRenderMode ? 68 : 14, availableH / (lines.length * 1.25));
   const minFont = printRenderMode ? 22 : 6;
 
@@ -2430,8 +2904,8 @@ function fitCanvasText(text, maxWidth) {
 }
 function compactLabel(label) {
   return String(label)
+    .replace(/^bolda AS01/, "ヨーカン棒 AS01")
     .replace(/\s*W\d+.*$/i, "")
-    .replace(/\s*\d+\s*$/, "")
     .trim();
 }
 
@@ -2500,7 +2974,7 @@ function drawSpotlight(item) {
   ctx.font = `bold ${printRenderMode ? 50 : 13}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(`${item.watt || 0}W`, x + w / 2, y + h * 0.82);
+  if (advancedMode || printRenderMode) ctx.fillText(`${item.watt || 0}W`, x + w / 2, y + h * 0.82);
   ctx.restore();
 }
 
@@ -2546,12 +3020,29 @@ function canvasToMm(event) {
 }
 
 function onPointerDown(event) {
+  canvas.focus({ preventScroll: true });
+  if (event.button > 0) return;
+  canvasPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  canvas.setPointerCapture(event.pointerId);
+  if (canvasPointers.size > 1) {
+    if (drag) restorePlacementItems(drag.snapshot);
+    drag = null;
+    canvasPan = null;
+    dropPreview = null;
+    const points = [...canvasPointers.values()];
+    const center = { clientX: (points[0].x + points[1].x) / 2, clientY: (points[0].y + points[1].y) / 2 };
+    canvasGesture = { distance: Math.max(1, Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y)), zoom: canvasView.zoom, anchor: canvasToMm(center) };
+    drawCanvas();
+    return;
+  }
   const point = canvasToMm(event);
-  const hit = (candidate) =>
-    point.x >= candidate.x &&
-    point.x <= candidate.x + candidate.width &&
-    point.y >= candidate.y &&
-    point.y <= candidate.y + candidate.depth;
+  const minimumTargetMm = (event.pointerType === "touch" ? 44 : 24) * canvas.width / canvas.getBoundingClientRect().width / scale;
+  const hit = (candidate) => {
+    const padX = Math.max(0, (minimumTargetMm - candidate.width) / 2);
+    const padY = Math.max(0, (minimumTargetMm - candidate.depth) / 2);
+    return point.x >= candidate.x - padX && point.x <= candidate.x + candidate.width + padX &&
+      point.y >= candidate.y - padY && point.y <= candidate.y + candidate.depth + padY;
+  };
   const reversed = state.items
     .map((candidate, index) => ({ candidate, index }))
     .sort((a, b) => getItemVerticalRange(b.candidate).bottom - getItemVerticalRange(a.candidate).bottom || b.index - a.index)
@@ -2560,14 +3051,41 @@ function onPointerDown(event) {
     || reversed.find((candidate) => candidate.type === "zone" && hit(candidate));
   state.selectedId = item ? item.id : null;
   if (item) {
-    drag = { id: item.id, dx: point.x - item.x, dy: point.y - item.y };
-    canvas.setPointerCapture(event.pointerId);
+    drag = { id: item.id, pointerId: event.pointerId, dx: point.x - item.x, dy: point.y - item.y,
+      startClientX: event.clientX, startClientY: event.clientY, moved: false,
+      snapshot: placementTree(item).map((entry) => ({ ...entry })) };
+  } else {
+    canvasPan = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, panX: canvasView.panX, panY: canvasView.panY };
   }
   render();
 }
 
 function onPointerMove(event) {
+  if (canvasPointers.has(event.pointerId)) canvasPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  const rect = canvas.getBoundingClientRect();
+  if (canvasGesture && canvasPointers.size > 1) {
+    const points = [...canvasPointers.values()];
+    const distance = Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
+    canvasView.zoom = Math.max(0.65, Math.min(6, canvasGesture.zoom * distance / canvasGesture.distance));
+    const inset = layoutCanvasPadding() * 2;
+    const newScale = Math.min((canvas.width - inset) / state.booth.width, (canvas.height - inset) / state.booth.depth) * canvasView.zoom;
+    const x = ((points[0].x + points[1].x) / 2 - rect.left) * canvas.width / rect.width;
+    const y = ((points[0].y + points[1].y) / 2 - rect.top) * canvas.height / rect.height;
+    canvasView.panX = x - canvasGesture.anchor.x * newScale - (canvas.width - state.booth.width * newScale) / 2;
+    canvasView.panY = y - canvasGesture.anchor.y * newScale - (canvas.height - state.booth.depth * newScale) / 2;
+    drawCanvas();
+    return;
+  }
+  if (canvasPan?.pointerId === event.pointerId) {
+    canvasView.panX = canvasPan.panX + (event.clientX - canvasPan.x) * canvas.width / rect.width;
+    canvasView.panY = canvasPan.panY + (event.clientY - canvasPan.y) * canvas.height / rect.height;
+    drawCanvas();
+    return;
+  }
   if (!drag) return;
+  if (drag.pointerId !== event.pointerId) return;
+  if (!drag.moved && Math.hypot(event.clientX - drag.startClientX, event.clientY - drag.startClientY) < 5) return;
+  drag.moved = true;
   const item = selectedItem();
   if (!item) return;
   const point = canvasToMm(event);
@@ -2575,13 +3093,35 @@ function onPointerMove(event) {
   const nextY = Domain.snapMm(point.y - drag.dy, state.gridSize, state.snapEnabled);
   if (item.supportItemId && (nextX !== item.x || nextY !== item.y)) detachItemFromSupport(item, false, false);
   moveItemTo(item, nextX, nextY);
-  render();
+  dropPreview = getDropPlacement(item);
+  if (dropPreview && !dropPreview.blocked) {
+    item.z = dropPreview.placement.z;
+    syncSupportedItems();
+  } else if (item.surfacePlaceable) {
+    item.z = 0;
+    syncSupportedItems();
+  }
+  drawCanvas();
 }
 
 function endDrag(event) {
-  const droppedItem = drag ? state.items.find((item) => item.id === drag.id) : null;
+  canvasPointers.delete(event.pointerId);
+  if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+  if (canvasGesture) {
+    if (canvasPointers.size < 2) canvasGesture = null;
+    canvasPan = null;
+    return;
+  }
+  canvasPan = null;
+  const finished = drag;
+  const droppedItem = finished ? state.items.find((item) => item.id === finished.id) : null;
   drag = null;
-  if (event?.type === "pointerup" && autoPlaceItemOnDropSupport(droppedItem)) render();
+  dropPreview = null;
+  if (finished?.moved) {
+    if (event.type === "pointerup") finishItemPlacement(droppedItem, finished.snapshot);
+    else restorePlacementItems(finished.snapshot);
+  }
+  render();
 }
 
 function renderTable() {
@@ -2626,7 +3166,7 @@ function itemPowerSummaryText(item) {
   const route = getCableRouteData(item);
   const load = item.type === "powerstrip"
     ? `定格${item.ratedCapacityW ? `${item.ratedCapacityW}W` : "未登録"}`
-    : `${item.watt || 0}W`;
+    : item.watt > 0 ? `${item.watt}W` : "消費電力未登録";
   return `${load} / ${source ? source.label : "未接続"}${route ? ` / 配線${Math.round(route.totalLengthMm)}mm` : ""}`;
 }
 
@@ -3489,7 +4029,7 @@ function oppositeSide(side) {
 }
 
 function typeLabel(type) {
-  return { table: "机", fixture: "什器", product: "実在商品", bolda: "自社什器 bolda", power: "コンセント", powerstrip: "電源タップ", device: "接続機器", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "導線確認用人物", scenario: "営業状態物品", zone: "用途領域" }[type] || type;
+  return { table: "机", fixture: "什器", product: "商品", bolda: "自社什器 bolda", power: "コンセント", powerstrip: "電源タップ", device: "接続機器", spotlight: "スポットライト", wall: "壁面", chair: "椅子", person: "人物", scenario: "展示備品", zone: "用途領域" }[type] || type;
 }
 
 function itemSizeLabel(item) {
@@ -3514,17 +4054,22 @@ function escapeHtml(value) {
 }
 
 function autosave() {
+  if (drag) return;
   try {
     localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(Domain.createProjectDocument(state)));
+    $("autosaveStatus").textContent = "自動保存済み";
+    $("mobileAutosaveStatus").textContent = "自動保存済み";
   } catch (error) {
+    $("autosaveStatus").textContent = "自動保存不可・保存ボタンをご利用ください";
+    $("mobileAutosaveStatus").textContent = "自動保存不可・保存してください";
     console.warn("Autosave failed", error);
   }
 }
 
 function loadAutosave() {
-  const saved = [AUTOSAVE_KEY, ...PREVIOUS_AUTOSAVE_KEYS].map((key) => localStorage.getItem(key)).find(Boolean);
-  if (!saved) return false;
   try {
+    const saved = [AUTOSAVE_KEY, ...PREVIOUS_AUTOSAVE_KEYS].map((key) => localStorage.getItem(key)).find(Boolean);
+    if (!saved) return false;
     const parsed = Domain.parseProjectDocument(saved);
     applyLoadedState(parsed.state);
     return true;
@@ -3671,8 +4216,10 @@ function draw3dScene() {
   addThreeBoothFloor(scene);
   addThreeBoothWalls(scene);
   activeItems().forEach((item) => addThreeItem(scene, item));
-  addThreePowerRoutes(scene);
-  addThreeOperationalOverlays(scene);
+  if (advancedMode) {
+    addThreePowerRoutes(scene);
+    addThreeOperationalOverlays(scene);
+  }
   addThreeSelectionHighlight(scene);
   syncThreeOverlapWarning();
 
@@ -4153,9 +4700,38 @@ function addThreeOfficialProduct(scene, item) {
   if (item.productCategory === "capsule-recovery-box") return addThreeCapsuleRecoveryBox(scene, item);
   if (item.productCategory === "mist-bottle") return addThreeMistBottle(scene, item);
   if (item.productCategory === "aluminum-pegboard") return addThreeAluminumPegboard(scene, item);
+  if (item.productCategory === "processing-storage-rack") return addThreeProcessingRack(scene, item);
+  if (item.productCategory === "ultrasonic-cleaner") return addThreeUltrasonicCleaner(scene, item);
   if (item.productCategory.startsWith("frame-heater-")) return addThreeFrameHeater(scene, item);
   if (item.productCategory.startsWith("buff-motor-")) return addThreeBuffMotor(scene, item);
   addThreeCounter(scene, item);
+}
+
+function addThreeProcessingRack(scene, item) {
+  const T = window.THREE;
+  const group = createFacingGroup(item);
+  const acrylic = new T.MeshPhysicalMaterial({ color: 0xe6f2f4, transparent: true, opacity: 0.34, roughness: 0.12, transmission: 0.28, depthWrite: false });
+  const edge = threeStandardMaterial(0xc1cbce, { roughness: 0.34, metalness: 0.08 });
+  const wall = Math.max(4, Math.min(8, item.width * 0.035));
+  addLocalBox(group, wall, item.height, item.depth, -item.width / 2 + wall / 2, item.height / 2, 0, acrylic);
+  addLocalBox(group, wall, item.height, item.depth, item.width / 2 - wall / 2, item.height / 2, 0, acrylic);
+  for (let shelf = 0; shelf <= 5; shelf += 1) {
+    addLocalBox(group, item.width, wall, item.depth, 0, shelf * (item.height - wall) / 5 + wall / 2, 0, shelf === 0 || shelf === 5 ? edge : acrylic);
+  }
+  scene.add(group);
+}
+
+function addThreeUltrasonicCleaner(scene, item) {
+  const group = createFacingGroup(item);
+  const shell = threeStandardMaterial(0xe9eeee, { roughness: 0.52 });
+  const steel = threeStandardMaterial(0x8b9698, { roughness: 0.24, metalness: 0.74 });
+  const dark = threeStandardMaterial(0x252e31, { roughness: 0.48 });
+  const bodyH = item.height * 0.8;
+  addLocalBox(group, item.width, bodyH, item.depth, 0, bodyH / 2, 0, shell);
+  addLocalBox(group, item.width * 0.88, item.height * 0.2, item.depth * 0.82, 0, bodyH + item.height * 0.1, 0, steel);
+  addLocalBox(group, item.width * 0.74, 1, item.depth * 0.66, 0, item.height - .5, 0, dark, false);
+  addLocalBox(group, item.width * 0.6, item.height * 0.14, 5, 0, bodyH * 0.48, item.depth / 2 + 2, threeStandardMaterial(0xf8f8f4, { roughness: 0.68 }), false);
+  scene.add(group);
 }
 
 function addThreeAluminumPegboard(scene, item) {
@@ -4283,9 +4859,22 @@ function addThreeOperationalItem(scene, item) {
   const h = item.height || defaultItemHeight(item);
   if (item.scenarioKind === "laptop") {
     addLocalBox(group, item.width, Math.max(10, h * 0.07), item.depth * 0.74, 0, h * 0.035, item.depth * 0.12, body);
-    addLocalBox(group, item.width * 0.92, h * 0.86, Math.max(8, item.depth * 0.045), 0, h * 0.5, -item.depth * 0.35, dark);
+    addLocalBox(group, item.width * 0.92, h * 0.9, Math.max(8, item.depth * 0.045), 0, h * 0.55, -item.depth * 0.35, dark);
     addLocalBox(group, item.width * 0.84, h * 0.7, Math.max(5, item.depth * 0.025), 0, h * 0.51, -item.depth * 0.32, threeStandardMaterial(0x79aeb9, { roughness: 0.3 }), false);
     addLocalBox(group, item.width * 0.72, 4, item.depth * 0.34, 0, h * 0.08, item.depth * 0.12, dark, false);
+  } else if (item.scenarioKind === "compact-printer") {
+    addLocalBox(group, item.width, h, item.depth, 0, h / 2, 0, light);
+    addLocalBox(group, item.width * 0.72, h * 0.08, 2, 0, h * 0.7, item.depth / 2 - 1, dark, false);
+    addLocalBox(group, item.width * 0.64, 1, item.depth * 0.48, 0, h - .5, -item.depth * 0.18, threeStandardMaterial(0xffffff, { roughness: 0.9 }), false);
+  } else if (item.scenarioKind === "tablet" || item.scenarioKind === "smartphone") {
+    addLocalBox(group, item.width, h, item.depth, 0, h / 2, 0, dark);
+    addLocalBox(group, item.width * 0.9, 1, item.depth * 0.84, 0, h - .5, 0, threeStandardMaterial(0x79aeb9, { roughness: 0.24 }), false);
+  } else if (item.scenarioKind === "monitor") {
+    const screenH = h * 0.68;
+    addLocalBox(group, item.width, screenH, Math.max(24, item.depth * 0.12), 0, h - screenH / 2, -item.depth * 0.18, dark);
+    addLocalBox(group, item.width * 0.9, screenH * 0.82, 5, 0, h - screenH / 2, -item.depth * 0.11, threeStandardMaterial(0x79aeb9, { roughness: 0.28 }), false);
+    addLocalBox(group, item.width * 0.08, h * 0.28, item.depth * 0.12, 0, h * 0.2, 0, body);
+    addLocalBox(group, item.width * 0.38, h * 0.05, item.depth * 0.7, 0, h * 0.025, 0, body);
   } else if (item.scenarioKind === "document-tray-3") {
     addLocalBox(group, item.width, h, 12, 0, h / 2, -item.depth / 2 + 6, body);
     addLocalBox(group, 12, h, item.depth, -item.width / 2 + 6, h / 2, 0, body);
@@ -4809,6 +5398,8 @@ function threeWorldZ(mm) {
 function configureThreeCamera(reset) {
   if (!threePreview) return;
   const T = window.THREE;
+  const viewport = preview3dCanvas.getBoundingClientRect();
+  if (viewport.width && viewport.height) threePreview.camera.aspect = viewport.width / viewport.height;
   if (reset) {
     threePreview.yaw = 0;
     threePreview.pitch = 0;
@@ -4831,13 +5422,15 @@ function configureThreeCamera(reset) {
   if (threePreview.cameraMode === "visitor") {
     const eyeHeight = Math.max(1000, Math.min(2200, state.viewerEyeHeight || 1600));
     const inwardDepth = side === "top" || side === "bottom" ? d : w;
-    const cameraDistance = inwardDepth / 2 + 450 * threePreview.zoom;
+    const frontage = side === "top" || side === "bottom" ? w : d;
+    const horizontalTan = Math.tan(55 * Math.PI / 360) * threePreview.camera.aspect;
+    const cameraDistance = inwardDepth / 2 + Math.max(800, frontage / (2 * horizontalTan) * 1.08) * threePreview.zoom;
     const targetDistance = Math.min(inwardDepth * 0.3, 1400);
     const position = outward.clone().multiplyScalar(cameraDistance);
     position.y = eyeHeight;
     const target = outward.clone().multiplyScalar(-targetDistance);
-    target.y = Math.max(900, eyeHeight - 120);
-    threePreview.camera.fov = 50;
+    target.y = Math.max(800, eyeHeight - 600);
+    threePreview.camera.fov = 55;
     threePreview.camera.updateProjectionMatrix();
     threePreview.target.copy(target);
     threePreview.camera.position.copy(position);
@@ -4847,7 +5440,7 @@ function configureThreeCamera(reset) {
   threePreview.camera.fov = 34;
   threePreview.camera.updateProjectionMatrix();
   const target = new T.Vector3(0, Math.min(h * 0.38, 900), 0);
-  const distance = (maxSize * 1.16 + Math.min(w, d) * 0.48) * threePreview.zoom;
+  const distance = (maxSize * 1.16 + Math.min(w, d) * 0.48) * threePreview.zoom * Math.max(1, 1.58 / threePreview.camera.aspect);
   const base = target.clone()
     .add(outward.clone().multiplyScalar(distance))
     .add(tangent.multiplyScalar(maxSize * (threePreview.lateral ?? 0.34) * threePreview.zoom));
@@ -4861,9 +5454,9 @@ function configureThreeCamera(reset) {
 
 function renderThreeScene() {
   if (!threePreview?.scene) return;
-  const stage = preview3dCanvas.parentElement;
-  const cssWidth = Math.max(760, Math.round(stage?.clientWidth || 980));
-  const cssHeight = Math.round(cssWidth / 1.58);
+  const rect = preview3dCanvas.getBoundingClientRect();
+  const cssWidth = Math.max(1, Math.round(rect.width));
+  const cssHeight = Math.max(1, Math.round(rect.height));
   threePreview.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   threePreview.renderer.setSize(cssWidth, cssHeight, false);
   threePreview.camera.aspect = cssWidth / cssHeight;
@@ -4989,6 +5582,7 @@ function syncThreeSelectionUi() {
     text.textContent = item
       ? `選択中: ${item.label} / ${itemSizeLabel(item)} / X${Math.round(item.x)} Y${Math.round(item.y)} Z${Math.round(item.z || 0)} / ${Domain.normalizeRotationDegrees(item.rotationDeg)}°${operational}${isItemActive(item) ? "" : " / 現在モードでは非表示"}`
       : "3D内の什器をクリックすると選択できます";
+    if (!advancedMode) text.textContent = item ? `${compactLabel(item.label)}・${itemSizeLabel(item)}` : "ものを選んで配置図で編集できます";
   }
   ["editSelected3dBtn", "rotateSelected3dBtn", "deleteSelected3dBtn"].forEach((id) => {
     if ($(id)) $(id).disabled = !item;

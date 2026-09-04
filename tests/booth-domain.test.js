@@ -100,6 +100,31 @@ test("一部が重なっていても中心が天板外なら机上へ自動配�
   assert.equal(result, null);
 });
 
+test("支持面上で既存商品と重なる場合は最寄りの空き位置へずらす", () => {
+  const table = { x: 1000, y: 500, z: 0, width: 600, depth: 400, height: 700 };
+  const item = { width: 200, depth: 200, height: 100 };
+  const occupied = [{ x: 1200, y: 600, width: 200, depth: 200 }];
+  const placement = domain.findNearestFreeSupportPlacement(item, table, occupied, {
+    offsetX: 200,
+    offsetY: 100,
+    zOffsetMm: 700,
+    stepMm: 50
+  });
+  assert.ok(placement);
+  assert.equal(placement.z, 700);
+  assert.equal(domain.rectanglesOverlap(placement, occupied[0]), false);
+  assert.equal(placement.maximumOverhangMm, 0);
+});
+
+test("支持面に空きがなければ重なり回避配置を返さない", () => {
+  const support = { x: 0, y: 0, width: 200, depth: 200, height: 100 };
+  const item = { width: 200, depth: 200, height: 50 };
+  const placement = domain.findNearestFreeSupportPlacement(item, support, [
+    { x: 0, y: 0, width: 200, depth: 200 }
+  ]);
+  assert.equal(placement, null);
+});
+
 test("在庫箱は平面90度回転を比較し、補充回数込みの最大同時箱数と容量を算出する", () => {
   const result = domain.calculateInventoryCapacity({
     zoneWidthMm: 1200,

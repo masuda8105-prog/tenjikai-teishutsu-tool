@@ -929,6 +929,32 @@ th {
 
 .hidden { display: none !important; }
 
+.mobile-dock, .mobile-drawer, .mobile-selection-sheet, .mobile-panel-close { display: none; }
+.mobile-settings-actions { display: none; }
+.mobile-save-status { display: none; }
+summary { font-size: 14px; font-weight: 700; cursor: pointer; padding: 5px 0; }
+details[open] summary { margin-bottom: 12px; }
+.editor-confirm { max-width: min(90vw, 440px); border: 1px solid #c6d9d2; border-radius: 16px; padding: 24px; color: #243f37; }
+.editor-confirm::backdrop { background: #152a304d; }
+.editor-confirm p { line-height: 1.6; margin-top: 0; }
+.editor-confirm .button-row { justify-content: flex-end; }
+.mobile-selection-actions { display: flex; gap: 6px; }
+.mobile-drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mobile-drawer-head strong { display: block; }
+.mobile-drawer-head span { font-size: 11px; color: #637870; }
+#surfacePlacementFields details { margin-top: 7px; }
+#surfacePlacementFields summary { font-size: 12px; }
+#layoutCanvas { cursor: grab; }
+#layoutCanvas:active { cursor: grabbing; }
+.palette-categories { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+.palette-categories button { min-height: 34px; padding: 5px 9px; font-size: 12px; background: #edf3f1; color: #425753; }
+.palette-categories button.active, button[aria-pressed="true"] { background: #d9eeea; border-color: #008c83; color: #005f58; }
+.palette-search { margin-top: 6px; }
+.palette-search input { border-radius: 9px; }
+.editor-message { position: fixed; z-index: 50; left: 50%; bottom: 24px; transform: translateX(-50%); max-width: min(90vw, 560px); padding: 12px 18px; background: #233f3b; color: white; border-radius: 10px; box-shadow: 0 6px 22px #152a3030; pointer-events: none; }
+.editor-message:empty { display: none; }
+#autosaveStatus { align-self: center; color: #55736a; font-size: 11px; }
+
 
 .furniture-image-refs {
   display: grid;
@@ -1016,6 +1042,94 @@ th {
     flex-direction: column;
   }
   .preview3d-selection-actions button { flex: 1; }
+}
+
+/* Editing is a room-planning workspace; submission/audit tools remain available in details. */
+@media screen {
+  body:not(.advanced-mode) .advanced-only,
+  body:not(.advanced-mode) .sheet-head,
+  body:not(.advanced-mode) .sheet-footer,
+  body:not(.advanced-mode) .submission-summary,
+  body:not(.advanced-mode) .legend { display: none !important; }
+  body:not(.advanced-mode) #listView th:nth-child(4),
+  body:not(.advanced-mode) #listView td:nth-child(4),
+  body:not(.advanced-mode) #listView th:nth-child(5),
+  body:not(.advanced-mode) #listView td:nth-child(5) { display: none; }
+  body:not(.advanced-mode) .print-sheet { padding: 0; min-height: 0; border: 0; box-shadow: none; background: transparent; width: 100%; }
+  .app-header { min-height: 76px; padding: 12px 22px; }
+  .app-header h1 { font-size: 20px; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .workspace { grid-template-columns: 320px minmax(0, 1fr); min-height: calc(100dvh - 76px); }
+  .panel { display: flex; flex-direction: column; max-height: calc(100dvh - 76px); overflow-y: auto; padding: 0 18px 24px; }
+  .panel #selectionSection { order: -1; }
+  .panel #selectionSection:has(#selectionEditor.hidden) { display: none; }
+  .panel h2 { font-size: 14px; margin-bottom: 10px; }
+  .panel .three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .palette { max-height: 400px; overflow: auto; padding: 2px; }
+  .palette button { min-height: 108px; border-radius: 9px; }
+  .palette .palette-thumb { aspect-ratio: 1.8; max-height: 76px; }
+  .palette button span { font-size: 12px; }
+  .stage { position: relative; padding: 16px; }
+  .toolbar { justify-content: flex-start; gap: 6px; }
+  .toolbar button { font-size: 12px; }
+  #layoutCanvas { display: block; width: 100%; height: calc(100dvh - 156px); max-height: none; min-height: 280px; aspect-ratio: auto; background: #fafbf8; border-color: #d7dfda; border-radius: 16px; }
+  body:not(.advanced-mode) #preview3dCanvas { height: calc(100dvh - 240px); max-height: none; min-height: 300px; aspect-ratio: auto; }
+  body:not(.advanced-mode) .preview3d-stage { min-height: 0; border-radius: 14px; }
+  body:not(.advanced-mode) .preview3d-meta { max-width: 45%; }
+  .view-preview3d #visitorViewBtn, .view-preview3d #dimensionsBtn, .view-preview3d #zoomOutBtn, .view-preview3d #zoomInBtn, .view-preview3d #fitCanvasBtn { display: none; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #69bcb0; outline-offset: 2px; }
+}
+
+@media screen and (max-width: 760px) {
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  .app-header { height: 58px; min-height: 58px; padding: 8px 12px; flex-wrap: nowrap; gap: 8px; }
+  .app-header > div:first-child { min-width: 0; flex: 1; }
+  .app-header h1 { font-size: 16px; max-width: none; }
+  .mobile-save-status { display: block; font-size: 10px; color: #55736a; margin-top: 3px; }
+  .eyebrow { display: none; }
+  .header-actions { flex-wrap: nowrap; gap: 4px; }
+  .header-actions > * { display: none; }
+  .header-actions #undoBtn, .header-actions #redoBtn { display: block; min-height: 40px; padding: 7px; font-size: 11px; }
+  .workspace { display: block; height: calc(100dvh - 58px); min-height: 0; }
+  .panel { display: none; }
+  .stage { height: 100%; overflow: hidden; padding: 6px 8px 74px; }
+  .toolbar { margin-bottom: 6px; gap: 4px; flex-wrap: nowrap; overflow-x: auto; }
+  .toolbar button { flex-shrink: 0; min-height: 38px; font-size: 11px; padding: 5px 9px; }
+  .toolbar .view-btn, #generate3dBtn, #clearBtn { display: none; }
+  body:not(.advanced-mode) .print-sheet, .print-sheet { width: 100%; min-height: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .sheet-head, .sheet-footer, .submission-summary, .legend { display: none !important; }
+  #layoutCanvas { height: calc(100dvh - 184px); min-height: 120px; max-height: none; border-radius: 12px; }
+  .mobile-dock { display: flex; position: fixed; z-index: 20; bottom: 0; left: 0; right: 0; gap: 5px; padding: 9px 8px calc(9px + env(safe-area-inset-bottom)); border-top: 1px solid #d4dfda; background: #fffffff5; }
+  .mobile-dock button { min-height: 46px; min-width: 0; flex: 1; padding: 6px 3px; font-size: 11px; border-radius: 9px; }
+  #mobileUndoBtn { display: none; }
+  .mobile-drawer, .mobile-selection-sheet { display: block; position: fixed; z-index: 25; bottom: calc(70px + env(safe-area-inset-bottom)); left: 8px; right: 8px; padding: 12px; border: 1px solid #c6d9d2; border-radius: 16px; background: #fffffff7; box-shadow: 0 -4px 25px #28413b1a; }
+  .mobile-drawer { max-height: 45dvh; overflow-y: auto; overscroll-behavior: contain; }
+  .mobile-drawer header, .mobile-drawer-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .mobile-drawer h2 { margin: 0; font-size: 16px; }
+  .mobile-drawer input { min-height: 42px; font-size: 16px; }
+  .mobile-drawer .palette { max-height: none; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mobile-drawer .palette button { min-height: 104px; }
+  .mobile-drawer .palette small { font-size: 10px; }
+  .mobile-selection-sheet { padding: 10px 12px; }
+  .mobile-selection-sheet strong { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #mobileSelectionMeta { display: block; font-size: 11px; color: #637870; margin: 4px 0 8px; }
+  .mobile-selection-sheet .button-row { flex-wrap: nowrap; gap: 6px; }
+  .mobile-selection-sheet button { flex: 1; min-height: 42px; font-size: 12px; }
+  body.mobile-editor-open .panel, body.mobile-settings-open .panel { display: block; position: fixed; z-index: 30; bottom: calc(70px + env(safe-area-inset-bottom)); left: 8px; right: 8px; padding: 12px; max-height: 45dvh; border: 1px solid #c6d9d2; border-radius: 16px; background: white; box-shadow: 0 -4px 25px #28413b1a; }
+  body.mobile-editor-open .panel > section, body.mobile-settings-open .panel > section { display: none !important; }
+  body.mobile-editor-open .panel #selectionSection, body.mobile-settings-open .panel #boothSettingsSection, body.mobile-settings-open .panel #submissionInfoSection { display: block !important; }
+  .mobile-panel-close { display: block; position: sticky; top: 0; margin-left: auto; z-index: 1; }
+  .mobile-settings-actions { display: flex; margin-top: 10px; }
+  .panel input, .panel select, .panel textarea { font-size: 16px; }
+  .editor-message { bottom: 200px; width: max-content; font-size: 12px; }
+  #preview3dView { gap: 6px; }
+  .preview3d-actions { gap: 4px; max-height: 84px; overflow: auto; }
+  .preview3d-actions button { font-size: 10px; min-height: 34px; padding: 4px 6px; }
+  body:not(.advanced-mode) #preview3dCanvas, #preview3dCanvas { height: calc(100dvh - 264px); min-height: 180px; }
+  .preview3d-stage { min-height: 0; border-radius: 12px; }
+  .preview3d-meta { display: none; }
+  .preview3d-warning { top: 8px; right: 8px; font-size: 10px; max-width: 90%; }
+  .preview3d-selection { padding: 6px; left: 6px; right: 6px; bottom: 6px; gap: 5px; }
+  .preview3d-selection-actions button { min-height: 36px; }
 }
 
 @media print {

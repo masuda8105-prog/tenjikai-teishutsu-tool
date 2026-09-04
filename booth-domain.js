@@ -137,6 +137,50 @@
     return best;
   }
 
+  function findNearestFreeSupportPlacement(item, support, obstacles = [], options = {}) {
+    const itemWidth = Math.max(0, finiteNumber(item?.width));
+    const itemDepth = Math.max(0, finiteNumber(item?.depth));
+    const supportWidth = Math.max(0, finiteNumber(support?.width));
+    const supportDepth = Math.max(0, finiteNumber(support?.depth));
+    if (!itemWidth || !itemDepth || itemWidth > supportWidth || itemDepth > supportDepth) return null;
+
+    const maxX = supportWidth - itemWidth;
+    const maxY = supportDepth - itemDepth;
+    const requestedX = finiteNumber(options.offsetX, (supportWidth - itemWidth) / 2);
+    const requestedY = finiteNumber(options.offsetY, (supportDepth - itemDepth) / 2);
+    const desiredX = Math.max(0, Math.min(maxX, requestedX));
+    const desiredY = Math.max(0, Math.min(maxY, requestedY));
+    const step = Math.max(10, finiteNumber(options.stepMm, 50));
+    const xOffsets = new Set([desiredX, 0, maxX]);
+    const yOffsets = new Set([desiredY, 0, maxY]);
+    for (let x = 0; x <= maxX; x += step) xOffsets.add(Math.min(maxX, x));
+    for (let y = 0; y <= maxY; y += step) yOffsets.add(Math.min(maxY, y));
+
+    const blocked = Array.isArray(obstacles) ? obstacles : [];
+    const candidates = [];
+    xOffsets.forEach((offsetX) => yOffsets.forEach((offsetY) => {
+      const rect = {
+        x: finiteNumber(support.x) + offsetX,
+        y: finiteNumber(support.y) + offsetY,
+        width: itemWidth,
+        depth: itemDepth
+      };
+      if (blocked.some((obstacle) => rectanglesOverlap(rect, obstacle))) return;
+      candidates.push({
+        width: itemWidth,
+        depth: itemDepth,
+        ...calculateSupportPlacement(item, support, {
+          offsetX,
+          offsetY,
+          zOffsetMm: options.zOffsetMm
+        }),
+        distanceMm: Math.hypot(offsetX - requestedX, offsetY - requestedY)
+      });
+    }));
+    candidates.sort((a, b) => a.distanceMm - b.distanceMm || a.offsetY - b.offsetY || a.offsetX - b.offsetX);
+    return candidates.find((candidate) => candidate.distanceMm <= finiteNumber(options.maxDistanceMm, Infinity)) || null;
+  }
+
   function orthogonalRoute(source, target, mode = "x-then-y") {
     const start = rectangleCenter(source);
     const end = rectangleCenter(target);
@@ -549,6 +593,7 @@
     rectangleCenter,
     calculateSupportPlacement,
     selectBestSupportForDrop,
+    findNearestFreeSupportPlacement,
     orthogonalRoute,
     polylineLength,
     segmentIntersectsRectangle,
